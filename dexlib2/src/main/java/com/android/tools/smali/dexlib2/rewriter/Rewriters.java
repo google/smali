@@ -42,6 +42,7 @@ import com.android.tools.smali.dexlib2.iface.MethodParameter;
 import com.android.tools.smali.dexlib2.iface.TryBlock;
 import com.android.tools.smali.dexlib2.iface.debug.DebugItem;
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction;
+import com.android.tools.smali.dexlib2.iface.reference.CallSiteReference;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
@@ -64,6 +65,7 @@ public interface Rewriters {
     @Nonnull Rewriter<String> getTypeRewriter();
     @Nonnull Rewriter<FieldReference> getFieldReferenceRewriter();
     @Nonnull Rewriter<MethodReference> getMethodReferenceRewriter();
+    @Nonnull Rewriter<CallSiteReference> getCallSiteReferenceRewriter();
 
     @Nonnull Rewriter<Annotation> getAnnotationRewriter();
     @Nonnull Rewriter<AnnotationElement> getAnnotationElementRewriter();
