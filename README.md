@@ -1,15 +1,11 @@
 ### About
 
+**NOTE**: This is a fork of https://github.com/JesusFreke/smali for patches needed by Google as the original repository is currently not maintained.
+
 smali/baksmali is an assembler/disassembler for the dex format used by dalvik, Android's Java VM implementation. The syntax is loosely based on Jasmin's/dedexer's syntax, and supports the full functionality of the dex format (annotations, debug info, line info, etc.)
 
-Downloads are at  https://bitbucket.org/JesusFreke/smali/downloads/. If you are interested in submitting a patch, feel free to send me a pull request here.
-
-See [the wiki](https://github.com/JesusFreke/smali/wiki) for more info/news/release notes/etc.
-
 #### Support
-- [github Issue tracker](https://github.com/JesusFreke/smali/issues) - For any bugs/issues/feature requests
-- [#smali on freenode](http://webchat.freenode.net/?channels=smali) - Free free to drop by and ask a question. Don't expect an instant response, but if you hang around someone will respond.
-
+- [github Issue tracker](https://github.com/google/smali/issues) - For any bugs/issues/feature requests
 
 #### Some useful links for getting started with smali
 
