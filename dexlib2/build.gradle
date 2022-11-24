@@ -33,6 +33,11 @@ ext.testAccessorOutputDir = file("${buildDir}/generated-src/accessorTest/java")
 ext.testAccessorOutputFile = file("${testAccessorOutputDir}/org/jf/dexlib2/AccessorTypes.java")
 
 sourceSets {
+    main {
+        java {
+            srcDirs "${project.rootDir}/third_party/dexlib2/src/main/java"
+        }
+    }
     accessorTest {
         java {
             srcDir testAccessorOutputDir

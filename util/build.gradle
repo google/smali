@@ -29,6 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+sourceSets {
+    main {
+        java {
+            srcDirs "${project.rootDir}/third_party/util/src/main/java"
+        }
+    }
+}
+
 dependencies {
     implementation project(':dexlib2')
     implementation depends.findbugs

@@ -50,9 +50,17 @@ configurations {
 
 sourceSets {
     main {
+        java {
+            srcDirs "${project.rootDir}/third_party/smali/src/main/java"
+        }
         resources {
             // This adds the generated .tokens files to the jar
             srcDir 'build/generated-src/antlr/main'
+        }
+    }
+    test {
+        java {
+            srcDirs "${project.rootDir}/third_party/smali/src/test/java"
         }
     }
 }

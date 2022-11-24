@@ -38,6 +38,14 @@ buildscript {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs "${project.rootDir}/third_party/baksmali/src/main/java"
+        }
+    }
+}
+
 dependencies {
     implementation project(':util')
     api project(':dexlib2')
