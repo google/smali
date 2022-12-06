@@ -12,7 +12,6 @@
  *
  * [The "BSD licence"]
  * Copyright (c) 2007-2008 Terence Parr
- * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +41,6 @@
  *
  * [The "BSD licence"]
  * Copyright (c) 2010 Ben Gruver
- * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
