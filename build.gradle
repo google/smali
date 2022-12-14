@@ -114,7 +114,7 @@ subprojects {
         apply plugin: 'maven-publish'
         apply plugin: 'signing'
 
-        group = 'com.google.tools.smali'
+        group = 'com.android.tools.smali'
 
         publishing {
             publications {
