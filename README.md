@@ -13,3 +13,34 @@ smali/baksmali is an assembler/disassembler for the dex format used by dalvik, A
 - [Registers wiki page](https://github.com/JesusFreke/smali/wiki/Registers)
 - [Types, Methods and Fields wiki page](https://github.com/JesusFreke/smali/wiki/TypesMethodsAndFields)
 - [Official dex format reference](https://source.android.com/devices/tech/dalvik/dex-format.html)
+
+### Building
+```
+./gradlew assemble
+```
+### Command Line Version
+
+To run the `smali` and `baksmali` tools from the command line build the fat
+jars. The fat jars will be named with the current version followed by the first
+8 characters of the current git hash followed by an optional `-dirty` if the
+repository was dirty when building and ending in  -fat . The fat jar can be
+invoked with `java -jar`.
+```
+./gradlew smali:fatJar
+java -jar smali/build/libs/smali-x.y.z-aaaaaaaa-dirty-fat.jar
+```
+
+### Testing
+
+To execute all tests run
+```
+./gradlew test
+```
+
+### Testing Maven Release
+Pust a release verison to you local maven repository (add
+`-Dmaven.repo.local=<dir>` to override the default local maven repository
+location)
+```
+./gradlew release publishToMavenLocal
+```
