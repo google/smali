@@ -38,7 +38,7 @@ To execute all tests run
 ```
 
 ### Testing Maven Release
-Pust a release verison to you local maven repository (add
+Push a release version to your local maven repository (add
 `-Dmaven.repo.local=<dir>` to override the default local maven repository
 location)
 ```
