@@ -85,7 +85,7 @@ publish {
                 pom {
                     description = 'baksmali is a disassembler for dalvik bytecode'
                     scm {
-                        url = 'https://github.com/JesusFreke/smali/tree/master/baksmali'
+                        url = 'https://github.com/google/smali/tree/master/baksmali'
                     }
                 }
             }

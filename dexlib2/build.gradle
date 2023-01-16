@@ -104,7 +104,7 @@ publish {
                 pom {
                     description = 'dexlib2 is a library for reading/modifying/writing Android dex files'
                     scm {
-                        url = 'https://github.com/JesusFreke/smali/tree/master/dexlib2'
+                        url = 'https://github.com/google/smali/tree/master/dexlib2'
                     }
                 }
             }
