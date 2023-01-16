@@ -115,11 +115,15 @@ subprojects {
         apply plugin: 'signing'
 
         group = 'com.android.tools.smali'
+        def artifact = project.name
+        if (artifact != 'smali') {
+            artifact = 'smali-' + artifact
+        }
 
         publishing {
             publications {
                 mavenJava(MavenPublication) {
-                    artifactId = project.name
+                    artifactId = artifact
                     from components.java
                     versionMapping {
                         usage('java-api') {
