@@ -33,7 +33,7 @@ options {
 }
 
 @header {
-package org.jf.smali;
+package com.android.tools.smali.smali;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -45,32 +45,32 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.TreeNodeStream;
 import org.antlr.runtime.tree.TreeParser;
 import org.antlr.runtime.tree.TreeRuleReturnScope;
-import org.jf.dexlib2.*;
-import org.jf.dexlib2.builder.Label;
-import org.jf.dexlib2.builder.MethodImplementationBuilder;
-import org.jf.dexlib2.builder.SwitchLabelElement;
-import org.jf.dexlib2.builder.instruction.*;
-import org.jf.dexlib2.iface.Annotation;
-import org.jf.dexlib2.iface.AnnotationElement;
-import org.jf.dexlib2.iface.ClassDef;
-import org.jf.dexlib2.iface.MethodImplementation;
-import org.jf.dexlib2.iface.reference.FieldReference;
-import org.jf.dexlib2.iface.reference.MethodReference;
-import org.jf.dexlib2.iface.value.EncodedValue;
-import org.jf.dexlib2.immutable.ImmutableAnnotation;
-import org.jf.dexlib2.immutable.ImmutableAnnotationElement;
-import org.jf.dexlib2.immutable.reference.ImmutableCallSiteReference;
-import org.jf.dexlib2.immutable.reference.ImmutableFieldReference;
-import org.jf.dexlib2.immutable.reference.ImmutableMethodHandleReference;
-import org.jf.dexlib2.immutable.reference.ImmutableMethodReference;
-import org.jf.dexlib2.immutable.reference.ImmutableMethodProtoReference;
-import org.jf.dexlib2.immutable.reference.ImmutableReference;
-import org.jf.dexlib2.immutable.reference.ImmutableTypeReference;
-import org.jf.dexlib2.immutable.value.*;
-import org.jf.dexlib2.util.MethodUtil;
-import org.jf.dexlib2.writer.InstructionFactory;
-import org.jf.dexlib2.writer.builder.*;
-import org.jf.util.LinearSearch;
+import com.android.tools.smali.dexlib2.*;
+import com.android.tools.smali.dexlib2.builder.Label;
+import com.android.tools.smali.dexlib2.builder.MethodImplementationBuilder;
+import com.android.tools.smali.dexlib2.builder.SwitchLabelElement;
+import com.android.tools.smali.dexlib2.builder.instruction.*;
+import com.android.tools.smali.dexlib2.iface.Annotation;
+import com.android.tools.smali.dexlib2.iface.AnnotationElement;
+import com.android.tools.smali.dexlib2.iface.ClassDef;
+import com.android.tools.smali.dexlib2.iface.MethodImplementation;
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
+import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
+import com.android.tools.smali.dexlib2.immutable.ImmutableAnnotation;
+import com.android.tools.smali.dexlib2.immutable.ImmutableAnnotationElement;
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableCallSiteReference;
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference;
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodHandleReference;
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference;
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodProtoReference;
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableReference;
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableTypeReference;
+import com.android.tools.smali.dexlib2.immutable.value.*;
+import com.android.tools.smali.dexlib2.util.MethodUtil;
+import com.android.tools.smali.dexlib2.writer.InstructionFactory;
+import com.android.tools.smali.dexlib2.writer.builder.*;
+import com.android.tools.smali.util.LinearSearch;
 
 import java.util.*;
 }
@@ -969,7 +969,7 @@ insn_format21c_string
     };
 
 insn_format21c_type
-  : //e.g. const-class v2, org/jf/HelloWorld2/HelloWorld2
+  : //e.g. const-class v2, com/android/tools/smali/HelloWorld2/HelloWorld2
     ^(I_STATEMENT_FORMAT21c_TYPE INSTRUCTION_FORMAT21c_TYPE REGISTER nonvoid_type_descriptor)
     {
       Opcode opcode = opcodes.getOpcodeByName($INSTRUCTION_FORMAT21c_TYPE.text);
@@ -1040,7 +1040,7 @@ insn_format22b
     };
 
 insn_format22c_field
-  : //e.g. iput-object v1, v0, org/jf/HelloWorld2/HelloWorld2.helloWorld Ljava/lang/String;
+  : //e.g. iput-object v1, v0, com/android/tools/smali/HelloWorld2/HelloWorld2.helloWorld Ljava/lang/String;
     ^(I_STATEMENT_FORMAT22c_FIELD inst=(INSTRUCTION_FORMAT22c_FIELD | INSTRUCTION_FORMAT22c_FIELD_ODEX) registerA=REGISTER registerB=REGISTER field_reference)
     {
       Opcode opcode = opcodes.getOpcodeByName($inst.text);
