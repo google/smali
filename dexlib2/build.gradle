@@ -29,7 +29,7 @@
  */
 
 ext.testAccessorOutputDir = file("${buildDir}/generated-src/accessorTest/java")
-ext.testAccessorOutputFile = file("${testAccessorOutputDir}/org/jf/dexlib2/AccessorTypes.java")
+ext.testAccessorOutputFile = file("${testAccessorOutputDir}/com/android/tools/smali/dexlib2/AccessorTypes.java")
 
 sourceSets {
     main {
@@ -66,7 +66,7 @@ dependencies {
 task ragel(type:Exec) {
     workingDir = 'src/main/ragel'
 
-    commandLine 'ragel', '-J', '-o', file('src/main/java/org/jf/dexlib2/util/SyntheticAccessorFSM.java'),
+    commandLine 'ragel', '-J', '-o', file('src/main/java/com/android/tools/smali/dexlib2/util/SyntheticAccessorFSM.java'),
             'SyntheticAccessorFSM.rl'
 }
 
@@ -75,7 +75,7 @@ task generateAccessorTestSource(type: JavaExec) {
     outputs.dir file(testAccessorOutputDir)
 
     classpath = configurations.accessorTestGenerator
-    main = 'org.jf.dexlib2.AccessorTestGenerator'
+    main = 'com.android.tools.smali.dexlib2.AccessorTestGenerator'
     args testAccessorOutputFile
 }
 compileAccessorTestJava.dependsOn(generateAccessorTestSource)

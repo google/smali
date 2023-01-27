@@ -1,13 +1,13 @@
-package org.jf.smali;
+package com.android.tools.smali.smali;
 
 import static java.lang.Math.toIntExact;
 
 import java.io.*;
 import java.util.Stack;
 import org.antlr.runtime.*;
-import org.jf.smali.util.*;
-import org.jf.util.*;
-import static org.jf.smali.smaliParser.*;
+import com.android.tools.smali.smali.util.*;
+import com.android.tools.smali.util.*;
+import static com.android.tools.smali.smali.smaliParser.*;
 
 %%
 

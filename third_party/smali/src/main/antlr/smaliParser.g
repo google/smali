@@ -253,10 +253,10 @@ tokens {
 }
 
 @header {
-package org.jf.smali;
+package com.android.tools.smali.smali;
 
-import org.jf.dexlib2.Opcode;
-import org.jf.dexlib2.Opcodes;
+import com.android.tools.smali.dexlib2.Opcode;
+import com.android.tools.smali.dexlib2.Opcodes;
 }
 
 
@@ -976,7 +976,7 @@ insn_format21c_string
     -> ^(I_STATEMENT_FORMAT21c_STRING[$start, "I_STATEMENT_FORMAT21c_STRING"] INSTRUCTION_FORMAT21c_STRING REGISTER STRING_LITERAL);
 
 insn_format21c_type
-  : //e.g. const-class v2, Lorg/jf/HelloWorld2/HelloWorld2;
+  : //e.g. const-class v2, Lcom/android/tools/smali/HelloWorld2/HelloWorld2;
     INSTRUCTION_FORMAT21c_TYPE REGISTER COMMA nonvoid_type_descriptor
     -> ^(I_STATEMENT_FORMAT21c_TYPE[$start, "I_STATEMENT_FORMAT21c"] INSTRUCTION_FORMAT21c_TYPE REGISTER nonvoid_type_descriptor);
 
@@ -1006,12 +1006,12 @@ insn_format22b
     -> ^(I_STATEMENT_FORMAT22b[$start, "I_STATEMENT_FORMAT22b"] INSTRUCTION_FORMAT22b REGISTER REGISTER integral_literal);
 
 insn_format22c_field
-  : //e.g. iput-object v1, v0 org/jf/HelloWorld2/HelloWorld2.helloWorld Ljava/lang/String;
+  : //e.g. iput-object v1, v0 com/android/tools/smali/HelloWorld2/HelloWorld2.helloWorld Ljava/lang/String;
     INSTRUCTION_FORMAT22c_FIELD REGISTER COMMA REGISTER COMMA field_reference
     -> ^(I_STATEMENT_FORMAT22c_FIELD[$start, "I_STATEMENT_FORMAT22c_FIELD"] INSTRUCTION_FORMAT22c_FIELD REGISTER REGISTER field_reference);
 
 insn_format22c_field_odex
-  : //e.g. iput-object-volatile v1, v0 org/jf/HelloWorld2/HelloWorld2.helloWorld Ljava/lang/String;
+  : //e.g. iput-object-volatile v1, v0 com/android/tools/smali/HelloWorld2/HelloWorld2.helloWorld Ljava/lang/String;
     INSTRUCTION_FORMAT22c_FIELD_ODEX REGISTER COMMA REGISTER COMMA field_reference
     {
       if (!allowOdex || opcodes.getOpcodeByName($INSTRUCTION_FORMAT22c_FIELD_ODEX.text) == null || apiLevel >= 14) {
