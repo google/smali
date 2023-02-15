@@ -41,6 +41,7 @@ import com.android.tools.smali.dexlib2.immutable.debug.ImmutableRestartLocal;
 import com.android.tools.smali.dexlib2.immutable.debug.ImmutableSetSourceFile;
 import com.android.tools.smali.dexlib2.immutable.debug.ImmutableStartLocal;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterators;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedMethod;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedMethodImplementation;
@@ -122,6 +123,11 @@ public abstract class DebugInfo implements Iterable<DebugItem> {
             DexReader reader = dexFile.getDataBuffer().readerAt(debugInfoOffset);
             final int lineNumberStart = reader.readBigUleb128();
             int registerCount = methodImpl.getRegisterCount();
+            // Debug information can have events for addresses past the instructions.
+            // They have no relevance for the method in question and are excluded from the iterator.
+            final int lastInstructionAddress =
+                methodImpl.getInstructionsSize()
+                    - Iterators.getLast(methodImpl.getInstructions().iterator()).getCodeUnits();
 
             //TODO: does dalvik allow references to invalid registers?
             final LocalInfo[] locals = new LocalInfo[registerCount];
@@ -177,7 +183,7 @@ public abstract class DebugInfo implements Iterable<DebugItem> {
 
                 @Nullable
                 protected DebugItem readNextItem(@Nonnull DexReader reader) {
-                    while (true) {
+                    while (codeAddress <= lastInstructionAddress) {
                         int next = reader.readUbyte();
                         switch (next) {
                             case DebugItemType.END_SEQUENCE: {
@@ -275,10 +281,14 @@ public abstract class DebugInfo implements Iterable<DebugItem> {
                                 int adjusted = next - 0x0A;
                                 codeAddress += adjusted / 15;
                                 lineNumber += (adjusted % 15) - 4;
+                                if (codeAddress > lastInstructionAddress) {
+                                  return endOfData();
+                                }
                                 return new ImmutableLineNumber(codeAddress, lineNumber);
                             }
                         }
                     }
+                    return endOfData();
                 }
             };
         }
