@@ -73,7 +73,7 @@ public class CDexBackedMethodImplementation extends DexBackedMethodImplementatio
     }
 
     @Override
-    protected int getInstructionsSize() {
+    public int getInstructionsSize() {
         int instructionsSize = dexFile.getDataBuffer().readUshort(
                 codeOffset + CodeItem.CDEX_INSTRUCTIONS_SIZE_AND_PREHEADER_FLAGS_OFFSET) >>
                 CodeItem.CDEX_INSTRUCTIONS_SIZE_SHIFT;
