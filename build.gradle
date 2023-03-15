@@ -30,7 +30,7 @@
 
 apply plugin: 'idea'
 
-version = '3.0.1'
+version = '3.0.2'
 def jcommanderVersion = ''
 
 if (!('release' in gradle.startParameter.taskNames)) {
@@ -89,6 +89,12 @@ subprojects {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    jar {
+        from(project.rootDir) {
+            include 'LICENSE'
+        }
+    }
+
     ext {
         depends = [
                 guava: 'com.google.guava:guava:31.1-android',
@@ -136,7 +142,7 @@ subprojects {
 
                     pom {
                         name = project.name
-                        url = 'http://smali.org'
+                        url = 'https://github.com/google/smali'
 
                         licenses {
                             license {
