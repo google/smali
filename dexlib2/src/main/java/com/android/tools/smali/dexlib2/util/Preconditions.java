@@ -35,7 +35,10 @@ import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.ReferenceType;
 import com.android.tools.smali.dexlib2.VerificationError;
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchElement;
+import com.android.tools.smali.dexlib2.iface.reference.CallSiteReference;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
+import com.android.tools.smali.dexlib2.iface.reference.MethodHandleReference;
+import com.android.tools.smali.dexlib2.iface.reference.MethodProtoReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.Reference;
 import com.android.tools.smali.dexlib2.iface.reference.StringReference;
@@ -272,6 +275,21 @@ public class Preconditions {
             case ReferenceType.METHOD:
                 if (!(reference instanceof MethodReference)) {
                     throw new IllegalArgumentException("Invalid reference type, expecting a method reference");
+                }
+                break;
+            case ReferenceType.METHOD_PROTO:
+                if (!(reference instanceof MethodProtoReference)) {
+                    throw new IllegalArgumentException("Invalid reference type, expecting a method proto reference");
+                }
+                break;
+            case ReferenceType.METHOD_HANDLE:
+                if (!(reference instanceof MethodHandleReference)) {
+                    throw new IllegalArgumentException("Invalid reference type, expecting a method handle reference");
+                }
+                break;
+            case ReferenceType.CALL_SITE:
+                if (!(reference instanceof CallSiteReference)) {
+                    throw new IllegalArgumentException("Invalid reference type, expecting a call site reference");
                 }
                 break;
             default:

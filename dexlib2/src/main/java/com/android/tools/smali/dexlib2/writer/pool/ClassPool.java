@@ -49,6 +49,7 @@ import com.android.tools.smali.dexlib2.iface.debug.SetSourceFile;
 import com.android.tools.smali.dexlib2.iface.debug.StartLocal;
 import com.android.tools.smali.dexlib2.iface.reference.CallSiteReference;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
+import com.android.tools.smali.dexlib2.iface.reference.MethodHandleReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodProtoReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.Reference;
@@ -195,6 +196,9 @@ public class ClassPool extends BasePool<String, PoolClassDef> implements ClassSe
                 break;
             case ReferenceType.METHOD_PROTO:
                 dexPool.protoSection.intern((MethodProtoReference)reference);
+                break;
+            case ReferenceType.METHOD_HANDLE:
+                dexPool.methodHandleSection.intern((MethodHandleReference) reference);
                 break;
             case ReferenceType.CALL_SITE:
                 dexPool.callSiteSection.intern((CallSiteReference) reference);
