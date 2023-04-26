@@ -3,10 +3,12 @@
 smali/baksmali is an assembler/disassembler for the dex format used by dalvik, Android's Java VM implementation. The syntax is loosely based on Jasmin's/dedexer's syntax, and supports the full functionality of the dex format (annotations, debug info, line info, etc.)
 
 **NOTE**: This is a fork of https://github.com/JesusFreke/smali for patches needed by Google as the original repository is currently not maintained. After forking the namespace was changed from `org.jf` to `com.android.tools.smali`. The artifacts are released on [Google Maven](https://maven.google.com) under the following coordinates:
-* [com.android.tools.smali:smali:<version>](https://maven.google.com/web/index.html?q=smali#com.android.tools.smali:smali)
-* [com.android.tools.smali:smali-dexlib2:<version>](https://maven.google.com/web/index.html?q=smali-dexlib2#com.android.tools.smali:smali-dexlib2)
-* [com.android.tools.smali:smali-baksmali:<version>](https://maven.google.com/web/index.html?q=smali-baksmali#com.android.tools.smali:smali)
-* [com.android.tools.smali:smali-util:<version>](https://maven.google.com/web/index.html?q=smali-util#com.android.tools.smali:smali-util)
+
+* [`com.android.tools.smali:smali:<version>`](https://maven.google.com/web/index.html?q=smali#com.android.tools.smali:smali)
+* [`com.android.tools.smali:smali-dexlib2:<version>`](https://maven.google.com/web/index.html?q=smali-dexlib2#com.android.tools.smali:smali-dexlib2)
+* [`com.android.tools.smali:smali-baksmali:<version>`](https://maven.google.com/web/index.html?q=smali-baksmali#com.android.tools.smali:smali)
+* [`com.android.tools.smali:smali-util:<version>`](https://maven.google.com/web/index.html?q=smali-util#com.android.tools.smali:smali-util)
+
 After the fork the first version released was 3.0.0, which was version 2.5.2 from the original repo with a few patches and the namespace change.
 
 #### Support
@@ -49,3 +51,21 @@ location)
 ```
 ./gradlew release publishToMavenLocal
 ```
+
+### Prepare and build a release version
+To prepare a release update `build.gradle` with the next release version and commit that.
+Then create a tag for that commit with the version.
+```
+git tag <version> <commit>
+git push origin <version>
+```
+Release versions can then be built by the Google R8 team using:
+```
+tools/trigger.py --smali=<version> --release
+```
+in the R8 repository.
+
+The status of the build on the bot is at https://ci.chromium.org/p/r8/builders/ci/smali.
+
+### Releasing versions on Google Maven
+TBD.
