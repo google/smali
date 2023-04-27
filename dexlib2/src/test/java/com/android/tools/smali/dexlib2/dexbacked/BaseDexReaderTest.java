@@ -69,7 +69,7 @@ public class BaseDexReaderTest {
 
     private void performSizedIntTest(int expectedValue, byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         Assert.assertEquals(expectedValue, reader.readSizedInt(buf.length));
     }
 
@@ -84,7 +84,7 @@ public class BaseDexReaderTest {
 
     private void performSizedIntFailureTest(byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         try {
             reader.readSizedInt(buf.length);
             Assert.fail();
@@ -124,7 +124,7 @@ public class BaseDexReaderTest {
 
     private void performSizedSmallUintTest(int expectedValue, byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         Assert.assertEquals(expectedValue, reader.readSizedSmallUint(buf.length));
     }
 
@@ -143,7 +143,7 @@ public class BaseDexReaderTest {
 
     private void performSizedSmallUintFailureTest(byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         try {
             reader.readSizedSmallUint(buf.length);
             Assert.fail();
@@ -194,7 +194,7 @@ public class BaseDexReaderTest {
 
     private void performSizedRightExtendedIntTest(int expectedValue, byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         Assert.assertEquals(expectedValue, reader.readSizedRightExtendedInt(buf.length));
     }
 
@@ -209,7 +209,7 @@ public class BaseDexReaderTest {
 
     private void performSizedRightExtendedIntFailureTest(byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         try {
             reader.readSizedRightExtendedInt(buf.length);
             Assert.fail();
@@ -303,7 +303,7 @@ public class BaseDexReaderTest {
 
     private void performSizedRightExtendedLongTest(long expectedValue, byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         Assert.assertEquals(expectedValue, reader.readSizedRightExtendedLong(buf.length));
     }
 
@@ -318,7 +318,7 @@ public class BaseDexReaderTest {
 
     private void performSizedRightExtendedLongFailureTest(byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         try {
             reader.readSizedRightExtendedLong(buf.length);
             Assert.fail();
@@ -412,7 +412,7 @@ public class BaseDexReaderTest {
 
     private void performSizedLongTest(long expectedValue, byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         Assert.assertEquals(expectedValue, reader.readSizedLong(buf.length));
     }
 
@@ -427,7 +427,7 @@ public class BaseDexReaderTest {
 
     private void performSizedLongFailureTest(byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         try {
             reader.readSizedLong(buf.length);
             Assert.fail();

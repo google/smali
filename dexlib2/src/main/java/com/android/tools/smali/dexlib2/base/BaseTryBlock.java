@@ -36,7 +36,7 @@ import com.android.tools.smali.dexlib2.iface.TryBlock;
 public abstract class BaseTryBlock<EH extends ExceptionHandler> implements TryBlock<EH> {
     @Override public boolean equals(Object o) {
         if (o instanceof TryBlock) {
-            TryBlock other = (TryBlock)o;
+            TryBlock<? extends ExceptionHandler> other = (TryBlock<? extends ExceptionHandler>)o;
             return getStartCodeAddress() == other.getStartCodeAddress() &&
                     getCodeUnitCount() == other.getCodeUnitCount() &&
                     getExceptionHandlers().equals(other.getExceptionHandlers());

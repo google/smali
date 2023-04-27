@@ -30,6 +30,7 @@
 
 package com.android.tools.smali.dexlib2.dexbacked.value;
 
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.reference.DexBackedMethodProtoReference;
 import com.android.tools.smali.dexlib2.base.value.BaseMethodTypeEncodedValue;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
@@ -42,7 +43,8 @@ public class DexBackedMethodTypeEncodedValue extends BaseMethodTypeEncodedValue 
     @Nonnull public final DexBackedDexFile dexFile;
     private final int methodProtoIndex;
 
-    public DexBackedMethodTypeEncodedValue(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader reader, int valueArg) {
+    public DexBackedMethodTypeEncodedValue(@Nonnull DexBackedDexFile dexFile,
+                                           @Nonnull DexReader<? extends DexBuffer> reader, int valueArg) {
         this.dexFile = dexFile;
         this.methodProtoIndex = reader.readSizedSmallUint(valueArg + 1);
     }

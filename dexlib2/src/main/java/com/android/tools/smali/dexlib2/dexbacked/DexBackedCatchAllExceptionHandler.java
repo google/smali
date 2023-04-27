@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 public class DexBackedCatchAllExceptionHandler extends DexBackedExceptionHandler {
     private final int handlerCodeAddress;
 
-    public DexBackedCatchAllExceptionHandler(@Nonnull DexReader reader) {
+    public DexBackedCatchAllExceptionHandler(@Nonnull DexReader<? extends DexBuffer> reader) {
         this.handlerCodeAddress = reader.readSmallUleb128();
     }
 

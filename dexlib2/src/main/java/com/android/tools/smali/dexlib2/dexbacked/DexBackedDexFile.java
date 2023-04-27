@@ -331,7 +331,7 @@ public class DexBackedDexFile implements DexFile {
         public String get(int index) {
             int stringOffset = getOffset(index);
             int stringDataOffset = dexBuffer.readSmallUint(stringOffset);
-            DexReader reader = dataBuffer.readerAt(stringDataOffset);
+            DexReader<? extends DexBuffer> reader = dataBuffer.readerAt(stringDataOffset);
             int utf16Length = reader.readSmallUleb128();
             return reader.readString(utf16Length);
         }

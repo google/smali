@@ -85,7 +85,7 @@ public class DexBackedMethodImplementation implements MethodImplementation {
                 return new VariableSizeLookaheadIterator<Instruction>(
                         dexFile.getDataBuffer(), instructionsStartOffset) {
                     @Override
-                    protected Instruction readNextItem(@Nonnull DexReader reader) {
+                    protected Instruction readNextItem(@Nonnull DexReader<? extends DexBuffer> reader) {
                         if (reader.getOffset() >= endOffset) {
                             return endOfData();
                         }

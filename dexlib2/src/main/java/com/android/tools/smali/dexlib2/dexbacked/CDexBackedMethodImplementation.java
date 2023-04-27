@@ -121,7 +121,7 @@ public class CDexBackedMethodImplementation extends DexBackedMethodImplementatio
 
         int debugOffsetsOffset = cdexFile.getDataBuffer().readSmallUint(debugTableOffset + debugTableItemOffset);
 
-        DexReader reader = cdexFile.getDataBuffer().readerAt(debugInfoOffsetsPos + debugOffsetsOffset);
+        DexReader<? extends DexBuffer> reader = cdexFile.getDataBuffer().readerAt(debugInfoOffsetsPos + debugOffsetsOffset);
 
         int bitMask = reader.readUbyte() << 8;
         bitMask += reader.readUbyte();
