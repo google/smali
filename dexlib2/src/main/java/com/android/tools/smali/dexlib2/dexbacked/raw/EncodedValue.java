@@ -31,6 +31,7 @@
 package com.android.tools.smali.dexlib2.dexbacked.raw;
 
 import com.android.tools.smali.dexlib2.ValueType;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.value.DexBackedEncodedValue;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
@@ -42,7 +43,7 @@ public class EncodedValue {
     public static void annotateEncodedValue(
             @Nonnull DexBackedDexFile dexFile,
             @Nonnull AnnotatedBytes out,
-            @Nonnull DexReader reader) {
+            @Nonnull DexReader<? extends DexBuffer> reader) {
         int valueArgType = reader.readUbyte();
 
         int valueArg = valueArgType >>> 5;
@@ -91,7 +92,7 @@ public class EncodedValue {
     public static void annotateEncodedAnnotation(
             @Nonnull DexBackedDexFile dexFile,
             @Nonnull AnnotatedBytes out,
-            @Nonnull DexReader reader) {
+            @Nonnull DexReader<? extends DexBuffer> reader) {
         assert out.getCursor() == reader.getOffset();
 
         int typeIndex = reader.readSmallUleb128();
@@ -117,7 +118,7 @@ public class EncodedValue {
     public static void annotateEncodedArray(
             @Nonnull DexBackedDexFile dexFile,
             @Nonnull AnnotatedBytes out,
-            @Nonnull DexReader reader) {
+            @Nonnull DexReader<? extends DexBuffer> reader) {
         assert out.getCursor() == reader.getOffset();
 
         int size = reader.readSmallUleb128();
@@ -133,15 +134,16 @@ public class EncodedValue {
         }
     }
 
-    public static String asString(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader reader) {
+    public static String asString(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader<? extends DexBuffer> reader) {
         int valueArgType = reader.readUbyte();
 
         int valueArg = valueArgType >>> 5;
         int valueType = valueArgType & 0x1f;
+        int intValue;
 
         switch (valueType) {
             case ValueType.BYTE:
-                int intValue = reader.readByte();
+                intValue = reader.readByte();
                 return String.format("0x%x", intValue);
             case ValueType.SHORT:
                 intValue = reader.readSizedInt(valueArg+1);

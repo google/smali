@@ -30,6 +30,7 @@
 
 package com.android.tools.smali.dexlib2.dexbacked.raw;
 
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.raw.util.DexAnnotator;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
 import com.android.tools.smali.util.StringUtils;
@@ -48,7 +49,7 @@ public class StringDataItem {
 
             @Override
             protected void annotateItem(@Nonnull AnnotatedBytes out, int itemIndex, @Nullable String itemIdentity) {
-                DexReader reader = dexFile.getBuffer().readerAt(out.getCursor());
+                DexReader<? extends DexBuffer> reader = dexFile.getBuffer().readerAt(out.getCursor());
                 int utf16Length = reader.readSmallUleb128();
                 out.annotateTo(reader.getOffset(), "utf16_size = %d", utf16Length);
 

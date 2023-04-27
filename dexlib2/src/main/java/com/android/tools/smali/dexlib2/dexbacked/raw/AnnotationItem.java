@@ -30,6 +30,7 @@
 
 package com.android.tools.smali.dexlib2.dexbacked.raw;
 
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.raw.util.DexAnnotator;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
@@ -54,7 +55,7 @@ public class AnnotationItem {
                 int visibility = dexFile.getBuffer().readUbyte(out.getCursor());
                 out.annotate(1, "visibility = %d: %s", visibility, getAnnotationVisibility(visibility));
 
-                DexReader reader = dexFile.getBuffer().readerAt(out.getCursor());
+                DexReader<? extends DexBuffer> reader = dexFile.getBuffer().readerAt(out.getCursor());
 
                 EncodedValue.annotateEncodedAnnotation(dexFile, out, reader);
             }
@@ -76,7 +77,7 @@ public class AnnotationItem {
 
     public static String getReferenceAnnotation(@Nonnull DexBackedDexFile dexFile, int annotationItemOffset) {
         try {
-            DexReader reader = dexFile.getDataBuffer().readerAt(annotationItemOffset);
+            DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(annotationItemOffset);
             reader.readUbyte();
             int typeIndex = reader.readSmallUleb128();
             String annotationType = dexFile.getTypeSection().get(typeIndex);

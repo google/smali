@@ -32,6 +32,7 @@ package com.android.tools.smali.dexlib2.dexbacked.reference;
 
 import com.android.tools.smali.dexlib2.base.reference.BaseStringReference;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
 import com.android.tools.smali.dexlib2.dexbacked.raw.StringIdItem;
 
@@ -64,7 +65,7 @@ public class DexBackedStringReference extends BaseStringReference {
         //add the string data length:
         int stringOffset = dexFile.getStringSection().getOffset(stringIndex);
         int stringDataOffset = dexFile.getBuffer().readSmallUint(stringOffset);
-        DexReader reader = dexFile.getDataBuffer().readerAt(stringDataOffset);
+        DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(stringDataOffset);
         size += reader.peekSmallUleb128Size();
         int utf16Length = reader.readSmallUleb128();
         //and string data itself:

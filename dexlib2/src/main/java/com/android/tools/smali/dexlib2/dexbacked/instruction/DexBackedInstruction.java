@@ -31,6 +31,7 @@
 package com.android.tools.smali.dexlib2.dexbacked.instruction;
 
 import com.android.tools.smali.dexlib2.Opcode;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
@@ -56,7 +57,7 @@ public abstract class DexBackedInstruction implements Instruction {
     @Override public int getCodeUnits() { return opcode.format.size / 2; }
 
     @Nonnull
-    public static Instruction readFrom(DexBackedDexFile dexFile, @Nonnull DexReader reader) {
+    public static Instruction readFrom(DexBackedDexFile dexFile, @Nonnull DexReader<? extends DexBuffer> reader) {
         int opcodeValue = reader.peekUbyte();
 
         if (opcodeValue == 0) {

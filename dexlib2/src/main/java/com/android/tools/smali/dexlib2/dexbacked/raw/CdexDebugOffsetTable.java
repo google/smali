@@ -67,7 +67,7 @@ import javax.annotation.Nonnull;
 public class CdexDebugOffsetTable {
     @Nonnull
     public static void annotate(@Nonnull DexAnnotator annotator, DexBuffer buffer) {
-        DexReader reader = buffer.readerAt(annotator.getCursor());
+        DexReader<? extends DexBuffer> reader = buffer.readerAt(annotator.getCursor());
 
         SectionAnnotator debugInfoAnnotator = annotator.getAnnotator(ItemType.DEBUG_INFO_ITEM);
 

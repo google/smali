@@ -31,6 +31,7 @@
 package com.android.tools.smali.dexlib2.dexbacked.value;
 
 import com.android.tools.smali.dexlib2.ValueType;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.immutable.value.ImmutableBooleanEncodedValue;
 import com.android.tools.smali.dexlib2.immutable.value.ImmutableByteEncodedValue;
 import com.android.tools.smali.dexlib2.immutable.value.ImmutableCharEncodedValue;
@@ -50,7 +51,7 @@ import javax.annotation.Nonnull;
 
 public abstract class DexBackedEncodedValue {
     @Nonnull
-    public static EncodedValue readFrom(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader reader) {
+    public static EncodedValue readFrom(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader<? extends DexBuffer> reader) {
         int startOffset = reader.getOffset();
 
         try {
@@ -123,7 +124,7 @@ public abstract class DexBackedEncodedValue {
         }
     }
 
-    public static void skipFrom(@Nonnull DexReader reader) {
+    public static void skipFrom(@Nonnull DexReader<? extends DexBuffer> reader) {
         int startOffset = reader.getOffset();
 
         try {

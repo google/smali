@@ -41,7 +41,7 @@ public class DexBackedAnnotationElement extends BaseAnnotationElement {
     public final int nameIndex;
     @Nonnull public final EncodedValue value;
 
-    public DexBackedAnnotationElement(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader reader) {
+    public DexBackedAnnotationElement(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader<? extends DexBuffer> reader) {
         this.dexFile = dexFile;
         this.nameIndex = reader.readSmallUleb128();
         this.value = DexBackedEncodedValue.readFrom(dexFile, reader);

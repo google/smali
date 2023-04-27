@@ -255,7 +255,7 @@ public class BaseDexReaderSleb128Test {
 
     private void performTest(int expectedValue, byte[] buf, int expectedLength) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         Assert.assertEquals(expectedValue, reader.readSleb128());
         Assert.assertEquals(expectedLength, reader.getOffset());
 
@@ -265,7 +265,7 @@ public class BaseDexReaderSleb128Test {
 
     private void performFailureTest(byte[] buf) {
         DexBuffer dexBuf = new DexBuffer(buf);
-        DexReader reader = dexBuf.readerAt(0);
+        DexReader<? extends DexBuffer> reader = dexBuf.readerAt(0);
         try {
             reader.peekSleb128Size();
             Assert.fail();
