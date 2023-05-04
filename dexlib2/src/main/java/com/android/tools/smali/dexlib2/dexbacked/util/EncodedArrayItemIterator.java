@@ -31,6 +31,7 @@
 package com.android.tools.smali.dexlib2.dexbacked.util;
 
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
 import com.android.tools.smali.dexlib2.dexbacked.value.DexBackedEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
@@ -60,7 +61,7 @@ public abstract class EncodedArrayItemIterator {
     }
 
     private static class EncodedArrayItemIteratorImpl extends EncodedArrayItemIterator {
-        @Nonnull private final DexReader reader;
+        @Nonnull private final DexReader<? extends DexBuffer> reader;
         @Nonnull private final DexBackedDexFile dexFile;
         private final int size;
         private int index = 0;

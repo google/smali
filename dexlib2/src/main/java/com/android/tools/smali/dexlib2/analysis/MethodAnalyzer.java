@@ -478,7 +478,7 @@ public class MethodAnalyzer {
         List<? extends TryBlock<? extends ExceptionHandler>> tries = methodImpl.getTryBlocks();
         tries = TryListBuilder.massageTryBlocks(tries);
         int triesIndex = 0;
-        TryBlock currentTry = null;
+        TryBlock<? extends ExceptionHandler> currentTry = null;
         AnalyzedInstruction[] currentExceptionHandlers = null;
         AnalyzedInstruction[][] exceptionHandlers = new AnalyzedInstruction[instructions.size()][];
 

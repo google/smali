@@ -87,7 +87,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
             directMethodCount = 0;
             virtualMethodCount = 0;
         } else {
-            DexReader reader = dexFile.getDataBuffer().readerAt(classDataOffset);
+            DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(classDataOffset);
             staticFieldCount = reader.readSmallUleb128();
             instanceFieldCount = reader.readSmallUleb128();
             directMethodCount = reader.readSmallUleb128();
@@ -192,7 +192,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
 
                         @Nullable
                         @Override
-                        protected DexBackedField readNextItem(@Nonnull DexReader reader) {
+                        protected DexBackedField readNextItem(@Nonnull DexReader<? extends DexBuffer> reader) {
                             while (true) {
                                 if (++count > staticFieldCount) {
                                     instanceFieldsOffset = reader.getOffset();
@@ -238,7 +238,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull
     public Iterable<? extends DexBackedField> getInstanceFields(final boolean skipDuplicates) {
         if (instanceFieldCount > 0) {
-            DexReader reader = dexFile.getDataBuffer().readerAt(getInstanceFieldsOffset());
+            DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(getInstanceFieldsOffset());
 
             final AnnotationsDirectory annotationsDirectory = getAnnotationsDirectory();
             final int fieldsStartOffset = reader.getOffset();
@@ -261,7 +261,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
 
                         @Nullable
                         @Override
-                        protected DexBackedField readNextItem(@Nonnull DexReader reader) {
+                        protected DexBackedField readNextItem(@Nonnull DexReader<? extends DexBuffer> reader) {
                             while (true) {
                                 if (++count > instanceFieldCount) {
                                     directMethodsOffset = reader.getOffset();
@@ -314,7 +314,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull
     public Iterable<? extends DexBackedMethod> getDirectMethods(final boolean skipDuplicates) {
         if (directMethodCount > 0) {
-            DexReader reader = dexFile.getDataBuffer().readerAt(getDirectMethodsOffset());
+            DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(getDirectMethodsOffset());
 
             final AnnotationsDirectory annotationsDirectory = getAnnotationsDirectory();
             final int methodsStartOffset = reader.getOffset();
@@ -339,7 +339,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
 
                         @Nullable
                         @Override
-                        protected DexBackedMethod readNextItem(@Nonnull DexReader reader) {
+                        protected DexBackedMethod readNextItem(@Nonnull DexReader<? extends DexBuffer> reader) {
                             while (true) {
                                 if (++count > directMethodCount) {
                                     virtualMethodsOffset = reader.getOffset();
@@ -381,7 +381,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull
     public Iterable<? extends DexBackedMethod> getVirtualMethods(final boolean skipDuplicates) {
         if (virtualMethodCount > 0) {
-            DexReader reader = dexFile.getDataBuffer().readerAt(getVirtualMethodsOffset());
+            DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(getVirtualMethodsOffset());
 
             final AnnotationsDirectory annotationsDirectory = getAnnotationsDirectory();
             final int methodsStartOffset = reader.getOffset();
@@ -406,7 +406,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
 
                         @Nullable
                         @Override
-                        protected DexBackedMethod readNextItem(@Nonnull DexReader reader) {
+                        protected DexBackedMethod readNextItem(@Nonnull DexReader<? extends DexBuffer> reader) {
                             while (true) {
                                 if (++count > virtualMethodCount) {
                                     return endOfData();
@@ -465,7 +465,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
         if (instanceFieldsOffset > 0) {
             return instanceFieldsOffset;
         }
-        DexReader reader = dexFile.getDataBuffer().readerAt(staticFieldsOffset);
+        DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(staticFieldsOffset);
         DexBackedField.skipFields(reader, staticFieldCount);
         instanceFieldsOffset = reader.getOffset();
         return instanceFieldsOffset;
@@ -475,7 +475,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
         if (directMethodsOffset > 0) {
             return directMethodsOffset;
         }
-        DexReader reader = dexFile.getDataBuffer().readerAt(getInstanceFieldsOffset());
+        DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(getInstanceFieldsOffset());
         DexBackedField.skipFields(reader, instanceFieldCount);
         directMethodsOffset = reader.getOffset();
         return directMethodsOffset;
@@ -485,7 +485,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
         if (virtualMethodsOffset > 0) {
             return virtualMethodsOffset;
         }
-        DexReader reader = dexFile.getDataBuffer().readerAt(getDirectMethodsOffset());
+        DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(getDirectMethodsOffset());
         DexBackedMethod.skipMethods(reader, directMethodCount);
         virtualMethodsOffset = reader.getOffset();
         return virtualMethodsOffset;
@@ -528,14 +528,14 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
         int staticInitialValuesOffset =
             dexFile.getBuffer().readSmallUint(classDefOffset + ClassDefItem.STATIC_VALUES_OFFSET);
         if (staticInitialValuesOffset != 0) {
-            DexReader reader = dexFile.getDataBuffer().readerAt(staticInitialValuesOffset);
+            DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(staticInitialValuesOffset);
             size += reader.peekSmallUleb128Size(); //encoded_array size field
         }
 
         //class_data_item
         int classDataOffset = dexFile.getBuffer().readSmallUint(classDefOffset + ClassDefItem.CLASS_DATA_OFFSET);
         if (classDataOffset > 0) {
-            DexReader reader = dexFile.getDataBuffer().readerAt(classDataOffset);
+            DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(classDataOffset);
             reader.readSmallUleb128(); //staticFieldCount
             reader.readSmallUleb128(); //instanceFieldCount
             reader.readSmallUleb128(); //directMethodCount

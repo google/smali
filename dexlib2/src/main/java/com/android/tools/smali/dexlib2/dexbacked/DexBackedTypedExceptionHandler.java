@@ -37,7 +37,7 @@ public class DexBackedTypedExceptionHandler extends DexBackedExceptionHandler {
     private final int typeId;
     private final int handlerCodeAddress;
 
-    public DexBackedTypedExceptionHandler(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader reader) {
+    public DexBackedTypedExceptionHandler(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader<? extends DexBuffer> reader) {
         this.dexFile = dexFile;
         this.typeId = reader.readSmallUleb128();
         this.handlerCodeAddress = reader.readSmallUleb128();

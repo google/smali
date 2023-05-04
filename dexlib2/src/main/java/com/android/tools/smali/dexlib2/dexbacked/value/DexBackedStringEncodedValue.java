@@ -32,6 +32,7 @@ package com.android.tools.smali.dexlib2.dexbacked.value;
 
 import com.android.tools.smali.dexlib2.base.value.BaseStringEncodedValue;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
 
 import javax.annotation.Nonnull;
@@ -40,7 +41,8 @@ public class DexBackedStringEncodedValue extends BaseStringEncodedValue {
     @Nonnull public final DexBackedDexFile dexFile;
     private final int stringIndex;
 
-    public DexBackedStringEncodedValue(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader reader, int valueArg) {
+    public DexBackedStringEncodedValue(@Nonnull DexBackedDexFile dexFile,
+                                       @Nonnull DexReader<? extends DexBuffer> reader, int valueArg) {
         this.dexFile = dexFile;
         stringIndex = reader.readSizedSmallUint(valueArg + 1);
     }

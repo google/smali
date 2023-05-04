@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 import java.util.Iterator;
 
 public abstract class VariableSizeLookaheadIterator<T> extends AbstractIterator<T> implements Iterator<T> {
-    @Nonnull private final DexReader reader;
+    @Nonnull private final DexReader<? extends DexBuffer> reader;
 
     protected VariableSizeLookaheadIterator(@Nonnull DexBuffer buffer, int offset) {
         this.reader = buffer.readerAt(offset);
@@ -52,7 +52,7 @@ public abstract class VariableSizeLookaheadIterator<T> extends AbstractIterator<
      *
      * @return The item that was read. If endOfData was called, the return value is ignored.
      */
-    @Nullable protected abstract T readNextItem(@Nonnull DexReader reader);
+    @Nullable protected abstract T readNextItem(@Nonnull DexReader<? extends DexBuffer> reader);
 
     @Override
     protected T computeNext() {

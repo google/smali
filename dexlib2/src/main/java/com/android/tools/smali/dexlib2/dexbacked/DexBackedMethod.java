@@ -73,7 +73,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
     private int parametersOffset = -1;
 
     public DexBackedMethod(@Nonnull DexBackedDexFile dexFile,
-                           @Nonnull DexReader reader,
+                           @Nonnull DexReader<? extends DexBuffer> reader,
                            @Nonnull DexBackedClassDef classDef,
                            int previousMethodIndex,
                            int hiddenApiRestrictions) {
@@ -94,7 +94,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
     }
 
     public DexBackedMethod(@Nonnull DexBackedDexFile dexFile,
-                           @Nonnull DexReader reader,
+                           @Nonnull DexReader<? extends DexBuffer> reader,
                            @Nonnull DexBackedClassDef classDef,
                            int previousMethodIndex,
                            @Nonnull AnnotationIterator methodAnnotationIterator,
@@ -243,7 +243,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
      * @param reader The reader to skip
      * @param count The number of encoded_method structures to skip over
      */
-    public static void skipMethods(@Nonnull DexReader reader, int count) {
+    public static void skipMethods(@Nonnull DexReader<? extends DexBuffer> reader, int count) {
         for (int i=0; i<count; i++) {
             reader.skipUleb128();
             reader.skipUleb128();
@@ -262,7 +262,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
     public int getSize() {
         int size = 0;
 
-        DexReader reader = dexFile.getDataBuffer().readerAt(startOffset);
+        DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(startOffset);
         reader.readLargeUleb128(); //method_idx_diff
         reader.readSmallUleb128(); //access_flags
         reader.readSmallUleb128(); //code_off

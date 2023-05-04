@@ -32,6 +32,7 @@ package com.android.tools.smali.dexlib2.dexbacked.raw;
 
 import com.android.tools.smali.dexlib2.ReferenceType;
 import com.android.tools.smali.dexlib2.VerificationError;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.instruction.DexBackedInstruction;
 import com.android.tools.smali.dexlib2.dexbacked.raw.util.DexAnnotator;
 import com.android.tools.smali.dexlib2.iface.instruction.FieldOffsetInstruction;
@@ -134,7 +135,7 @@ public class CodeItem {
 
             @Override
             protected PreInstructionInfo annotatePreInstructionFields(
-                    @Nonnull AnnotatedBytes out, @Nonnull DexReader reader, @Nullable String itemIdentity) {
+                    @Nonnull AnnotatedBytes out, @Nonnull DexReader<? extends DexBuffer> reader, @Nullable String itemIdentity) {
                 int sizeFields = reader.readUshort();
 
                 int triesCount = (sizeFields >> CDEX_TRIES_SIZE_SHIFT) & 0xf;
@@ -267,7 +268,7 @@ public class CodeItem {
         }
 
         protected PreInstructionInfo annotatePreInstructionFields(
-                @Nonnull AnnotatedBytes out, @Nonnull DexReader reader, @Nullable String itemIdentity) {
+                @Nonnull AnnotatedBytes out, @Nonnull DexReader<? extends DexBuffer> reader, @Nullable String itemIdentity) {
 
             int registers = reader.readUshort();
             out.annotate(2, "registers_size = %d", registers);
@@ -296,7 +297,7 @@ public class CodeItem {
 
         protected void annotateInstructions(
                 @Nonnull AnnotatedBytes out,
-                @Nonnull DexReader reader,
+                @Nonnull DexReader<? extends DexBuffer> reader,
                 int instructionSize) {
 
             out.annotate(0, "instructions:");
@@ -353,7 +354,7 @@ public class CodeItem {
         }
 
         protected void annotatePostInstructionFields(@Nonnull AnnotatedBytes out,
-                                                     @Nonnull DexReader reader,
+                                                     @Nonnull DexReader<? extends DexBuffer> reader,
                                                      int triesCount) {
             if (triesCount > 0) {
                 if ((reader.getOffset() % 4) != 0) {
@@ -435,7 +436,7 @@ public class CodeItem {
         @Override
         public void annotateItem(@Nonnull AnnotatedBytes out, int itemIndex, @Nullable String itemIdentity) {
             try {
-                DexReader reader = dexFile.getBuffer().readerAt(out.getCursor());
+                DexReader<? extends DexBuffer> reader = dexFile.getBuffer().readerAt(out.getCursor());
 
                 PreInstructionInfo info = annotatePreInstructionFields(out, reader, itemIdentity);
                 annotateInstructions(out, reader, info.instructionSize);

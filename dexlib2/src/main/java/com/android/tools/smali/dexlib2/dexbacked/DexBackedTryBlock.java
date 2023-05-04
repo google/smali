@@ -61,7 +61,7 @@ public class DexBackedTryBlock extends BaseTryBlock<DexBackedExceptionHandler> {
     @Nonnull
     @Override
     public List<? extends DexBackedExceptionHandler> getExceptionHandlers() {
-        DexReader reader = dexFile.getDataBuffer().readerAt(
+        DexReader<? extends DexBuffer> reader = dexFile.getDataBuffer().readerAt(
                 handlersStartOffset + dexFile.getDataBuffer().readUshort(tryItemOffset + CodeItem.TryItem.HANDLER_OFFSET));
         final int encodedSize = reader.readSleb128();
 
@@ -71,7 +71,7 @@ public class DexBackedTryBlock extends BaseTryBlock<DexBackedExceptionHandler> {
                     dexFile.getDataBuffer(), reader.getOffset(), encodedSize) {
                 @Nonnull
                 @Override
-                protected DexBackedTypedExceptionHandler readNextItem(@Nonnull DexReader reader, int index) {
+                protected DexBackedTypedExceptionHandler readNextItem(@Nonnull DexReader<? extends DexBuffer> reader, int index) {
                     return new DexBackedTypedExceptionHandler(dexFile, reader);
                 }
             };
@@ -82,7 +82,7 @@ public class DexBackedTryBlock extends BaseTryBlock<DexBackedExceptionHandler> {
                     dexFile.getDataBuffer(), reader.getOffset(), sizeWithCatchAll) {
                 @Nonnull
                 @Override
-                protected DexBackedExceptionHandler readNextItem(@Nonnull DexReader dexReader, int index) {
+                protected DexBackedExceptionHandler readNextItem(@Nonnull DexReader<? extends DexBuffer> dexReader, int index) {
                     if (index == sizeWithCatchAll-1) {
                         return new DexBackedCatchAllExceptionHandler(dexReader);
                     } else {

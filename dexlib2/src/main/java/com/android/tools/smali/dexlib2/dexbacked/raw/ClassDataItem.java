@@ -31,6 +31,7 @@
 package com.android.tools.smali.dexlib2.dexbacked.raw;
 
 import com.android.tools.smali.dexlib2.AccessFlags;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.raw.util.DexAnnotator;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
 import com.google.common.base.Joiner;
@@ -57,7 +58,7 @@ public class ClassDataItem {
 
             @Override
             protected void annotateItem(@Nonnull AnnotatedBytes out, int itemIndex, @Nullable String itemIdentity) {
-                DexReader reader = dexFile.getBuffer().readerAt(out.getCursor());
+                DexReader<? extends DexBuffer> reader = dexFile.getBuffer().readerAt(out.getCursor());
 
                 int staticFieldsSize = reader.readSmallUleb128();
                 out.annotateTo(reader.getOffset(), "static_fields_size = %d", staticFieldsSize);
@@ -125,7 +126,7 @@ public class ClassDataItem {
             }
 
             private int annotateEncodedField(@Nonnull AnnotatedBytes out, @Nonnull DexBackedDexFile dexFile,
-                                             @Nonnull DexReader reader, int previousIndex) {
+                                             @Nonnull DexReader<? extends DexBuffer> reader, int previousIndex) {
                 // large values may be used for the index delta, which cause the cumulative index to overflow upon
                 // addition, effectively allowing out of order entries.
                 int indexDelta = reader.readLargeUleb128();
@@ -141,7 +142,7 @@ public class ClassDataItem {
             }
 
             private int annotateEncodedMethod(@Nonnull AnnotatedBytes out, @Nonnull DexBackedDexFile dexFile,
-                                              @Nonnull DexReader reader, int previousIndex) {
+                                              @Nonnull DexReader<? extends DexBuffer> reader, int previousIndex) {
                 // large values may be used for the index delta, which cause the cumulative index to overflow upon
                 // addition, effectively allowing out of order entries.
                 int indexDelta = reader.readLargeUleb128();

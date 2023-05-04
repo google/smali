@@ -31,6 +31,7 @@
 package com.android.tools.smali.dexlib2.dexbacked.raw;
 
 import com.android.tools.smali.dexlib2.DebugItemType;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.raw.util.DexAnnotator;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
@@ -49,7 +50,7 @@ public class DebugInfoItem {
 
             @Override
             public void annotateItem(@Nonnull AnnotatedBytes out, int itemIndex, @Nullable String itemIdentity) {
-                DexReader reader = dexFile.getBuffer().readerAt(out.getCursor());
+                DexReader<? extends DexBuffer> reader = dexFile.getBuffer().readerAt(out.getCursor());
 
                 int lineStart = reader.readBigUleb128();
                 out.annotateTo(reader.getOffset(), "line_start = %d", lineStart & 0xFFFFFFFFL);

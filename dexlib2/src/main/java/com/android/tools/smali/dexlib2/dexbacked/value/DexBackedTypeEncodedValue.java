@@ -32,6 +32,7 @@ package com.android.tools.smali.dexlib2.dexbacked.value;
 
 import com.android.tools.smali.dexlib2.base.value.BaseTypeEncodedValue;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
+import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
 
 import javax.annotation.Nonnull;
@@ -40,7 +41,8 @@ public class DexBackedTypeEncodedValue extends BaseTypeEncodedValue {
     @Nonnull public final DexBackedDexFile dexFile;
     private final int typeIndex;
 
-    public DexBackedTypeEncodedValue(@Nonnull DexBackedDexFile dexFile, @Nonnull DexReader reader, int valueArg) {
+    public DexBackedTypeEncodedValue(@Nonnull DexBackedDexFile dexFile,
+                                     @Nonnull DexReader<? extends DexBuffer> reader, int valueArg) {
         this.dexFile = dexFile;
         typeIndex = reader.readSizedSmallUint(valueArg + 1);
     }
