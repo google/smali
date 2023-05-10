@@ -76,8 +76,7 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
      */
     @Nonnull @Override public List<String> getDexEntryNames() throws IOException {
         List<String> entryNames = Lists.newArrayList();
-        ZipFile zipFile = getZipFile();
-        try {
+        try (ZipFile zipFile = getZipFile()) {
             Enumeration<? extends ZipEntry> entriesEnumeration = zipFile.entries();
 
             while (entriesEnumeration.hasMoreElements()) {
@@ -91,8 +90,6 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
             }
 
             return entryNames;
-        } finally {
-            zipFile.close();
         }
     }
 
@@ -104,42 +101,29 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
      * @throws NotADexFile If the entry isn't a dex file
      */
     @Nullable @Override public DexEntry<DexBackedDexFile> getEntry(@Nonnull String entryName) throws IOException {
-        ZipFile zipFile = getZipFile();
-        try {
+        try (ZipFile zipFile = getZipFile()) {
             ZipEntry entry = zipFile.getEntry(entryName);
             if (entry == null) {
                 return null;
             }
 
             return loadEntry(zipFile, entry);
-        } finally {
-            zipFile.close();
         }
     }
 
     public boolean isZipFile() {
-        ZipFile zipFile = null;
-        try {
-            zipFile = getZipFile();
+        try (ZipFile zipFile = getZipFile()) {
             return true;
         } catch (IOException ex) {
             return false;
         } catch (NotAZipFileException ex) {
             return false;
-        } finally {
-            if(zipFile != null) {
-                try {
-                    zipFile.close();
-                } catch (IOException ex) {
-                    // just eat it
-                }
-            }
         }
+        // just eat it
     }
 
     protected boolean isDex(@Nonnull ZipFile zipFile, @Nonnull ZipEntry zipEntry) throws IOException {
-        InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
-        try {
+        try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(zipEntry))) {
             DexUtil.verifyDexHeader(inputStream);
         } catch (NotADexFile ex) {
             return false;
@@ -147,8 +131,6 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
             return false;
         } catch (UnsupportedFile ex) {
             return false;
-        } finally {
-            inputStream.close();
         }
         return true;
     }
@@ -162,12 +144,11 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
     }
 
     @Nonnull
-    protected DexEntry loadEntry(@Nonnull ZipFile zipFile, @Nonnull ZipEntry zipEntry) throws IOException {
-        InputStream inputStream = zipFile.getInputStream(zipEntry);
-        try {
+    protected DexEntry<DexBackedDexFile> loadEntry(@Nonnull ZipFile zipFile, @Nonnull ZipEntry zipEntry) throws IOException {
+        try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
             byte[] buf = ByteStreams.toByteArray(inputStream);
 
-            return new DexEntry() {
+            return new DexEntry<DexBackedDexFile>() {
                 @Nonnull
                 @Override
                 public String getEntryName() {
@@ -176,18 +157,16 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
 
                 @Nonnull
                 @Override
-                public DexFile getDexFile() {
+                public DexBackedDexFile getDexFile() {
                     return new DexBackedDexFile(opcodes, buf);
                 }
 
                 @Nonnull
                 @Override
-                public MultiDexContainer getContainer() {
+                public MultiDexContainer<DexBackedDexFile> getContainer() {
                     return ZipDexContainer.this;
                 }
             };
-        } finally {
-            inputStream.close();
         }
     }
 
