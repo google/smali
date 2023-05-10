@@ -30,10 +30,9 @@
 
 package com.android.tools.smali.util;
 
-import com.android.tools.smali.util.LinearSearch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;

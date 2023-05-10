@@ -33,13 +33,13 @@ package com.android.tools.smali.dexlib2.analysis.util;
 import com.android.tools.smali.dexlib2.analysis.TestUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import junit.framework.Assert;
 import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.analysis.ClassPath;
 import com.android.tools.smali.dexlib2.analysis.DexClassProvider;
 import com.android.tools.smali.dexlib2.analysis.TypeProto;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.immutable.ImmutableDexFile;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;

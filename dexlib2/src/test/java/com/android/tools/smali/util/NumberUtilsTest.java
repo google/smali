@@ -30,8 +30,7 @@
 
 package com.android.tools.smali.util;
 
-import com.android.tools.smali.util.NumberUtils;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class NumberUtilsTest {

@@ -33,7 +33,6 @@ package com.android.tools.smali.dexlib2.writer;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import junit.framework.Assert;
 import com.android.tools.smali.dexlib2.AnnotationVisibility;
 import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
@@ -49,6 +48,7 @@ import com.android.tools.smali.dexlib2.immutable.value.ImmutableAnnotationEncode
 import com.android.tools.smali.dexlib2.immutable.value.ImmutableNullEncodedValue;
 import com.android.tools.smali.dexlib2.writer.io.MemoryDataStore;
 import com.android.tools.smali.dexlib2.writer.pool.DexPool;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;

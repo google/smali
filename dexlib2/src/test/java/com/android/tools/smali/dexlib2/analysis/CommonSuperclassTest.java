@@ -32,10 +32,10 @@ package com.android.tools.smali.dexlib2.analysis;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import junit.framework.Assert;
 import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.immutable.ImmutableDexFile;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;

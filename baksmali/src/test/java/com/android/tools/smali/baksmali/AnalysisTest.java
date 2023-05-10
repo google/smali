@@ -32,7 +32,6 @@ package com.android.tools.smali.baksmali;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import junit.framework.Assert;
 import com.android.tools.smali.baksmali.Adaptors.ClassDefinition;
 import com.android.tools.smali.baksmali.formatter.BaksmaliWriter;
 import com.android.tools.smali.dexlib2.DexFileFactory;
@@ -41,6 +40,7 @@ import com.android.tools.smali.dexlib2.analysis.ClassPath;
 import com.android.tools.smali.dexlib2.analysis.ClassProvider;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.DexFile;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
