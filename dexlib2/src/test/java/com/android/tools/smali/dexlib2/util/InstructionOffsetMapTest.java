@@ -56,14 +56,13 @@ import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstructio
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction35c;
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction3rc;
 import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction51l;
-import com.android.tools.smali.dexlib2.util.InstructionOffsetMap;
 import com.google.common.collect.ImmutableList;
-import junit.framework.Assert;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation;
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableStringReference;
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableTypeReference;
 import com.android.tools.smali.util.ExceptionWithContext;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class InstructionOffsetMapTest {

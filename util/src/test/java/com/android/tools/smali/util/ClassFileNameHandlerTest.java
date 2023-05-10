@@ -32,15 +32,16 @@ package com.android.tools.smali.util;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class ClassFileNameHandlerTest {
-    private final Charset UTF8 = Charset.forName("UTF-8");
+    private final Charset UTF8 = StandardCharsets.UTF_8;
 
     @Test
     public void test1ByteEncodings() {

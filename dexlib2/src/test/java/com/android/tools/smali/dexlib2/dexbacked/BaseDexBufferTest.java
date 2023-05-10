@@ -30,9 +30,8 @@
 
 package com.android.tools.smali.dexlib2.dexbacked;
 
-import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
-import junit.framework.Assert;
 import com.android.tools.smali.util.ExceptionWithContext;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;

@@ -31,11 +31,11 @@
 package com.android.tools.smali.dexlib2.writer.util;
 
 import com.google.common.collect.ImmutableList;
-import junit.framework.Assert;
 import com.android.tools.smali.dexlib2.iface.ExceptionHandler;
 import com.android.tools.smali.dexlib2.iface.TryBlock;
 import com.android.tools.smali.dexlib2.immutable.ImmutableExceptionHandler;
 import com.android.tools.smali.dexlib2.immutable.ImmutableTryBlock;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;

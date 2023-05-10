@@ -30,10 +30,7 @@
 
 package com.android.tools.smali.dexlib2.builder;
 
-import com.android.tools.smali.dexlib2.builder.Label;
-import com.android.tools.smali.dexlib2.builder.MethodImplementationBuilder;
 import com.google.common.collect.Lists;
-import junit.framework.Assert;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction10t;
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction10x;
@@ -44,6 +41,7 @@ import com.android.tools.smali.dexlib2.iface.debug.DebugItem;
 import com.android.tools.smali.dexlib2.iface.debug.LineNumber;
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction;
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
