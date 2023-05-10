@@ -94,9 +94,8 @@ public class DumpCommand extends DexInputCommand {
      */
     public static void dump(@Nonnull DexBackedDexFile dexFile, @Nonnull OutputStream output)
             throws IOException {
-        Writer writer = new BufferedWriter(new OutputStreamWriter(output));
 
-        try {
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(output))) {
             int consoleWidth = ConsoleUtil.getConsoleWidth();
             if (consoleWidth <= 0) {
                 consoleWidth = 120;
@@ -104,8 +103,6 @@ public class DumpCommand extends DexInputCommand {
 
             DexAnnotator annotator = new DexAnnotator(dexFile, consoleWidth);
             annotator.writeAnnotations(writer);
-        } finally {
-            writer.close();
         }
     }
 }

@@ -95,11 +95,10 @@ public final class DexFileFactory {
             // eat it and continue
         }
 
-        InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-        try {
+        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             try {
                 return DexBackedDexFile.fromInputStream(opcodes, inputStream);
-            } catch (DexBackedDexFile.NotADexFile ex) {
+            } catch (NotADexFile ex) {
                 // just eat it
             }
 
@@ -132,8 +131,6 @@ public final class DexFileFactory {
 
                 return oatDexFiles.get(0);
             }
-        } finally {
-            inputStream.close();
         }
 
         throw new UnsupportedFileTypeException("%s is not an apk, dex, odex or oat file.", file.getPath());
@@ -195,8 +192,7 @@ public final class DexFileFactory {
             // eat it and continue
         }
 
-        InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-        try {
+        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             OatFile oatFile = null;
             try {
                 oatFile = OatFile.fromInputStream(inputStream, new FilenameVdexProvider(file));
@@ -217,8 +213,6 @@ public final class DexFileFactory {
 
                 return new DexEntryFinder(file.getPath(), oatFile).findEntry(dexEntry, exactMatch);
             }
-        } finally {
-            inputStream.close();
         }
 
         throw new UnsupportedFileTypeException("%s is not an apk or oat file.", file.getPath());
@@ -247,12 +241,11 @@ public final class DexFileFactory {
             return zipDexContainer;
         }
 
-        InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-        try {
+        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             try {
                 DexBackedDexFile dexFile = DexBackedDexFile.fromInputStream(opcodes, inputStream);
                 return new SingletonMultiDexContainer(file.getPath(), dexFile);
-            } catch (DexBackedDexFile.NotADexFile ex) {
+            } catch (NotADexFile ex) {
                 // just eat it
             }
 
@@ -280,8 +273,6 @@ public final class DexFileFactory {
                 }
                 return oatFile;
             }
-        } finally {
-            inputStream.close();
         }
 
         throw new UnsupportedFileTypeException("%s is not an apk, dex, odex or oat file.", file.getPath());

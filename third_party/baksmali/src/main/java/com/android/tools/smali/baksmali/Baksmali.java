@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -160,7 +161,7 @@ public class Baksmali {
             }
 
             BufferedWriter bufWriter = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(smaliFile), "UTF8"));
+                    new FileOutputStream(smaliFile), StandardCharsets.UTF_8));
 
             writer = new BaksmaliWriter(
                     bufWriter,

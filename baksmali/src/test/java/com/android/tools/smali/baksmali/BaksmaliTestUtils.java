@@ -43,6 +43,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -109,11 +111,11 @@ public class BaksmaliTestUtils {
 
     @Nonnull
     public static String readResourceFully(@Nonnull String fileName) throws IOException {
-        return readResourceFully(fileName, "UTF-8");
+        return readResourceFully(fileName, StandardCharsets.UTF_8);
     }
 
     @Nonnull
-    public static String readResourceFully(@Nonnull String fileName, @Nonnull String encoding)
+    public static String readResourceFully(@Nonnull String fileName, @Nonnull Charset encoding)
             throws IOException {
         return new String(readResourceBytesFully(fileName), encoding);
     }
