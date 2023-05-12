@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import javax.annotation.Nonnull;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -84,7 +85,7 @@ public class CustomInlineMethodResolver extends InlineMethodResolver {
     }
 
     public CustomInlineMethodResolver(@Nonnull ClassPath classPath, @Nonnull File inlineTable) throws IOException {
-        this(classPath, Files.toString(inlineTable, Charset.forName("UTF-8")));
+        this(classPath, Files.asCharSource(inlineTable, StandardCharsets.UTF_8).read());
     }
 
     @Override

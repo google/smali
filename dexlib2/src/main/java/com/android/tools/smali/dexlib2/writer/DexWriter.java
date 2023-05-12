@@ -374,11 +374,10 @@ public abstract class DexWriter<
                         @Nonnull DeferredOutputStreamFactory tempFactory) throws IOException {
         try {
             int dataSectionOffset = getDataSectionOffset();
-            DexDataWriter headerWriter = outputAt(dest, 0);
-            DexDataWriter indexWriter = outputAt(dest, HeaderItem.ITEM_SIZE);
-            DexDataWriter offsetWriter = outputAt(dest, dataSectionOffset);
 
-            try {
+            try (DexDataWriter headerWriter = outputAt(dest, 0);
+                 DexDataWriter indexWriter = outputAt(dest, HeaderItem.ITEM_SIZE);
+                 DexDataWriter offsetWriter = outputAt(dest, dataSectionOffset)) {
                 writeStrings(indexWriter, offsetWriter);
                 writeTypes(indexWriter);
                 writeTypeLists(offsetWriter);
@@ -387,25 +386,19 @@ public abstract class DexWriter<
                 writeMethods(indexWriter);
 
                 // encoded arrays depend on method handles..
-                DexDataWriter methodHandleWriter = outputAt(dest, indexWriter.getPosition() +
+                try (DexDataWriter methodHandleWriter = outputAt(dest, indexWriter.getPosition() +
                         classSection.getItemCount() * ClassDefItem.ITEM_SIZE +
-                        callSiteSection.getItemCount() * CallSiteIdItem.ITEM_SIZE);
-                try {
+                        callSiteSection.getItemCount() * CallSiteIdItem.ITEM_SIZE)) {
                     writeMethodHandles(methodHandleWriter);
-                } finally {
-                    methodHandleWriter.close();
                 }
 
                 // call sites depend on encoded arrays..
                 writeEncodedArrays(offsetWriter);
 
                 // class defs depend on method handles and call sites..
-                DexDataWriter callSiteWriter = outputAt(dest, indexWriter.getPosition() +
-                        classSection.getItemCount() * ClassDefItem.ITEM_SIZE);
-                try {
+                try (DexDataWriter callSiteWriter = outputAt(dest, indexWriter.getPosition() +
+                        classSection.getItemCount() * ClassDefItem.ITEM_SIZE)) {
                     writeCallSites(callSiteWriter);
-                } finally {
-                    callSiteWriter.close();
                 }
 
                 writeAnnotations(offsetWriter);
@@ -417,10 +410,6 @@ public abstract class DexWriter<
 
                 writeMapItem(offsetWriter);
                 writeHeader(headerWriter, dataSectionOffset, offsetWriter.getPosition());
-            } finally {
-                headerWriter.close();
-                indexWriter.close();
-                offsetWriter.close();
             }
             updateSignature(dest);
             updateChecksum(dest);
@@ -576,7 +565,7 @@ public abstract class DexWriter<
         hiddenApiRestrictionsOffset = offsetWriter.getPosition();
 
         List<Map.Entry<? extends ClassKey, Integer>> classEntriesValueSorted = Lists.newArrayList(classSection.getItems());
-        Collections.sort(classEntriesValueSorted, DexWriter.comparableValueComparator());
+        classEntriesValueSorted.sort(DexWriter.comparableValueComparator());
         RestrictionsWriter restrictionsWriter = new RestrictionsWriter(dataStore, offsetWriter, classEntriesValueSorted.size());
 
         try {
@@ -677,15 +666,9 @@ public abstract class DexWriter<
         }
 
         public void close() throws IOException {
-            DexDataWriter writer = null;
             offsetsWriter.close();
-            try {
-                writer = outputAt(dataStore, startOffset);
+            try (DexDataWriter writer = outputAt(dataStore, startOffset)) {
                 writer.writeInt(restrictionsWriter.getPosition() - startOffset);
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
             }
         }
     }

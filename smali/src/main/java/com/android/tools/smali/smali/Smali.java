@@ -31,6 +31,8 @@
 package com.android.tools.smali.smali;
 
 import com.google.common.collect.Lists;
+
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -192,19 +194,17 @@ public class Smali {
 
     private static boolean assembleSmaliFile(File smaliFile, DexBuilder dexBuilder, SmaliOptions options)
             throws Exception {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(smaliFile);
-            InputStreamReader reader = new InputStreamReader(fis, "UTF-8");
+        try (FileInputStream fis = new FileInputStream(smaliFile)) {
+            InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
 
             LexerErrorInterface lexer = new smaliFlexLexer(reader, options.apiLevel);
-            ((smaliFlexLexer)lexer).setSourceFile(smaliFile);
-            CommonTokenStream tokens = new CommonTokenStream((TokenSource)lexer);
+            ((smaliFlexLexer) lexer).setSourceFile(smaliFile);
+            CommonTokenStream tokens = new CommonTokenStream((TokenSource) lexer);
 
             if (options.printTokens) {
                 tokens.getTokens();
 
-                for (int i=0; i<tokens.size(); i++) {
+                for (int i = 0; i < tokens.size(); i++) {
                     Token token = tokens.get(i);
                     if (token.getChannel() == smaliParser.HIDDEN) {
                         continue;
@@ -250,26 +250,20 @@ public class Smali {
             dexGen.smali_file();
 
             return dexGen.getNumberOfSyntaxErrors() == 0;
-        } finally {
-            if (fis != null) {
-                fis.close();
-            }
         }
     }
 
     private static boolean printTokensForSingleFile(File smaliFile, SmaliOptions options)
             throws Exception {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(smaliFile);
-            InputStreamReader reader = new InputStreamReader(fis, "UTF-8");
+        try (FileInputStream fis = new FileInputStream(smaliFile)) {
+            InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
 
             LexerErrorInterface lexer = new smaliFlexLexer(reader, options.apiLevel);
-            ((smaliFlexLexer)lexer).setSourceFile(smaliFile);
-            CommonTokenStream tokens = new CommonTokenStream((TokenSource)lexer);
+            ((smaliFlexLexer) lexer).setSourceFile(smaliFile);
+            CommonTokenStream tokens = new CommonTokenStream((TokenSource) lexer);
             tokens.fill();
 
-            for (int i=0; i<tokens.size(); i++) {
+            for (int i = 0; i < tokens.size(); i++) {
                 Token token = tokens.get(i);
                 if (token.getChannel() == smaliParser.HIDDEN) {
                     continue;
@@ -286,10 +280,6 @@ public class Smali {
             System.out.flush();
 
             return lexer.getNumberOfSyntaxErrors() == 0;
-        } finally {
-            if (fis != null) {
-                fis.close();
-            }
         }
     }
 }
