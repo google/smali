@@ -32,7 +32,7 @@ package com.android.tools.smali.util;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;

@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2;
 
 import com.google.common.collect.ImmutableMap;
-import junit.framework.Assert;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.DexFile;
 import com.android.tools.smali.dexlib2.iface.Method;
@@ -41,6 +40,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.util.SyntheticAccessorResolver;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;

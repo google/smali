@@ -30,10 +30,8 @@
 
 package com.android.tools.smali.smali;
 
-import com.android.tools.smali.smali.SmaliTestUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.ValueType;
@@ -49,6 +47,7 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.value.FieldEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.MethodEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.TypeEncodedValue;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;

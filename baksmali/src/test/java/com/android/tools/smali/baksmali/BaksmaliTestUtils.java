@@ -31,12 +31,12 @@
 package com.android.tools.smali.baksmali;
 
 import com.google.common.io.ByteStreams;
-import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import com.android.tools.smali.baksmali.Adaptors.ClassDefinition;
 import com.android.tools.smali.baksmali.formatter.BaksmaliWriter;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.smali.SmaliTestUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;

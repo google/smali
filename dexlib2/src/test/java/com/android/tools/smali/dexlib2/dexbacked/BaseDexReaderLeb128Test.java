@@ -30,10 +30,8 @@
 
 package com.android.tools.smali.dexlib2.dexbacked;
 
-import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
-import com.android.tools.smali.dexlib2.dexbacked.DexReader;
-import junit.framework.Assert;
 import com.android.tools.smali.util.ExceptionWithContext;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class BaseDexReaderLeb128Test {

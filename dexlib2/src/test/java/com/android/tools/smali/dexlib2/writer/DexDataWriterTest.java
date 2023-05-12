@@ -30,9 +30,9 @@
 
 package com.android.tools.smali.dexlib2.writer;
 
-import junit.framework.Assert;
 import com.android.tools.smali.dexlib2.ValueType;
 import com.android.tools.smali.util.ExceptionWithContext;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
