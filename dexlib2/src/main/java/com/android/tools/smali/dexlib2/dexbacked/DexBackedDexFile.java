@@ -121,6 +121,16 @@ public class DexBackedDexFile implements DexFile {
         } else {
             hiddenApiRestrictionsOffset = DexWriter.NO_OFFSET;
         }
+
+        if (dexVersion >= 41) {
+          // Reject non-trivial dex container (i.e. multiples dex files in the same physical file).
+          int container_off = dexBuffer.readSmallUint(HeaderItem.CONTAINER_OFF_OFFSET);
+          int container_size = dexBuffer.readSmallUint(HeaderItem.CONTAINER_SIZE_OFFSET);
+          int file_size = dexBuffer.readSmallUint(HeaderItem.FILE_SIZE_OFFSET);
+          if (container_off != 0 || container_size != file_size) {
+            throw new DexUtil.UnsupportedFile(String.format("Dex container is not supported"));
+          }
+        }
     }
 
     protected DexBackedDexFile(@Nullable Opcodes opcodes, @Nonnull DexBuffer dexBuffer, @Nonnull DexBuffer dataBuffer, int offset, boolean verifyMagic) {
