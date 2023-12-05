@@ -31,6 +31,8 @@ java_binary_host {
         ":third_party-smali",
     ],
 
+    manifest: "manifest.txt",
+
     static_libs: [
         "antlr-runtime",
         "jcommander",
