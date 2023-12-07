@@ -32,7 +32,7 @@ java_binary_host {
         ":third_party-smali-baksmali",
     ],
 
-    // manifest: "manifest.txt",
+    manifest: "manifest.txt",
 
     static_libs: [
         "smali-dexlib2",
