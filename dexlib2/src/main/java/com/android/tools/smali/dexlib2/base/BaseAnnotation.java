@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2.base;
 
 import com.android.tools.smali.dexlib2.iface.Annotation;
-import com.google.common.primitives.Ints;
 import com.android.tools.smali.util.CollectionUtils;
 
 import java.util.Comparator;
@@ -57,7 +56,7 @@ public abstract class BaseAnnotation implements Annotation {
 
     @Override
     public int compareTo(Annotation o) {
-        int res = Ints.compare(getVisibility(), o.getVisibility());
+        int res = Integer.compare(getVisibility(), o.getVisibility());
         if (res != 0) return res;
         res = getType().compareTo(o.getType());
         if (res != 0) return res;

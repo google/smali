@@ -30,10 +30,10 @@
 
 package com.android.tools.smali.dexlib2;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
+import static java.util.Collections.unmodifiableSet;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -107,19 +107,20 @@ public enum HiddenApiRestriction {
 
     public static Set<HiddenApiRestriction> getAllFlags(int value) {
         HiddenApiRestriction normalRestriction = hiddenApiFlags[value & HIDDENAPI_FLAG_MASK];
+        HashSet restrictionSet = new HashSet<HiddenApiRestriction>();
 
         int domainSpecificPart = (value & ~HIDDENAPI_FLAG_MASK);
         if (domainSpecificPart == 0) {
-            return ImmutableSet.of(normalRestriction);
+            restrictionSet.add(normalRestriction);
+            return unmodifiableSet(restrictionSet);
         }
-        Builder<HiddenApiRestriction> builder = ImmutableSet.builder();
-        builder.add(normalRestriction);
+        restrictionSet.add(normalRestriction);
         for (HiddenApiRestriction domainSpecificApiFlag : domainSpecificApiFlags) {
             if (domainSpecificApiFlag.isSet(value)) {
-                builder.add(domainSpecificApiFlag);
+                restrictionSet.add(domainSpecificApiFlag);
             }
         }
-        return builder.build();
+        return unmodifiableSet(restrictionSet);
     }
 
     public static String formatHiddenRestrictions(int value) {

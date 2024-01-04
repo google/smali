@@ -34,7 +34,6 @@ import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodHandleReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.Reference;
-import com.google.common.primitives.Ints;
 import com.android.tools.smali.dexlib2.formatter.DexFormatter;
 
 import javax.annotation.Nonnull;
@@ -60,7 +59,7 @@ public abstract class BaseMethodHandleReference extends BaseReference implements
 
     @Override
     public int compareTo(@Nonnull MethodHandleReference o) {
-        int res = Ints.compare(getMethodHandleType(), o.getMethodHandleType());
+        int res = Integer.compare(getMethodHandleType(), o.getMethodHandleType());
         if (res != 0) return res;
 
         Reference reference = getMemberReference();
