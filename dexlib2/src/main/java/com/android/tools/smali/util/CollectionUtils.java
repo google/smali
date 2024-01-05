@@ -32,13 +32,13 @@ package com.android.tools.smali.util;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Ordering;
-import com.google.common.primitives.Ints;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
+
 import javax.annotation.Nonnull;
 
 public class CollectionUtils {
@@ -64,7 +64,7 @@ public class CollectionUtils {
 
     public static <T extends Comparable<? super T>> int compareAsList(@Nonnull Collection<? extends T> list1,
                                                                       @Nonnull Collection<? extends T> list2) {
-        int res = Ints.compare(list1.size(), list2.size());
+        int res = Integer.compare(list1.size(), list2.size());
         if (res != 0) return res;
         Iterator<? extends T> elements2 = list2.iterator();
         for (T element1: list1) {
@@ -114,7 +114,7 @@ public class CollectionUtils {
     public static <T> int compareAsList(@Nonnull Comparator<? super T> elementComparator,
                                         @Nonnull Collection<? extends T> list1,
                                         @Nonnull Collection<? extends T> list2) {
-        int res = Ints.compare(list1.size(), list2.size());
+        int res = Integer.compare(list1.size(), list2.size());
         if (res != 0) return res;
         Iterator<? extends T> elements2 = list2.iterator();
         for (T element1: list1) {
@@ -139,7 +139,7 @@ public class CollectionUtils {
         if (it instanceof SortedSet) {
             SortedSet<? extends T> sortedSet = (SortedSet<? extends T>)it;
             Comparator<?> comparator = sortedSet.comparator();
-            return (comparator == null) || comparator.equals(Ordering.natural());
+            return (comparator == null) || comparator.equals(NaturalOrdering.INSTANCE);
         }
         return false;
     }
@@ -150,7 +150,7 @@ public class CollectionUtils {
             SortedSet<? extends T> sortedSet = (SortedSet<? extends T>)it;
             Comparator<?> comparator = sortedSet.comparator();
             if (comparator == null) {
-                return elementComparator.equals(Ordering.natural());
+                return elementComparator.equals(NaturalOrdering.INSTANCE);
             }
             return elementComparator.equals(comparator);
         }
@@ -162,7 +162,8 @@ public class CollectionUtils {
         if (isNaturalSortedSet(collection)) {
             return (SortedSet<? extends T>)collection;
         }
-        return ImmutableSortedSet.copyOf(collection);
+        SortedSet<? extends T> sortedSet = ArraySortedSet.of(NaturalOrdering.INSTANCE, collection.toArray());
+        return Collections.unmodifiableSortedSet(sortedSet);
     }
 
     @Nonnull
@@ -175,6 +176,7 @@ public class CollectionUtils {
                 return sortedSet;
             }
         }
+
         return ImmutableSortedSet.copyOf(elementComparator, collection);
     }
 
@@ -191,7 +193,7 @@ public class CollectionUtils {
 
     public static <T extends Comparable<T>> int compareAsSet(@Nonnull Collection<? extends T> set1,
                                                              @Nonnull Collection<? extends T> set2) {
-        int res = Ints.compare(set1.size(), set2.size());
+        int res = Integer.compare(set1.size(), set2.size());
         if (res != 0) return res;
 
         SortedSet<? extends T> sortedSet1 = toNaturalSortedSet(set1);
@@ -208,7 +210,7 @@ public class CollectionUtils {
     public static <T> int compareAsSet(@Nonnull Comparator<? super T> elementComparator,
                                        @Nonnull Collection<? extends T> list1,
                                        @Nonnull Collection<? extends T> list2) {
-        int res = Ints.compare(list1.size(), list2.size());
+        int res = Integer.compare(list1.size(), list2.size());
         if (res != 0) return res;
 
         SortedSet<? extends T> set1 = toSortedSet(elementComparator, list1);
@@ -220,5 +222,35 @@ public class CollectionUtils {
             if (res != 0) return res;
         }
         return 0;
+    }
+
+    public static <T> Comparator<? super T> usingToStringOrdering() {
+        return UsingToStringOrdering.INSTANCE;
+    }
+
+    public static <T> Comparator<? super T> naturalOrdering() {
+        return NaturalOrdering.INSTANCE;
+    }
+
+    public final static class UsingToStringOrdering<T extends Object> implements Comparator<T> {
+        static final UsingToStringOrdering INSTANCE = new UsingToStringOrdering();
+
+        @Override
+        public int compare(Object left, Object right) {
+            return left.toString().compareTo(right.toString());
+        }
+
+        private UsingToStringOrdering() {}
+    }
+
+    public final static class NaturalOrdering<T extends Comparable<? super T>> implements Comparator<T> {
+        static final NaturalOrdering INSTANCE = new NaturalOrdering();
+
+        @Override
+        public int compare(T left, T right) {
+            return left.compareTo(right);
+        }
+
+        private NaturalOrdering() {}
     }
 }

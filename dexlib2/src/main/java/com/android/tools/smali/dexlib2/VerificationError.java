@@ -30,7 +30,6 @@
 
 package com.android.tools.smali.dexlib2;
 
-import com.google.common.collect.Maps;
 import com.android.tools.smali.util.ExceptionWithContext;
 
 import javax.annotation.Nullable;
@@ -47,7 +46,7 @@ public class VerificationError {
     public static final int CLASS_CHANGE_ERROR = 8;
     public static final int INSTANTIATION_ERROR = 9;
 
-    private static final HashMap<String, Integer> verificationErrorNames = Maps.newHashMap();
+    private static final HashMap<String, Integer> verificationErrorNames = new HashMap<>();
 
     static {
         verificationErrorNames.put("generic-error", GENERIC);

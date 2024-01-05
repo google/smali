@@ -31,14 +31,13 @@
 package com.android.tools.smali.dexlib2.base;
 
 import com.android.tools.smali.dexlib2.iface.ExceptionHandler;
-import com.google.common.base.Objects;
-import com.google.common.primitives.Ints;
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.Objects;
 
 public abstract class BaseExceptionHandler implements ExceptionHandler {
     @Nullable @Override public TypeReference getExceptionTypeReference() {
@@ -65,7 +64,7 @@ public abstract class BaseExceptionHandler implements ExceptionHandler {
     public boolean equals(@Nullable Object o) {
         if (o instanceof ExceptionHandler) {
             ExceptionHandler other = (ExceptionHandler)o;
-            return Objects.equal(getExceptionType(), other.getExceptionType()) &&
+            return Objects.equals(getExceptionType(), other.getExceptionType()) &&
                    (getHandlerCodeAddress() == other.getHandlerCodeAddress());
         }
         return false;
@@ -87,7 +86,7 @@ public abstract class BaseExceptionHandler implements ExceptionHandler {
             res = exceptionType.compareTo(o.getExceptionType());
             if (res != 0) return res;
         }
-        return Ints.compare(getHandlerCodeAddress(), o.getHandlerCodeAddress());
+        return Integer.compare(getHandlerCodeAddress(), o.getHandlerCodeAddress());
     }
 
 

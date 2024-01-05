@@ -33,7 +33,6 @@ package com.android.tools.smali.dexlib2.base.reference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodProtoReference;
 import com.android.tools.smali.util.CharSequenceUtils;
 import com.android.tools.smali.util.CollectionUtils;
-import com.google.common.collect.Ordering;
 import com.android.tools.smali.dexlib2.formatter.DexFormatter;
 
 import javax.annotation.Nonnull;
@@ -62,7 +61,8 @@ public abstract class BaseMethodProtoReference extends BaseReference implements
     public int compareTo(@Nonnull MethodProtoReference o) {
         int res = getReturnType().compareTo(o.getReturnType());
         if (res != 0) return res;
-        return CollectionUtils.compareAsIterable(Ordering.usingToString(), getParameterTypes(), o.getParameterTypes());
+        return CollectionUtils.compareAsIterable(
+            CollectionUtils.usingToStringOrdering(), getParameterTypes(), o.getParameterTypes());
     }
 
     @Override public String toString() {

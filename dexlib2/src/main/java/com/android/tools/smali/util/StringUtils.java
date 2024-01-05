@@ -33,6 +33,8 @@ package com.android.tools.smali.util;
 import com.android.tools.smali.dexlib2.formatter.DexFormattedWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
 
 public class StringUtils {
 
@@ -121,5 +123,18 @@ public class StringUtils {
         }
 
         return sb.toString();
+    }
+
+    public static String join(List<? extends Object> parts, String separator) {
+        StringBuilder builder = new StringBuilder();
+        Iterator<? extends Object> it = parts.iterator();
+        if (it.hasNext()) {
+            builder.append(it.hasNext());
+        }
+        while (it.hasNext()) {
+            builder.append(separator);
+            builder.append(it.next());
+        }
+        return builder.toString();
     }
 }

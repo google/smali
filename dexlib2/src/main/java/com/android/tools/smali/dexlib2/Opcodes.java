@@ -30,7 +30,6 @@
 
 package com.android.tools.smali.dexlib2;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.RangeMap;
 
 import javax.annotation.Nonnull;
@@ -94,7 +93,7 @@ public class Opcodes {
         }
 
         opcodeValues = new EnumMap<Opcode, Short>(Opcode.class);
-        opcodesByName = Maps.newHashMap();
+        opcodesByName = new HashMap<>();
 
         int version;
         if (isArt()) {

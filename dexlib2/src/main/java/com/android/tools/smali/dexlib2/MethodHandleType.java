@@ -30,8 +30,11 @@
 
 package com.android.tools.smali.dexlib2;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
+import static java.util.Collections.unmodifiableMap;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import com.android.tools.smali.util.ExceptionWithContext;
 
 import javax.annotation.Nonnull;
@@ -47,17 +50,26 @@ public class MethodHandleType {
     public static final int INVOKE_DIRECT = 7;
     public static final int INVOKE_INTERFACE = 8;
 
-    private static final BiMap<Integer, String> methodHandleTypeNames = new ImmutableBiMap.Builder<Integer, String>()
-            .put(STATIC_PUT, "static-put")
-            .put(STATIC_GET, "static-get")
-            .put(INSTANCE_PUT, "instance-put")
-            .put(INSTANCE_GET, "instance-get")
-            .put(INVOKE_STATIC, "invoke-static")
-            .put(INVOKE_INSTANCE, "invoke-instance")
-            .put(INVOKE_CONSTRUCTOR, "invoke-constructor")
-            .put(INVOKE_DIRECT, "invoke-direct")
-            .put(INVOKE_INTERFACE, "invoke-interface")
-            .build();
+    private static final Map<Integer, String> methodHandleTypeNames = unmodifiableMap(Map.of(
+            STATIC_PUT, "static-put",
+            STATIC_GET, "static-get",
+            INSTANCE_PUT, "instance-put",
+            INSTANCE_GET, "instance-get",
+            INVOKE_STATIC, "invoke-static",
+            INVOKE_INSTANCE, "invoke-instance",
+            INVOKE_CONSTRUCTOR, "invoke-constructor",
+            INVOKE_DIRECT, "invoke-direct",
+            INVOKE_INTERFACE, "invoke-interface"));
+
+    private static final Map<String, Integer> inverse = getInverse();
+
+    private static Map<String, Integer> getInverse() {
+        HashMap<String, Integer> namesToTypes = new HashMap<>();
+        for (Map.Entry<Integer, String> entry : methodHandleTypeNames.entrySet()) {
+            namesToTypes.put(entry.getValue(), entry.getKey());
+        }
+        return unmodifiableMap(namesToTypes);
+    }
 
     @Nonnull public static String toString(int methodHandleType) {
         String val = methodHandleTypeNames.get(methodHandleType);
@@ -68,7 +80,7 @@ public class MethodHandleType {
     }
 
     public static int getMethodHandleType(String methodHandleType) {
-        Integer ret = methodHandleTypeNames.inverse().get(methodHandleType);
+        Integer ret = inverse.get(methodHandleType);
         if (ret == null) {
             throw new ExceptionWithContext("Invalid method handle type: %s", methodHandleType);
         }
