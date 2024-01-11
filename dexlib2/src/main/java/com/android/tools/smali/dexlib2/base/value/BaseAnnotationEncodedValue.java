@@ -34,7 +34,6 @@ import com.android.tools.smali.dexlib2.ValueType;
 import com.android.tools.smali.dexlib2.iface.value.AnnotationEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 import com.android.tools.smali.util.CollectionUtils;
-import com.google.common.primitives.Ints;
 import com.android.tools.smali.dexlib2.formatter.DexFormatter;
 
 import javax.annotation.Nonnull;
@@ -59,7 +58,7 @@ public abstract class BaseAnnotationEncodedValue implements AnnotationEncodedVal
 
     @Override
     public int compareTo(@Nonnull EncodedValue o) {
-        int res = Ints.compare(getValueType(), o.getValueType());
+        int res = Integer.compare(getValueType(), o.getValueType());
         if (res != 0) return res;
         AnnotationEncodedValue other = (AnnotationEncodedValue)o;
         res = getType().compareTo(other.getType());

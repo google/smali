@@ -33,7 +33,6 @@ package com.android.tools.smali.dexlib2.base.value;
 import com.android.tools.smali.dexlib2.ValueType;
 import com.android.tools.smali.dexlib2.iface.value.DoubleEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
-import com.google.common.primitives.Ints;
 import com.android.tools.smali.dexlib2.formatter.DexFormatter;
 
 import javax.annotation.Nonnull;
@@ -57,7 +56,7 @@ public abstract class BaseDoubleEncodedValue implements DoubleEncodedValue {
 
     @Override
     public int compareTo(@Nonnull EncodedValue o) {
-        int res = Ints.compare(getValueType(), o.getValueType());
+        int res = Integer.compare(getValueType(), o.getValueType());
         if (res != 0) return res;
         return Double.compare(getValue(), ((DoubleEncodedValue)o).getValue());
     }

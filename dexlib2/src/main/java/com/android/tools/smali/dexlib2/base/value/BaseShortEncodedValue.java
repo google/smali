@@ -33,8 +33,6 @@ package com.android.tools.smali.dexlib2.base.value;
 import com.android.tools.smali.dexlib2.ValueType;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.ShortEncodedValue;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Shorts;
 import com.android.tools.smali.dexlib2.formatter.DexFormatter;
 
 import javax.annotation.Nonnull;
@@ -56,9 +54,9 @@ public abstract class BaseShortEncodedValue implements ShortEncodedValue {
 
     @Override
     public int compareTo(@Nonnull EncodedValue o) {
-        int res = Ints.compare(getValueType(), o.getValueType());
+        int res = Integer.compare(getValueType(), o.getValueType());
         if (res != 0) return res;
-        return Shorts.compare(getValue(), ((ShortEncodedValue)o).getValue());
+        return Short.compare(getValue(), ((ShortEncodedValue)o).getValue());
     }
 
     public int getValueType() { return ValueType.SHORT; }
