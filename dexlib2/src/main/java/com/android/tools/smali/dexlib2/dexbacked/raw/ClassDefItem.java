@@ -33,7 +33,10 @@ package com.android.tools.smali.dexlib2.dexbacked.raw;
 import com.android.tools.smali.dexlib2.AccessFlags;
 import com.android.tools.smali.dexlib2.dexbacked.raw.util.DexAnnotator;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
-import com.google.common.base.Joiner;
+import com.android.tools.smali.util.StringUtils;
+
+import java.util.Arrays;
+
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 
 import javax.annotation.Nonnull;
@@ -72,7 +75,7 @@ public class ClassDefItem {
 
                 int accessFlags = dexFile.getBuffer().readInt(out.getCursor());
                 out.annotate(4, "access_flags = 0x%x: %s", accessFlags,
-                        Joiner.on('|').join(AccessFlags.getAccessFlagsForClass(accessFlags)));
+                        StringUtils.join(Arrays.asList(AccessFlags.getAccessFlagsForClass(accessFlags)), "|"));
 
                 int superclassIndex = dexFile.getBuffer().readOptionalUint(out.getCursor());
                 out.annotate(4, "superclass_idx = %s",

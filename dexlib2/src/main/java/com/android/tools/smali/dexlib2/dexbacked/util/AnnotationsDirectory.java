@@ -30,19 +30,19 @@
 
 package com.android.tools.smali.dexlib2.dexbacked.util;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedAnnotation;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 
 import javax.annotation.Nonnull;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 public abstract class AnnotationsDirectory {
     public static final AnnotationsDirectory EMPTY = new AnnotationsDirectory() {
         @Override public int getFieldAnnotationCount() { return 0; }
-        @Nonnull @Override public Set<? extends DexBackedAnnotation> getClassAnnotations() { return ImmutableSet.of(); }
+        @Nonnull @Override public Set<? extends DexBackedAnnotation> getClassAnnotations() { return Collections.emptySet(); }
         @Nonnull @Override public AnnotationIterator getFieldAnnotationIterator() { return AnnotationIterator.EMPTY; }
         @Nonnull @Override public AnnotationIterator getMethodAnnotationIterator() { return AnnotationIterator.EMPTY; }
         @Nonnull @Override public AnnotationIterator getParameterAnnotationIterator() {return AnnotationIterator.EMPTY;}
@@ -111,7 +111,7 @@ public abstract class AnnotationsDirectory {
             };
         }
 
-        return ImmutableSet.of();
+        return Collections.emptySet();
     }
 
     @Nonnull
@@ -132,7 +132,7 @@ public abstract class AnnotationsDirectory {
                 @Override public int size() { return size; }
             };
         }
-        return ImmutableList.of();
+        return Collections.emptyList();
     }
 
     private static class AnnotationsDirectoryImpl extends AnnotationsDirectory {

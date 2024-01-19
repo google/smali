@@ -41,8 +41,7 @@ import com.android.tools.smali.dexlib2.immutable.debug.ImmutablePrologueEnd;
 import com.android.tools.smali.dexlib2.immutable.debug.ImmutableRestartLocal;
 import com.android.tools.smali.dexlib2.immutable.debug.ImmutableSetSourceFile;
 import com.android.tools.smali.dexlib2.immutable.debug.ImmutableStartLocal;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterators;
+import com.android.tools.smali.util.IteratorUtils;
 import com.android.tools.smali.dexlib2.iface.debug.DebugItem;
 import com.android.tools.smali.dexlib2.iface.debug.EndLocal;
 import com.android.tools.smali.dexlib2.iface.debug.LocalInfo;
@@ -50,6 +49,7 @@ import com.android.tools.smali.dexlib2.iface.debug.LocalInfo;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 public abstract class DebugInfo implements Iterable<DebugItem> {
@@ -82,11 +82,11 @@ public abstract class DebugInfo implements Iterable<DebugItem> {
         private EmptyDebugInfo() {}
 
         @Nonnull @Override public Iterator<DebugItem> iterator() {
-            return ImmutableSet.<DebugItem>of().iterator();
+            return Collections.emptyIterator();
         }
 
         @Nonnull @Override public Iterator<String> getParameterNames(@Nullable DexReader<? extends DexBuffer> reader) {
-            return ImmutableSet.<String>of().iterator();
+            return Collections.emptyIterator();
         }
 
         @Override
@@ -124,7 +124,7 @@ public abstract class DebugInfo implements Iterable<DebugItem> {
             // They have no relevance for the method in question and are excluded from the iterator.
             final int lastInstructionAddress =
                 methodImpl.getInstructionsSize()
-                    - Iterators.getLast(methodImpl.getInstructions().iterator()).getCodeUnits();
+                    - IteratorUtils.getLast(methodImpl.getInstructions().iterator()).getCodeUnits();
 
             //TODO: does dalvik allow references to invalid registers?
             final LocalInfo[] locals = new LocalInfo[registerCount];

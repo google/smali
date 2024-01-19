@@ -33,12 +33,12 @@ package com.android.tools.smali.dexlib2.dexbacked.instruction;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.ArrayPayload;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.util.FixedSizeList;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Collections;
 
 public class DexBackedArrayPayload extends DexBackedInstruction implements ArrayPayload {
     public static final Opcode OPCODE = Opcode.ARRAY_PAYLOAD;
@@ -81,7 +81,7 @@ public class DexBackedArrayPayload extends DexBackedInstruction implements Array
         }
 
         if (elementCount == 0) {
-            return ImmutableList.of();
+            return Collections.unmodifiableList(List.of());
         }
 
         switch (elementWidth) {

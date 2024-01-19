@@ -33,10 +33,11 @@ package com.android.tools.smali.dexlib2.dexbacked.util;
 import com.android.tools.smali.dexlib2.base.BaseMethodParameter;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.MethodParameter;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class ParameterIterator implements Iterator<MethodParameter> {
         if (parameterAnnotations.hasNext()) {
             annotations = parameterAnnotations.next();
         } else {
-            annotations = ImmutableSet.of();
+            annotations = Collections.emptySet();
         }
 
         if (parameterNames.hasNext()) {

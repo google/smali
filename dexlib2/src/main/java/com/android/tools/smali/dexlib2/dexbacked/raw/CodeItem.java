@@ -56,8 +56,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.formats.SparseSwitchPay
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.util.NumberUtils;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
+import com.android.tools.smali.util.StringUtils;
 import com.android.tools.smali.dexlib2.dexbacked.CDexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
 import com.android.tools.smali.dexlib2.formatter.DexFormatter;
@@ -455,7 +454,7 @@ public class CodeItem {
         }
 
         private void annotateInstruction35c(@Nonnull AnnotatedBytes out, @Nonnull Instruction35c instruction) {
-            List<String> args = Lists.newArrayList();
+            List<String> args = new ArrayList<>();
 
             int registerCount = instruction.getRegisterCount();
             if (registerCount == 1) {
@@ -481,7 +480,7 @@ public class CodeItem {
             }
 
             out.annotate(6, String.format("%s {%s}, %s",
-                    instruction.getOpcode().name, Joiner.on(", ").join(args), instruction.getReference()));
+                    instruction.getOpcode().name, StringUtils.join(args, ", "), instruction.getReference()));
         }
 
         private void annotateInstruction3rc(@Nonnull AnnotatedBytes out, @Nonnull Instruction3rc instruction) {
@@ -493,7 +492,7 @@ public class CodeItem {
         }
 
         private void annotateDefaultInstruction(@Nonnull AnnotatedBytes out, @Nonnull Instruction instruction) {
-            List<String> args = Lists.newArrayList();
+            List<String> args = new ArrayList<>();
 
             if (instruction instanceof OneRegisterInstruction) {
                 args.add(formatRegister(((OneRegisterInstruction)instruction).getRegisterA()));
@@ -555,7 +554,7 @@ public class CodeItem {
             }
 
             out.annotate(instruction.getCodeUnits()*2, "%s %s",
-                    instruction.getOpcode().name, Joiner.on(", ").join(args));
+                    instruction.getOpcode().name, StringUtils.join(args, ", "));
         }
 
         private void annotateArrayPayload(@Nonnull AnnotatedBytes out, @Nonnull ArrayPayload instruction) {

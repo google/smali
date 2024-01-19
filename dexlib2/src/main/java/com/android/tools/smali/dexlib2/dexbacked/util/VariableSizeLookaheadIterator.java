@@ -30,19 +30,71 @@
 
 package com.android.tools.smali.dexlib2.dexbacked.util;
 
-import com.google.common.collect.AbstractIterator;
 import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public abstract class VariableSizeLookaheadIterator<T> extends AbstractIterator<T> implements Iterator<T> {
+public abstract class VariableSizeLookaheadIterator<T> implements Iterator<T> {
+    /** We have computed the next element and haven't returned it yet. */
+    private static final int STATE_READY = 1;
+
+    /** We haven't yet computed or have already returned the element. */
+    private static final int STATE_NOT_READY = 2;
+
+    /** We have reached the end of the data and are finished. */
+    private static final int STATE_DONE = 3;
+
+    /** We've suffered an exception and are kaputt. */
+    private static final int STATE_FAILED = 4;
+
+    private int state = STATE_NOT_READY;
+    private T next;
     @Nonnull private final DexReader<? extends DexBuffer> reader;
 
     protected VariableSizeLookaheadIterator(@Nonnull DexBuffer buffer, int offset) {
         this.reader = buffer.readerAt(offset);
+    }
+
+    protected final T endOfData() {
+        state = STATE_DONE;
+        return null;
+      }
+
+    @Override
+    public final boolean hasNext() {
+        switch (state) {
+        case STATE_DONE:
+            return false;
+        case STATE_READY:
+            return true;
+        default:
+        }
+        return tryToComputeNext();
+    }
+
+    private boolean tryToComputeNext() {
+        state = STATE_FAILED; // temporary pessimism
+        next = computeNext();
+        if (state != STATE_DONE) {
+          state = STATE_READY;
+          return true;
+        }
+        return false;
+      }
+
+    @Override
+    public final T next() {
+        if (!hasNext()) {
+        throw new NoSuchElementException();
+        }
+        state = STATE_NOT_READY;
+        T result = next;
+        next = null;
+        return result;
     }
 
     /**
@@ -54,7 +106,6 @@ public abstract class VariableSizeLookaheadIterator<T> extends AbstractIterator<
      */
     @Nullable protected abstract T readNextItem(@Nonnull DexReader<? extends DexBuffer> reader);
 
-    @Override
     protected T computeNext() {
         return readNextItem(reader);
     }

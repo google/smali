@@ -31,13 +31,10 @@
 package com.android.tools.smali.dexlib2.dexbacked;
 
 import com.android.tools.smali.dexlib2.Opcodes;
-import com.android.tools.smali.dexlib2.iface.DexFile;
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.dexlib2.util.DexUtil.InvalidFile;
 import com.android.tools.smali.dexlib2.util.DexUtil.UnsupportedFile;
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile.NotADexFile;
 
 import javax.annotation.Nonnull;
@@ -46,6 +43,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -75,7 +73,7 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
      * @return A list of the names of dex files in this zip file
      */
     @Nonnull @Override public List<String> getDexEntryNames() throws IOException {
-        List<String> entryNames = Lists.newArrayList();
+        List<String> entryNames = new ArrayList<>();
         try (ZipFile zipFile = getZipFile()) {
             Enumeration<? extends ZipEntry> entriesEnumeration = zipFile.entries();
 
@@ -146,7 +144,9 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
     @Nonnull
     protected DexEntry<DexBackedDexFile> loadEntry(@Nonnull ZipFile zipFile, @Nonnull ZipEntry zipEntry) throws IOException {
         try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
-            byte[] buf = ByteStreams.toByteArray(inputStream);
+            int fileSize = inputStream.available();
+            byte[] buf = new byte[fileSize];
+            inputStream.read(buf);
 
             return new DexEntry<DexBackedDexFile>() {
                 @Nonnull

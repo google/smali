@@ -57,10 +57,10 @@ import com.android.tools.smali.dexlib2.iface.DexFile;
 import com.android.tools.smali.dexlib2.iface.reference.Reference;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.dexlib2.writer.DexWriter;
-import com.google.common.io.ByteStreams;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractList;
@@ -204,7 +204,9 @@ public class DexBackedDexFile implements DexFile {
             throws IOException {
         DexUtil.verifyDexHeader(is);
 
-        byte[] buf = ByteStreams.toByteArray(is);
+        int fileSize = is.available();
+        byte[] buf = new byte[fileSize];
+        is.read(buf);
         return new DexBackedDexFile(opcodes, buf, 0, false);
     }
 

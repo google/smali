@@ -30,6 +30,8 @@
 
 package com.android.tools.smali.dexlib2.dexbacked;
 
+import static java.util.Collections.unmodifiableList;
+
 import com.android.tools.smali.dexlib2.HiddenApiRestriction;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodReference;
 import com.android.tools.smali.dexlib2.dexbacked.raw.MethodIdItem;
@@ -44,11 +46,11 @@ import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.Method;
 import com.android.tools.smali.dexlib2.iface.MethodParameter;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -153,7 +155,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
                 }
             };
         }
-        return ImmutableList.of();
+        return unmodifiableList(List.of());
     }
 
     @Nonnull
@@ -167,7 +169,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
         if (methodImpl != null) {
             return methodImpl.getParameterNames(null);
         }
-        return ImmutableSet.<String>of().iterator();
+        return Collections.emptyIterator();
     }
 
     @Nonnull
@@ -186,7 +188,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
                 @Override public int size() { return parameterCount; }
             };
         }
-        return ImmutableList.of();
+        return Collections.emptyList();
     }
 
     @Nonnull
@@ -199,7 +201,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
     @Override
     public Set<HiddenApiRestriction> getHiddenApiRestrictions() {
         if (hiddenApiRestrictions == DexBackedClassDef.NO_HIDDEN_API_RESTRICTIONS) {
-            return ImmutableSet.of();
+            return Collections.emptySet();
         } else {
             return EnumSet.copyOf(HiddenApiRestriction.getAllFlags(hiddenApiRestrictions));
         }

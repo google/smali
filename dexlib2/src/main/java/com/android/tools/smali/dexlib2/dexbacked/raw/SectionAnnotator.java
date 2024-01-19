@@ -33,11 +33,12 @@ package com.android.tools.smali.dexlib2.dexbacked.raw;
 import com.android.tools.smali.dexlib2.dexbacked.raw.util.DexAnnotator;
 import com.android.tools.smali.dexlib2.util.AlignmentUtils;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
-import com.google.common.collect.Maps;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class SectionAnnotator {
@@ -47,7 +48,7 @@ public abstract class SectionAnnotator {
     public final int sectionOffset;
     public final int itemCount;
 
-    protected Map<Integer, String> itemIdentities = Maps.newHashMap();
+    protected Map<Integer, String> itemIdentities = new HashMap<>();
 
     public SectionAnnotator(@Nonnull DexAnnotator annotator, @Nonnull MapItem mapItem) {
         this.annotator = annotator;

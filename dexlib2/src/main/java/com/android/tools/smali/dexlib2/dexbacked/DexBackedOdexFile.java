@@ -34,7 +34,6 @@ import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.dexbacked.raw.OdexHeaderItem;
 import com.android.tools.smali.dexlib2.dexbacked.util.VariableSizeList;
 import com.android.tools.smali.dexlib2.util.DexUtil;
-import com.google.common.io.ByteStreams;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -85,14 +84,16 @@ public class DexBackedOdexFile extends DexBackedDexFile {
         DexUtil.verifyOdexHeader(is);
 
         is.reset();
-        byte[] odexBuf = new byte[OdexHeaderItem.ITEM_SIZE];
-        ByteStreams.readFully(is, odexBuf);
+        byte[] odexBuf = is.readNBytes(OdexHeaderItem.ITEM_SIZE);
         int dexOffset = OdexHeaderItem.getDexOffset(odexBuf);
         if (dexOffset > OdexHeaderItem.ITEM_SIZE) {
-            ByteStreams.skipFully(is, dexOffset - OdexHeaderItem.ITEM_SIZE);
+            is.skip(dexOffset - OdexHeaderItem.ITEM_SIZE);
         }
 
-        byte[] dexBuf = ByteStreams.toByteArray(is);
+        int remainingBytes = is.available();
+        byte[] dexBuf = new byte[remainingBytes];
+        is.read(dexBuf);
+        is.close();
 
         return new DexBackedOdexFile(opcodes, odexBuf, dexBuf);
     }

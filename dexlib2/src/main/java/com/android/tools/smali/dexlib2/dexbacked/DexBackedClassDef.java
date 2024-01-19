@@ -43,13 +43,12 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference;
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference;
 import com.android.tools.smali.dexlib2.writer.DexWriter;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import com.android.tools.smali.util.ChainedIterator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.AbstractList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -146,7 +145,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
                 @Override public int size() { return size; }
             };
         }
-        return ImmutableList.of();
+        return Collections.emptyList();
     }
 
     @Nonnull
@@ -225,7 +224,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
             };
         } else {
             instanceFieldsOffset = staticFieldsOffset;
-            return ImmutableSet.of();
+            return Collections.emptySet();
         }
     }
 
@@ -295,14 +294,14 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
             if (instanceFieldsOffset > 0) {
                 directMethodsOffset = instanceFieldsOffset;
             }
-            return ImmutableSet.of();
+            return Collections.emptySet();
         }
     }
 
     @Nonnull
     @Override
     public Iterable<? extends DexBackedField> getFields() {
-        return Iterables.concat(getStaticFields(), getInstanceFields());
+        return new ChainedIterator(getStaticFields(), getInstanceFields());
     }
 
     @Nonnull
@@ -374,7 +373,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
             if (directMethodsOffset > 0) {
                 virtualMethodsOffset = directMethodsOffset;
             }
-            return ImmutableSet.of();
+            return Collections.emptySet();
         }
     }
 
@@ -436,7 +435,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
                 }
             };
         } else {
-            return ImmutableSet.of();
+            return Collections.emptySet();
         }
     }
 
@@ -449,7 +448,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull
     @Override
     public Iterable<? extends DexBackedMethod> getMethods() {
-        return Iterables.concat(getDirectMethods(), getVirtualMethods());
+        return new ChainedIterator(getDirectMethods(), getVirtualMethods());
     }
 
     private AnnotationsDirectory getAnnotationsDirectory() {

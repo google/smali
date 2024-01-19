@@ -55,9 +55,7 @@ import com.android.tools.smali.dexlib2.dexbacked.raw.StringIdItem;
 import com.android.tools.smali.dexlib2.dexbacked.raw.TypeIdItem;
 import com.android.tools.smali.dexlib2.dexbacked.raw.TypeListItem;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.primitives.Ints;
+
 import com.android.tools.smali.dexlib2.dexbacked.CDexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 
@@ -65,15 +63,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DexAnnotator extends AnnotatedBytes {
     @Nonnull public final DexBackedDexFile dexFile;
 
-    private final Map<Integer, SectionAnnotator> annotators = Maps.newHashMap();
-    private static final Map<Integer, Integer> sectionAnnotationOrder = Maps.newHashMap();
+    private final Map<Integer, SectionAnnotator> annotators = new HashMap<>();
+    private static final Map<Integer, Integer> sectionAnnotationOrder = new HashMap<>();
 
     static {
         int[] sectionOrder = new int[] {
@@ -189,13 +189,14 @@ public class DexAnnotator extends AnnotatedBytes {
     public void writeAnnotations(Writer out) throws IOException {
         List<MapItem> mapItems = dexFile.getMapItems();
         // sort the map items based on the order defined by sectionAnnotationOrder
-        Ordering<MapItem> ordering = Ordering.from(new Comparator<MapItem>() {
+        Comparator<MapItem> comparator = new Comparator<MapItem>() {
             @Override public int compare(MapItem o1, MapItem o2) {
-                return Ints.compare(sectionAnnotationOrder.get(o1.getType()), sectionAnnotationOrder.get(o2.getType()));
+                return Integer.compare(sectionAnnotationOrder.get(o1.getType()), sectionAnnotationOrder.get(o2.getType()));
             }
-        });
+        };
 
-        mapItems = ordering.immutableSortedCopy(mapItems);
+        MapItem[] mapItemsArray = mapItems.toArray(new MapItem[mapItems.size()]);
+        Arrays.sort(mapItemsArray, comparator);
 
         try {
             // Need to annotate the debug info offset table first, to propagate the debug info identities
@@ -204,7 +205,7 @@ public class DexAnnotator extends AnnotatedBytes {
                 CdexDebugOffsetTable.annotate(this, dexFile.getBuffer());
             }
 
-            for (MapItem mapItem: mapItems) {
+            for (MapItem mapItem: mapItemsArray) {
                 try {
                     SectionAnnotator annotator = annotators.get(mapItem.getType());
                     annotator.annotateSection(this);
