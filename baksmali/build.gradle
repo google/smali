@@ -61,10 +61,13 @@ processResources.expand('version': version)
 
 // Build a separate jar that contains all dependencies
 task fatJar(type: Jar) {
+    dependsOn ':dexlib2:jar'
+    dependsOn ':util:jar'
     from sourceSets.main.output
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 
-    classifier = 'fat'
+    duplicatesStrategy = 'exclude'
+    archiveClassifier = 'fat'
 
     manifest {
         attributes('Main-Class': 'com.android.tools.smali.baksmali.Main')
