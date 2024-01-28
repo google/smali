@@ -42,34 +42,34 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * The returned iterator does not support {@code remove()}.
  */
 public class ChainedIterator<T extends @Nullable Object> implements Iterator<T>, Iterable<T> {
-	Iterator<T> iteratorA;
-	Iterator<T> iteratorB;
+    Iterator<T> iteratorA;
+    Iterator<T> iteratorB;
 
-	public ChainedIterator(Iterable<T> iterableA, Iterable<T> iterableB) {
-		this.iteratorA = iterableA.iterator();
-		this.iteratorB = iterableB.iterator();
-	}
+    public ChainedIterator(Iterable<T> iterableA, Iterable<T> iterableB) {
+        this.iteratorA = iterableA.iterator();
+        this.iteratorB = iterableB.iterator();
+    }
 
-	@Override
-	public final boolean hasNext() {
-		return iteratorA.hasNext() || iteratorB.hasNext();
-	}
+    @Override
+    public final boolean hasNext() {
+        return iteratorA.hasNext() || iteratorB.hasNext();
+    }
 
-	@Override
-	public final T next() {
-		if (iteratorA.hasNext()) {
-			return iteratorA.next();
-		}
-		return iteratorB.next();
-	}
+    @Override
+    public final T next() {
+        if (iteratorA.hasNext()) {
+            return iteratorA.next();
+        }
+        return iteratorB.next();
+    }
 
-	@Override
-	public final void remove() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public final void remove() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public final Iterator<T> iterator() {
-		return this;
-	}
+    @Override
+    public final Iterator<T> iterator() {
+        return this;
+    }
 }

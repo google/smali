@@ -41,28 +41,28 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * The returned iterator supports {@code remove()} if {@code backingIterator} does.
  */
 public class TransformedIterator<F extends @Nullable Object, T extends @Nullable Object>
-		implements Iterator<T> {
-	final Iterator<? extends F> backingIterator;
-	final Function<F, T> transformFunction;
+        implements Iterator<T> {
+    final Iterator<? extends F> backingIterator;
+    final Function<F, T> transformFunction;
 
-	public TransformedIterator(Iterator<? extends F> backingIterator,
-			Function<F, T> transformFunction) {
-		this.backingIterator = backingIterator;
-		this.transformFunction = transformFunction;
-	}
+    public TransformedIterator(Iterator<? extends F> backingIterator,
+            Function<F, T> transformFunction) {
+        this.backingIterator = backingIterator;
+        this.transformFunction = transformFunction;
+    }
 
-	@Override
-	public final boolean hasNext() {
-		return backingIterator.hasNext();
-	}
+    @Override
+    public final boolean hasNext() {
+        return backingIterator.hasNext();
+    }
 
-	@Override
-	public final T next() {
-		return transformFunction.apply(backingIterator.next());
-	}
+    @Override
+    public final T next() {
+        return transformFunction.apply(backingIterator.next());
+    }
 
-	@Override
-	public final void remove() {
-		backingIterator.remove();
-	}
+    @Override
+    public final void remove() {
+        backingIterator.remove();
+    }
 }
