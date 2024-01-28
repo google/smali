@@ -46,6 +46,7 @@ import com.android.tools.smali.dexlib2.dexbacked.ZipDexContainer;
 import com.android.tools.smali.dexlib2.dexbacked.ZipDexContainer.NotAZipFileException;
 import com.android.tools.smali.dexlib2.writer.pool.DexPool;
 import com.android.tools.smali.util.ExceptionWithContext;
+import com.android.tools.smali.util.InputStreamUtil;
 import com.android.tools.smali.util.StringUtils;
 
 import java.io.BufferedInputStream;
@@ -518,10 +519,7 @@ public final class DexFileFactory {
 
                 if (candidateFile.exists()) {
                     try {
-                        FileInputStream fis = new FileInputStream(candidateFile);
-                        int fileSize = fis.available();
-                        buf = new byte[fileSize];
-                        fis.read(buf);
+                        buf = InputStreamUtil.toByteArray(new FileInputStream(candidateFile));
                     } catch (FileNotFoundException e) {
                         buf = null;
                     } catch (IOException ex) {

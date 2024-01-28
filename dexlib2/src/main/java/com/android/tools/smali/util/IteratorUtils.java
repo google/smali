@@ -36,12 +36,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class IteratorUtils {
 
-    public static <T extends @Nullable Object> T getLast(Iterator<T> iterator) {
-        while (true) {
-          T current = iterator.next();
-          if (!iterator.hasNext()) {
-            return current;
-          }
-        }
-      }
+	public static <T extends @Nullable Object> T getLast(Iterator<T> iterator) {
+		while (true) {
+			T current = iterator.next();
+			if (!iterator.hasNext()) {
+				return current;
+			}
+		}
+	}
 }

@@ -35,6 +35,7 @@ import com.android.tools.smali.dexlib2.dexbacked.DexBackedOdexFile.NotAnOdexFile
 import com.android.tools.smali.dexlib2.dexbacked.raw.CdexHeaderItem;
 import com.android.tools.smali.dexlib2.dexbacked.raw.HeaderItem;
 import com.android.tools.smali.dexlib2.dexbacked.raw.OdexHeaderItem;
+import com.android.tools.smali.util.InputStreamUtil;
 
 import javax.annotation.Nonnull;
 import java.io.EOFException;
@@ -59,9 +60,9 @@ public class DexUtil {
             throw new IllegalArgumentException("InputStream must support mark");
         }
         inputStream.mark(44);
-        byte[] partialHeader;
+        byte[] partialHeader = new byte[44];
         try {
-            partialHeader = inputStream.readNBytes(44);
+            InputStreamUtil.readFully(inputStream, partialHeader);
         } catch (EOFException ex) {
             throw new NotADexFile("File is too short");
         } finally {
@@ -157,9 +158,9 @@ public class DexUtil {
             throw new IllegalArgumentException("InputStream must support mark");
         }
         inputStream.mark(8);
-        byte[] partialHeader;
+        byte[] partialHeader = new byte[8];
         try {
-            partialHeader = inputStream.readNBytes(8);
+            InputStreamUtil.readFully(inputStream, partialHeader);
         } catch (EOFException ex) {
             throw new NotAnOdexFile("File is too short");
         } finally {

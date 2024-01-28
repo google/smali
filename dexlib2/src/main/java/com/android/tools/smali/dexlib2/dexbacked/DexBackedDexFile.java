@@ -57,6 +57,7 @@ import com.android.tools.smali.dexlib2.iface.DexFile;
 import com.android.tools.smali.dexlib2.iface.reference.Reference;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.dexlib2.writer.DexWriter;
+import com.android.tools.smali.util.InputStreamUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -204,9 +205,7 @@ public class DexBackedDexFile implements DexFile {
             throws IOException {
         DexUtil.verifyDexHeader(is);
 
-        int fileSize = is.available();
-        byte[] buf = new byte[fileSize];
-        is.read(buf);
+        byte[] buf = InputStreamUtil.toByteArray(is);
         return new DexBackedDexFile(opcodes, buf, 0, false);
     }
 

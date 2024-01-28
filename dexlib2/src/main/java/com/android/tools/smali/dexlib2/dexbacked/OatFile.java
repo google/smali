@@ -36,7 +36,9 @@ import com.android.tools.smali.dexlib2.dexbacked.raw.HeaderItem;
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
+import com.android.tools.smali.util.InputStreamUtil;
 import com.android.tools.smali.util.TransformedIterator;
+
 import java.util.function.Function;
 import com.android.tools.smali.dexlib2.dexbacked.OatFile.SymbolTable.Symbol;
 
@@ -133,9 +135,9 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
             throw new IllegalArgumentException("InputStream must support mark");
         }
         is.mark(4);
-        byte[] partialHeader;
+        byte[] partialHeader = new byte[4];
         try {
-            partialHeader = is.readNBytes(4);
+            InputStreamUtil.readFully(is, partialHeader);
         } catch (EOFException ex) {
             throw new NotAnOatFileException();
         } finally {
@@ -146,9 +148,7 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
 
         is.reset();
 
-        int fileSize = is.available();
-        byte[] buf = new byte[fileSize];
-        is.read(buf);
+        byte[] buf = InputStreamUtil.toByteArray(is);
         return new OatFile(buf, vdexProvider);
     }
 

@@ -35,6 +35,8 @@ import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.dexlib2.util.DexUtil.InvalidFile;
 import com.android.tools.smali.dexlib2.util.DexUtil.UnsupportedFile;
+import com.android.tools.smali.util.InputStreamUtil;
+
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile.NotADexFile;
 
 import javax.annotation.Nonnull;
@@ -144,9 +146,7 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
     @Nonnull
     protected DexEntry<DexBackedDexFile> loadEntry(@Nonnull ZipFile zipFile, @Nonnull ZipEntry zipEntry) throws IOException {
         try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
-            int fileSize = inputStream.available();
-            byte[] buf = new byte[fileSize];
-            inputStream.read(buf);
+            byte[] buf = InputStreamUtil.toByteArray(inputStream);
 
             return new DexEntry<DexBackedDexFile>() {
                 @Nonnull

@@ -53,25 +53,27 @@ public abstract class VariableSizeLookaheadIterator<T> implements Iterator<T> {
 
     private int state = STATE_NOT_READY;
     private T next;
-    @Nonnull private final DexReader<? extends DexBuffer> reader;
+    @Nonnull
+    private final DexReader<? extends DexBuffer> reader;
 
-    protected VariableSizeLookaheadIterator(@Nonnull DexBuffer buffer, int offset) {
+    protected VariableSizeLookaheadIterator(@Nonnull
+    DexBuffer buffer, int offset) {
         this.reader = buffer.readerAt(offset);
     }
 
     protected final T endOfData() {
         state = STATE_DONE;
         return null;
-      }
+    }
 
     @Override
     public final boolean hasNext() {
         switch (state) {
-        case STATE_DONE:
-            return false;
-        case STATE_READY:
-            return true;
-        default:
+            case STATE_DONE:
+                return false;
+            case STATE_READY:
+                return true;
+            default:
         }
         return tryToComputeNext();
     }
@@ -80,16 +82,16 @@ public abstract class VariableSizeLookaheadIterator<T> implements Iterator<T> {
         state = STATE_FAILED; // temporary pessimism
         next = computeNext();
         if (state != STATE_DONE) {
-          state = STATE_READY;
-          return true;
+            state = STATE_READY;
+            return true;
         }
         return false;
-      }
+    }
 
     @Override
     public final T next() {
         if (!hasNext()) {
-        throw new NoSuchElementException();
+            throw new NoSuchElementException();
         }
         state = STATE_NOT_READY;
         T result = next;
@@ -98,13 +100,14 @@ public abstract class VariableSizeLookaheadIterator<T> implements Iterator<T> {
     }
 
     /**
-     * Reads the next item from reader. If the end of the list has been reached, it should call endOfData.
-     *
-     * endOfData has a return value of T, so you can simply {@code return endOfData()}
+     * Reads the next item from reader. If the end of the list has been reached, it should call
+     * endOfData. endOfData has a return value of T, so you can simply {@code return endOfData()}
      *
      * @return The item that was read. If endOfData was called, the return value is ignored.
      */
-    @Nullable protected abstract T readNextItem(@Nonnull DexReader<? extends DexBuffer> reader);
+    @Nullable
+    protected abstract T readNextItem(@Nonnull
+    DexReader<? extends DexBuffer> reader);
 
     protected T computeNext() {
         return readNextItem(reader);
