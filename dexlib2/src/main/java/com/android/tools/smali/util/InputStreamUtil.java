@@ -4,8 +4,6 @@ package com.android.tools.smali.util;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import com.google.common.math.IntMath;
-
 import java.io.DataInput;
 import java.io.EOFException;
 import java.io.IOException;
@@ -16,6 +14,9 @@ import java.util.Queue;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Utility methods for working with {@link InputStream}. Based on guava ByteStreams.
+ */
 public final class InputStreamUtil {
 
     private static final int BUFFER_SIZE = 8192;
@@ -47,8 +48,8 @@ public final class InputStreamUtil {
         // reading and so all of the bytes in each new allocated buffer are available for reading
         // from
         // the stream.
-        for (int bufSize = initialBufferSize; totalLen < MAX_ARRAY_LEN; bufSize = IntMath
-                .saturatedMultiply(bufSize, bufSize < 4096 ? 4 : 2)) {
+        for (int bufSize = initialBufferSize; totalLen < MAX_ARRAY_LEN; bufSize = 
+                saturatedMultiply(bufSize, bufSize < 4096 ? 4 : 2)) {
             byte[] buf = new byte[min(bufSize, MAX_ARRAY_LEN - totalLen)];
             bufs.add(buf);
             int off = 0;
@@ -71,6 +72,17 @@ public final class InputStreamUtil {
         } else {
             throw new OutOfMemoryError("input is too large to fit in a byte array");
         }
+    }
+
+    private static int saturatedMultiply(int a, int b) {
+        long value = (long) a * b;
+        if (value > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+          }
+          if (value < Integer.MIN_VALUE) {
+            return Integer.MIN_VALUE;
+          }
+          return (int) value;
     }
 
     private static byte[] combineBuffers(Queue<byte[]> bufs, int totalLen) {

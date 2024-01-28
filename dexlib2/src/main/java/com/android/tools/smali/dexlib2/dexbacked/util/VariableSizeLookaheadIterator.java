@@ -106,8 +106,7 @@ public abstract class VariableSizeLookaheadIterator<T> implements Iterator<T> {
      * @return The item that was read. If endOfData was called, the return value is ignored.
      */
     @Nullable
-    protected abstract T readNextItem(@Nonnull
-    DexReader<? extends DexBuffer> reader);
+    protected abstract T readNextItem(@Nonnull DexReader<? extends DexBuffer> reader);
 
     protected T computeNext() {
         return readNextItem(reader);
