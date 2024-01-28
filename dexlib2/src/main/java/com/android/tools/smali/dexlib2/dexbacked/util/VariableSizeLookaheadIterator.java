@@ -56,8 +56,7 @@ public abstract class VariableSizeLookaheadIterator<T> implements Iterator<T> {
     @Nonnull
     private final DexReader<? extends DexBuffer> reader;
 
-    protected VariableSizeLookaheadIterator(@Nonnull
-    DexBuffer buffer, int offset) {
+    protected VariableSizeLookaheadIterator(@Nonnull DexBuffer buffer, int offset) {
         this.reader = buffer.readerAt(offset);
     }
 
