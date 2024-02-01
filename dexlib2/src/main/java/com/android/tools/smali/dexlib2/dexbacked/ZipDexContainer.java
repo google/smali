@@ -116,11 +116,14 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
      * Loads a dex file from a specific named entry.
      *
      * @param entryName The name of the entry
-     * @return A ZipDexFile, or null if there is no entry with the given name
+     * @return A DexEntry, or null if there is no entry with the given name
      * @throws NotADexFile If the entry isn't a dex file
      */
     @Nullable @Override public DexEntry<DexBackedDexFile> getEntry(@Nonnull String entryName) throws IOException {
          DexFile dexFile = getEntries().get(entryName);
+         if (dexFile == null) {
+             return null;
+         }
          return new DexEntry() {
              @Nonnull
              @Override
