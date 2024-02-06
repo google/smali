@@ -29,9 +29,6 @@
 prog="$0"
 while [ -h "${prog}" ]; do
     newProg=`/bin/ls -ld "${prog}"`
-    echo ${newProg}
-
-
     newProg=`expr "${newProg}" : ".* -> \(.*\)$"`
     if expr "x${newProg}" : 'x/' >/dev/null; then
         prog="${newProg}"
@@ -48,10 +45,15 @@ prog="${progdir}"/`basename "${prog}"`
 cd "${oldwd}"
 
 
-jarfile=baksmali.jar
+jarfile=smali-baksmali.jar
 libdir="$progdir"
-if [ ! -r "$libdir/$jarfile" ]
-then
+
+if [ ! -r "$libdir/$jarfile" ]; then
+    # set location for the Android tree case
+    libdir=`dirname "$progdir"`/framework
+fi
+
+if [ ! -r "$libdir/$jarfile" ]; then
     echo `basename "$prog"`": can't find $jarfile"
     exit 1
 fi
