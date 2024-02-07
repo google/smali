@@ -30,12 +30,12 @@
 
 package com.android.tools.smali.dexlib2.util;
 
-import com.google.common.io.ByteStreams;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile.NotADexFile;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedOdexFile.NotAnOdexFile;
 import com.android.tools.smali.dexlib2.dexbacked.raw.CdexHeaderItem;
 import com.android.tools.smali.dexlib2.dexbacked.raw.HeaderItem;
 import com.android.tools.smali.dexlib2.dexbacked.raw.OdexHeaderItem;
+import com.android.tools.smali.util.InputStreamUtil;
 
 import javax.annotation.Nonnull;
 import java.io.EOFException;
@@ -62,7 +62,7 @@ public class DexUtil {
         inputStream.mark(44);
         byte[] partialHeader = new byte[44];
         try {
-            ByteStreams.readFully(inputStream, partialHeader);
+            InputStreamUtil.readFully(inputStream, partialHeader);
         } catch (EOFException ex) {
             throw new NotADexFile("File is too short");
         } finally {
@@ -160,7 +160,7 @@ public class DexUtil {
         inputStream.mark(8);
         byte[] partialHeader = new byte[8];
         try {
-            ByteStreams.readFully(inputStream, partialHeader);
+            InputStreamUtil.readFully(inputStream, partialHeader);
         } catch (EOFException ex) {
             throw new NotAnOdexFile("File is too short");
         } finally {

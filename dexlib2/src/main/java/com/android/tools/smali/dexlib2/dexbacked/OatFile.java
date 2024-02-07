@@ -36,14 +36,15 @@ import com.android.tools.smali.dexlib2.dexbacked.raw.HeaderItem;
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
-import com.google.common.io.ByteStreams;
+import com.android.tools.smali.util.InputStreamUtil;
+import com.android.tools.smali.util.TransformedIterator;
+
+import java.util.function.Function;
 import com.android.tools.smali.dexlib2.dexbacked.OatFile.SymbolTable.Symbol;
 
 import java.util.AbstractList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -136,7 +137,7 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
         is.mark(4);
         byte[] partialHeader = new byte[4];
         try {
-            ByteStreams.readFully(is, partialHeader);
+            InputStreamUtil.readFully(is, partialHeader);
         } catch (EOFException ex) {
             throw new NotAnOatFileException();
         } finally {
@@ -147,7 +148,7 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
 
         is.reset();
 
-        byte[] buf = ByteStreams.toByteArray(is);
+        byte[] buf = InputStreamUtil.toByteArray(is);
         return new OatFile(buf, vdexProvider);
     }
 
@@ -169,11 +170,11 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
     @Nonnull
     public List<String> getBootClassPath() {
         if (getOatVersion() < 75) {
-            return ImmutableList.of();
+            return Collections.unmodifiableList(List.of());
         }
         String bcp = oatHeader.getKeyValue("bootclasspath");
         if (bcp == null) {
-            return ImmutableList.of();
+            return Collections.unmodifiableList(List.of());
         }
         return Arrays.asList(bcp.split(":"));
     }
@@ -181,18 +182,18 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
     @Nonnull
     public List<DexBackedDexFile> getDexFiles() {
         return new AbstractForwardSequentialList<DexBackedDexFile>() {
+
             @Override public int size() {
-                return Iterators.size(Iterators.filter(new DexEntryIterator(), Objects::nonNull));
+                DexEntryIterator it = new DexEntryIterator();
+                return it.getSize();
             }
 
             @Nonnull @Override public Iterator<DexBackedDexFile> iterator() {
-                return Iterators.transform(
-                    Iterators.filter(new DexEntryIterator(), Objects::nonNull),
-                        new Function<OatDexEntry, DexBackedDexFile>() {
-                            @Nullable @Override public DexBackedDexFile apply(OatDexEntry dexEntry) {
-                                return dexEntry.getDexFile();
-                            }
-                        });
+                return new TransformedIterator<OatDexEntry, DexBackedDexFile>(new DexEntryIterator(), new Function<OatDexEntry, DexBackedDexFile>() {
+                    @Nullable @Override public DexBackedDexFile apply(OatDexEntry dexEntry) {
+                        return dexEntry.getDexFile();
+                    }
+                });
             }
         };
     }
@@ -200,17 +201,16 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
     @Nonnull @Override public List<String> getDexEntryNames() throws IOException {
         return new AbstractForwardSequentialList<String>() {
             @Override public int size() {
-                return Iterators.size(Iterators.filter(new DexEntryIterator(), Objects::nonNull));
+                DexEntryIterator it = new DexEntryIterator();
+                return it.getSize();
             }
 
             @Nonnull @Override public Iterator<String> iterator() {
-                return Iterators.transform(
-                    Iterators.filter(new DexEntryIterator(), Objects::nonNull),
-                        new Function<OatDexEntry, String>() {
-                            @Nullable @Override public String apply(OatDexEntry dexEntry) {
-                                return dexEntry.entryName;
-                            }
-                        });
+                return new TransformedIterator<OatDexEntry, String>(new DexEntryIterator(), new Function<OatDexEntry, String>() {
+                    @Nullable @Override public String apply(OatDexEntry dexEntry) {
+                        return dexEntry.entryName;
+                    }
+                });
             }
         };
     }
@@ -676,6 +676,20 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
 
         @Override public void remove() {
             throw new UnsupportedOperationException();
+        }
+
+        /**
+         * Returns the number of elements remaining in {@code iterator}. The iterator will be left
+         * exhausted: its {@code hasNext()} method will return {@code false}.
+         */
+        public int getSize() {
+            int count = 0;
+            while (hasNext()) {
+                if (Objects.nonNull(next())) {
+                    count++;
+                }
+            }
+            return count;
         }
     }
 

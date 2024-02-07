@@ -83,6 +83,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 *******************************************************************************
 
+Various portions of the code are taken from https://github.com/google/guava,
+and are used in accordance with the following license:
 
 Content of http://www.apache.org/licenses/LICENSE-2.0:
 

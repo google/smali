@@ -41,10 +41,11 @@ import com.android.tools.smali.dexlib2.iface.debug.DebugItem;
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction;
 import com.android.tools.smali.dexlib2.util.AlignmentUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -133,7 +134,7 @@ public class DexBackedMethodImplementation implements MethodImplementation {
                 }
             };
         }
-        return ImmutableList.of();
+        return Collections.emptyList();
     }
 
     protected int getDebugOffset() {

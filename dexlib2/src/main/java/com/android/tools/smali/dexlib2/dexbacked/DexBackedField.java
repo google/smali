@@ -41,10 +41,11 @@ import com.android.tools.smali.dexlib2.dexbacked.value.DexBackedEncodedValue;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Field;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -136,7 +137,7 @@ public class DexBackedField extends BaseFieldReference implements Field {
     @Override
     public Set<HiddenApiRestriction> getHiddenApiRestrictions() {
         if (hiddenApiRestrictions == DexBackedClassDef.NO_HIDDEN_API_RESTRICTIONS) {
-            return ImmutableSet.of();
+            return Collections.emptySet();
         } else {
             return EnumSet.copyOf(HiddenApiRestriction.getAllFlags(hiddenApiRestrictions));
         }

@@ -34,7 +34,11 @@ import com.android.tools.smali.dexlib2.AccessFlags;
 import com.android.tools.smali.dexlib2.dexbacked.DexBuffer;
 import com.android.tools.smali.dexlib2.dexbacked.raw.util.DexAnnotator;
 import com.android.tools.smali.dexlib2.util.AnnotatedBytes;
-import com.google.common.base.Joiner;
+import com.android.tools.smali.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
+
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.DexReader;
 
@@ -136,7 +140,7 @@ public class ClassDataItem {
 
                 int accessFlags = reader.readSmallUleb128();
                 out.annotateTo(reader.getOffset(), "access_flags = 0x%x: %s", accessFlags,
-                        Joiner.on('|').join(AccessFlags.getAccessFlagsForField(accessFlags)));
+                        StringUtils.join(Arrays.asList(AccessFlags.getAccessFlagsForField(accessFlags)), "|"));
 
                 return fieldIndex;
             }
@@ -152,7 +156,7 @@ public class ClassDataItem {
 
                 int accessFlags = reader.readSmallUleb128();
                 out.annotateTo(reader.getOffset(), "access_flags = 0x%x: %s", accessFlags,
-                        Joiner.on('|').join(AccessFlags.getAccessFlagsForMethod(accessFlags)));
+                    StringUtils.join(Arrays.asList(AccessFlags.getAccessFlagsForField(accessFlags)), "|"));
 
                 int codeOffset = reader.readSmallUleb128();
                 if (codeOffset == 0) {

@@ -36,8 +36,8 @@ import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.dexlib2.util.DexUtil.InvalidFile;
 import com.android.tools.smali.dexlib2.util.DexUtil.UnsupportedFile;
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
+import com.android.tools.smali.util.InputStreamUtil;
+
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile.NotADexFile;
 
 import java.io.BufferedInputStream;
@@ -99,7 +99,7 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
 
                 // There might be several dex files in zip entry since DEX v41.
                 try (InputStream inputStream = zipFile.getInputStream(entry)) {
-                    byte[] buf = ByteStreams.toByteArray(inputStream);
+                    byte[] buf = InputStreamUtil.toByteArray(inputStream);
                     for (int offset = 0, i = 1; offset < buf.length; i++) {
                       DexBackedDexFile dex = new DexBackedDexFile(opcodes, buf, 0, true, offset);
                       entries.put(entry.getName() + (i > 1 ? ("/" + i) : ""), dex);

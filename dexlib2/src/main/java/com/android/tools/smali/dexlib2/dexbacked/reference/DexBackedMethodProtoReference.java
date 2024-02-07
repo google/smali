@@ -30,7 +30,6 @@
 
 package com.android.tools.smali.dexlib2.dexbacked.reference;
 
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodProtoReference;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.raw.ProtoIdItem;
@@ -38,6 +37,8 @@ import com.android.tools.smali.dexlib2.dexbacked.raw.TypeListItem;
 import com.android.tools.smali.dexlib2.dexbacked.util.FixedSizeList;
 
 import javax.annotation.Nonnull;
+
+import java.util.Collections;
 import java.util.List;
 
 public class DexBackedMethodProtoReference extends BaseMethodProtoReference {
@@ -67,7 +68,7 @@ public class DexBackedMethodProtoReference extends BaseMethodProtoReference {
                 @Override public int size() { return parameterCount; }
             };
         }
-        return ImmutableList.of();
+        return Collections.emptyList();
     }
 
     @Nonnull

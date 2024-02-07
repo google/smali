@@ -32,7 +32,6 @@ package com.android.tools.smali.dexlib2.dexbacked.reference;
 
 import com.android.tools.smali.dexlib2.ValueType;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.collect.Lists;
 import com.android.tools.smali.dexlib2.base.reference.BaseCallSiteReference;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.util.EncodedArrayItemIterator;
@@ -44,6 +43,8 @@ import com.android.tools.smali.dexlib2.iface.value.MethodTypeEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue;
 
 import javax.annotation.Nonnull;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class DexBackedCallSiteReference extends BaseCallSiteReference {
@@ -124,7 +125,7 @@ public class DexBackedCallSiteReference extends BaseCallSiteReference {
     @Nonnull
     @Override
     public List<? extends EncodedValue> getExtraArguments() {
-        List<EncodedValue> values = Lists.newArrayList();
+        List<EncodedValue> values = new ArrayList<>();
 
         EncodedArrayItemIterator iter = getCallSiteIterator();
         if (iter.getItemCount() < 3) {
