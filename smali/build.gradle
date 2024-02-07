@@ -94,13 +94,17 @@ dependencies {
 
 processResources.inputs.property('version', version)
 processResources.expand('version': version)
+processResources.dependsOn('generateGrammarSource')
 
 // Build a separate jar that contains all dependencies
 task fatJar(type: Jar, dependsOn: jar) {
+    dependsOn ':dexlib2:jar'
+    dependsOn ':util:jar'
     from sourceSets.main.output
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 
-    classifier = 'fat'
+    duplicatesStrategy = 'exclude'
+    archiveClassifier = 'fat'
 
     manifest {
         attributes('Main-Class': 'com.android.tools.smali.smali.Main')
@@ -168,5 +172,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: fatJar) {
 sourcesJar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
+sourcesJar.dependsOn('generateGrammarSource')
+sourcesJar.dependsOn('jflex')
 
 tasks.getByPath(':release').dependsOn(proguard)

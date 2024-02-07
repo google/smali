@@ -87,6 +87,9 @@ public class HeaderItem {
     public static final int DATA_SIZE_OFFSET = 104;
     public static final int DATA_START_OFFSET = 108;
 
+    public static final int CONTAINER_SIZE_OFFSET = 112;
+    public static final int CONTAINER_OFF_OFFSET = 116;
+
     @Nonnull private DexBackedDexFile dexFile;
 
     public HeaderItem(@Nonnull DexBackedDexFile dexFile) {

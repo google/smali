@@ -39,8 +39,6 @@ import com.android.tools.smali.util.InputStreamUtil;
 
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile.NotADexFile;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -48,8 +46,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Represents a zip file that contains dex files (i.e. an apk or jar file)
@@ -58,6 +60,7 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
 
     private final File zipFilePath;
     @Nullable private final Opcodes opcodes;
+    private TreeMap<String, DexBackedDexFile> entries;
 
     /**
      * Constructs a new ZipDexContainer for the given zip file
@@ -75,7 +78,14 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
      * @return A list of the names of dex files in this zip file
      */
     @Nonnull @Override public List<String> getDexEntryNames() throws IOException {
-        List<String> entryNames = new ArrayList<>();
+        return new ArrayList<>(getEntries().keySet());
+    }
+
+    private Map<String, DexBackedDexFile> getEntries() throws IOException {
+        if (entries != null) {
+          return entries;
+        }
+        entries = new TreeMap<String, DexBackedDexFile>();
         try (ZipFile zipFile = getZipFile()) {
             Enumeration<? extends ZipEntry> entriesEnumeration = zipFile.entries();
 
@@ -86,10 +96,18 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
                     continue;
                 }
 
-                entryNames.add(entry.getName());
+                // There might be several dex files in zip entry since DEX v41.
+                try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                    byte[] buf = ByteStreams.toByteArray(inputStream);
+                    for (int offset = 0, i = 1; offset < buf.length; i++) {
+                      DexBackedDexFile dex = new DexBackedDexFile(opcodes, buf, 0, true, offset);
+                      entries.put(entry.getName() + (i > 1 ? ("/" + i) : ""), dex);
+                      offset += dex.getFileSize();
+                    };
+                }
             }
 
-            return entryNames;
+            return entries;
         }
     }
 
@@ -97,18 +115,33 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
      * Loads a dex file from a specific named entry.
      *
      * @param entryName The name of the entry
-     * @return A ZipDexFile, or null if there is no entry with the given name
+     * @return A DexEntry, or null if there is no entry with the given name
      * @throws NotADexFile If the entry isn't a dex file
      */
     @Nullable @Override public DexEntry<DexBackedDexFile> getEntry(@Nonnull String entryName) throws IOException {
-        try (ZipFile zipFile = getZipFile()) {
-            ZipEntry entry = zipFile.getEntry(entryName);
-            if (entry == null) {
-                return null;
-            }
+         DexFile dexFile = getEntries().get(entryName);
+         if (dexFile == null) {
+             return null;
+         }
+         return new DexEntry() {
+             @Nonnull
+             @Override
+             public String getEntryName() {
+                 return entryName;
+             }
 
-            return loadEntry(zipFile, entry);
-        }
+             @Nonnull
+             @Override
+             public DexFile getDexFile() {
+                 return dexFile;
+             }
+
+             @Nonnull
+             @Override
+             public MultiDexContainer getContainer() {
+                 return ZipDexContainer.this;
+             }
+         };
     }
 
     public boolean isZipFile() {
@@ -140,33 +173,6 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
             return new ZipFile(zipFilePath);
         } catch (IOException ex) {
             throw new NotAZipFileException();
-        }
-    }
-
-    @Nonnull
-    protected DexEntry<DexBackedDexFile> loadEntry(@Nonnull ZipFile zipFile, @Nonnull ZipEntry zipEntry) throws IOException {
-        try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
-            byte[] buf = InputStreamUtil.toByteArray(inputStream);
-
-            return new DexEntry<DexBackedDexFile>() {
-                @Nonnull
-                @Override
-                public String getEntryName() {
-                    return zipEntry.getName();
-                }
-
-                @Nonnull
-                @Override
-                public DexBackedDexFile getDexFile() {
-                    return new DexBackedDexFile(opcodes, buf);
-                }
-
-                @Nonnull
-                @Override
-                public MultiDexContainer<DexBackedDexFile> getContainer() {
-                    return ZipDexContainer.this;
-                }
-            };
         }
     }
 
