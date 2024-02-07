@@ -25,6 +25,7 @@
     static_libs: [
         "guava",
         "jsr305",
+        "auto_android_annotation_stubs",
     ],
 }
 
@@ -42,5 +43,6 @@ java_library_host {
 
     static_libs: [
         "jsr305",
+        "auto_android_annotation_stubs",
     ],
 }
