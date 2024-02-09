@@ -179,10 +179,10 @@ public class BaksmaliWriterTest {
                 )));
 
         Assert.assertEquals(
-                ".subannotation Lannotation/`type with spaces`;\n" +
-                        "    `element with spaces 1` = Ldefining/class/`with spaces`;->`fieldName with spaces`:Lfield/`type with spaces`;\n" +
+                ".subannotation Lannotation/`type with spaces`;" + System.lineSeparator() +
+                        "    `element with spaces 1` = Ldefining/class/`with spaces`;->`fieldName with spaces`:Lfield/`type with spaces`;" + System.lineSeparator() +
                         "    `element with spaces 2` = Ldefining/class/`with spaces`;->`methodName with spaces`(" +
-                        "L`param with spaces 1`;L`param with spaces 2`;)Lreturn/type/`with spaces`;\n" +
+                        "L`param with spaces 1`;L`param with spaces 2`;)Lreturn/type/`with spaces`;" + System.lineSeparator() +
                         ".end subannotation",
                 output.toString());
     }
@@ -196,9 +196,9 @@ public class BaksmaliWriterTest {
                 new ImmutableMethodEncodedValue(getMethodReferenceWithSpaces()))));
 
         Assert.assertEquals(
-                "{\n" +
-                        "    Ldefining/class/`with spaces`;->`fieldName with spaces`:Lfield/`type with spaces`;,\n" +
-                        "    Ldefining/class/`with spaces`;->`methodName with spaces`(L`param with spaces 1`;L`param with spaces 2`;)Lreturn/type/`with spaces`;\n" +
+                "{" + System.lineSeparator() +
+                        "    Ldefining/class/`with spaces`;->`fieldName with spaces`:Lfield/`type with spaces`;," + System.lineSeparator() +
+                        "    Ldefining/class/`with spaces`;->`methodName with spaces`(L`param with spaces 1`;L`param with spaces 2`;)Lreturn/type/`with spaces`;" + System.lineSeparator() +
                         "}",
                 output.toString());
     }
