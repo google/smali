@@ -55,6 +55,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -460,7 +461,7 @@ public final class DexFileFactory {
         }
 
         @Nonnull @Override public List<String> getDexEntryNames() {
-            return unmodifiableList(List.of(entryName));
+            return Collections.singletonList(entryName);
         }
 
         @Nullable @Override public DexEntry<DexBackedDexFile> getEntry(@Nonnull String entryName) {

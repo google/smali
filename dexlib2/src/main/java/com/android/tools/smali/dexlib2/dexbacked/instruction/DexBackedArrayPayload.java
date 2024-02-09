@@ -81,7 +81,7 @@ public class DexBackedArrayPayload extends DexBackedInstruction implements Array
         }
 
         if (elementCount == 0) {
-            return Collections.unmodifiableList(List.of());
+            return Collections.emptyList();
         }
 
         switch (elementWidth) {

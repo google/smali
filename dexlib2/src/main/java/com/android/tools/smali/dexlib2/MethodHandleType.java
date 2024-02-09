@@ -50,16 +50,21 @@ public class MethodHandleType {
     public static final int INVOKE_DIRECT = 7;
     public static final int INVOKE_INTERFACE = 8;
 
-    private static final Map<Integer, String> methodHandleTypeNames = unmodifiableMap(Map.of(
-            STATIC_PUT, "static-put",
-            STATIC_GET, "static-get",
-            INSTANCE_PUT, "instance-put",
-            INSTANCE_GET, "instance-get",
-            INVOKE_STATIC, "invoke-static",
-            INVOKE_INSTANCE, "invoke-instance",
-            INVOKE_CONSTRUCTOR, "invoke-constructor",
-            INVOKE_DIRECT, "invoke-direct",
-            INVOKE_INTERFACE, "invoke-interface"));
+    private static final Map<Integer, String> methodHandleTypeNames;
+
+    static {
+        Map<Integer, String> temp = new HashMap<>();
+        temp.put(STATIC_PUT, "static-put");
+        temp.put(STATIC_GET, "static-get");
+        temp.put(INSTANCE_PUT, "instance-put");
+        temp.put(INSTANCE_GET, "instance-get");
+        temp.put(INVOKE_STATIC, "invoke-static");
+        temp.put(INVOKE_INSTANCE, "invoke-instance");
+        temp.put(INVOKE_CONSTRUCTOR, "invoke-constructor");
+        temp.put(INVOKE_DIRECT, "invoke-direct");
+        temp.put(INVOKE_INTERFACE, "invoke-interface");
+        methodHandleTypeNames = unmodifiableMap(temp);
+    }
 
     private static final Map<String, Integer> inverse = getInverse();
 
