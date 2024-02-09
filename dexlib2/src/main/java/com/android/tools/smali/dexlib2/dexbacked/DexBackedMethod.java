@@ -155,7 +155,7 @@ public class DexBackedMethod extends BaseMethodReference implements Method {
                 }
             };
         }
-        return unmodifiableList(List.of());
+        return Collections.emptyList();
     }
 
     @Nonnull

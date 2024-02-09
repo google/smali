@@ -170,11 +170,11 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
     @Nonnull
     public List<String> getBootClassPath() {
         if (getOatVersion() < 75) {
-            return Collections.unmodifiableList(List.of());
+            return Collections.emptyList();
         }
         String bcp = oatHeader.getKeyValue("bootclasspath");
         if (bcp == null) {
-            return Collections.unmodifiableList(List.of());
+            return Collections.emptyList();
         }
         return Arrays.asList(bcp.split(":"));
     }

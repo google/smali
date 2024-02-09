@@ -151,7 +151,8 @@ public class InstructionMethodItemTest {
         BaksmaliWriter writer = new BaksmaliWriter(stringWriter);
         methodItem.writeTo(writer);
 
-        Assert.assertEquals("#Invalid reference\n#const-string v0, blahblahblah\nnop", stringWriter.toString());
+        Assert.assertEquals("#Invalid reference" + System.lineSeparator()
+                + "#const-string v0, blahblahblah" + System.lineSeparator() + "nop", stringWriter.toString());
     }
 
     private static class TestMethod extends BaseMethodReference implements Method {
