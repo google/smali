@@ -34,14 +34,14 @@ import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.DexFile;
 import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Set;
 
 public class ImmutableDexFile implements DexFile {
-    @Nonnull protected final ImmutableSet<? extends ImmutableClassDef> classes;
+    @Nonnull protected final Set<? extends ImmutableClassDef> classes;
     @Nonnull private final Opcodes opcodes;
 
     public ImmutableDexFile(@Nonnull Opcodes opcodes, @Nullable Collection<? extends ClassDef> classes) {
@@ -49,7 +49,7 @@ public class ImmutableDexFile implements DexFile {
         this.opcodes = opcodes;
     }
 
-    public ImmutableDexFile(@Nonnull Opcodes opcodes, @Nullable ImmutableSet<? extends ImmutableClassDef> classes) {
+    public ImmutableDexFile(@Nonnull Opcodes opcodes, @Nullable Set<? extends ImmutableClassDef> classes) {
         this.classes = ImmutableUtils.nullToEmptySet(classes);
         this.opcodes = opcodes;
     }
@@ -61,6 +61,6 @@ public class ImmutableDexFile implements DexFile {
         return new ImmutableDexFile(dexFile.getOpcodes(), dexFile.getClasses());
     }
 
-    @Nonnull @Override public ImmutableSet<? extends ImmutableClassDef> getClasses() { return classes; }
+    @Nonnull @Override public Set<? extends ImmutableClassDef> getClasses() { return classes; }
     @Nonnull @Override public Opcodes getOpcodes() { return opcodes; }
 }

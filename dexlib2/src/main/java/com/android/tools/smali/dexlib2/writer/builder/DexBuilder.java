@@ -85,13 +85,13 @@ import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.Build
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderStringEncodedValue;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderTypeEncodedValue;
 import com.android.tools.smali.util.ExceptionWithContext;
+import com.android.tools.smali.util.IteratorUtils;
 import com.google.common.base.Function;
 import com.android.tools.smali.dexlib2.writer.util.StaticInitializerUtil;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 import javax.annotation.Nonnull;
@@ -177,8 +177,10 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
         ImmutableSortedSet<BuilderField> instanceFields = null;
         BuilderArrayEncodedValue internedStaticInitializers = null;
         if (fields != null) {
-            staticFields = ImmutableSortedSet.copyOf(Iterables.filter(fields, FieldUtil.FIELD_IS_STATIC));
-            instanceFields = ImmutableSortedSet.copyOf(Iterables.filter(fields, FieldUtil.FIELD_IS_INSTANCE));
+            staticFields = ImmutableSortedSet.copyOf((Iterator<? extends BuilderField>)IteratorUtils
+                    .filter(fields.iterator(), FieldUtil.FIELD_IS_STATIC));
+            instanceFields = ImmutableSortedSet.copyOf((Iterator<? extends BuilderField>)IteratorUtils
+                    .filter(fields.iterator(), FieldUtil.FIELD_IS_INSTANCE));
             ArrayEncodedValue staticInitializers = StaticInitializerUtil.getStaticInitializers(staticFields);
             if (staticInitializers != null) {
                 internedStaticInitializers = encodedArraySection.internArrayEncodedValue(staticInitializers);

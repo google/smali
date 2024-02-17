@@ -31,21 +31,22 @@
 package com.android.tools.smali.dexlib2.util;
 
 import com.android.tools.smali.dexlib2.iface.Field;
-import com.google.common.base.Predicate;
 import com.android.tools.smali.dexlib2.AccessFlags;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.util.function.Predicate;
+
 public final class FieldUtil {
     public static Predicate<Field> FIELD_IS_STATIC = new Predicate<Field>() {
-        @Override public boolean apply(@Nullable Field input) {
+        @Override public boolean test(@Nullable Field input) {
             return input!=null && isStatic(input);
         }
     };
 
     public static Predicate<Field> FIELD_IS_INSTANCE = new Predicate<Field>() {
-        @Override public boolean apply(@Nullable Field input) {
+        @Override public boolean test(@Nullable Field input) {
             return input!= null && !isStatic(input);
         }
     };

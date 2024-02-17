@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2.immutable.reference;
 
 import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.immutable.util.CharSequenceConverter;
@@ -39,10 +38,12 @@ import com.android.tools.smali.dexlib2.immutable.util.CharSequenceConverter;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 public class ImmutableMethodReference extends BaseMethodReference implements ImmutableReference {
     @Nonnull protected final String definingClass;
     @Nonnull protected final String name;
-    @Nonnull protected final ImmutableList<String> parameters;
+    @Nonnull protected final List<String> parameters;
     @Nonnull protected final String returnType;
 
     public ImmutableMethodReference(@Nonnull String definingClass,
@@ -57,7 +58,7 @@ public class ImmutableMethodReference extends BaseMethodReference implements Imm
 
     public ImmutableMethodReference(@Nonnull String definingClass,
                                     @Nonnull String name,
-                                    @Nullable ImmutableList<String> parameters,
+                                    @Nullable List<String> parameters,
                                     @Nonnull String returnType) {
         this.definingClass = definingClass;
         this.name = name;
@@ -79,7 +80,7 @@ public class ImmutableMethodReference extends BaseMethodReference implements Imm
 
     @Nonnull @Override public String getDefiningClass() { return definingClass; }
     @Nonnull @Override public String getName() { return name; }
-    @Nonnull @Override public ImmutableList<String> getParameterTypes() { return parameters; }
+    @Nonnull @Override public List<String> getParameterTypes() { return parameters; }
     @Nonnull @Override public String getReturnType() { return returnType; }
 
 

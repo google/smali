@@ -30,35 +30,37 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
+import static java.util.Collections.unmodifiableMap;
+
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ImmutableMultiDexContainer implements MultiDexContainer<ImmutableDexFile> {
 
-    private final ImmutableMap<String, ImmutableDexEntry> entries;
+    private final Map<String, ImmutableDexEntry> entries;
 
     public ImmutableMultiDexContainer(Map<String, ImmutableDexFile> entries) {
-        ImmutableMap.Builder<String, ImmutableDexEntry> builder = ImmutableMap.builder();
+        HashMap<String, ImmutableDexEntry> map = new HashMap<>();
 
         for (Map.Entry<String, ImmutableDexFile> entry : entries.entrySet()) {
             ImmutableDexEntry dexEntry = new ImmutableDexEntry(entry.getKey(), entry.getValue());
-            builder.put(dexEntry.getEntryName(), dexEntry);
+            map.put(dexEntry.getEntryName(), dexEntry);
         }
 
-        this.entries = builder.build();
+        this.entries = unmodifiableMap(map);
     }
 
 
     @Nonnull
     @Override
     public List<String> getDexEntryNames() {
-        return ImmutableList.copyOf(entries.keySet());
+        return List.copyOf(entries.keySet());
     }
 
     @Nullable

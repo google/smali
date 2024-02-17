@@ -30,13 +30,16 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
+import static java.util.Collections.unmodifiableList;
+
 import com.android.tools.smali.dexlib2.base.BaseExceptionHandler;
 import com.android.tools.smali.dexlib2.iface.ExceptionHandler;
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.List;
 
 public class ImmutableExceptionHandler extends BaseExceptionHandler implements ExceptionHandler {
     @Nullable protected final String exceptionType;
@@ -61,9 +64,9 @@ public class ImmutableExceptionHandler extends BaseExceptionHandler implements E
     @Override public int getHandlerCodeAddress() { return handlerCodeAddress; }
 
     @Nonnull
-    public static ImmutableList<ImmutableExceptionHandler> immutableListOf(
+    public static List<ImmutableExceptionHandler> immutableListOf(
             @Nullable Iterable<? extends ExceptionHandler> list) {
-        return CONVERTER.toList(list);
+        return unmodifiableList(CONVERTER.toList(list));
     }
 
     private static final ImmutableConverter<ImmutableExceptionHandler, ExceptionHandler> CONVERTER =

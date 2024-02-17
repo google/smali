@@ -30,19 +30,22 @@
 
 package com.android.tools.smali.dexlib2.immutable.util;
 
+import static java.util.Collections.unmodifiableList;
+
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.List;
 
 public final class CharSequenceConverter {
     private CharSequenceConverter() {
     }
 
     @Nonnull
-    public static ImmutableList<String> immutableStringList(@Nullable Iterable<? extends CharSequence> iterable) {
-        return CONVERTER.toList(iterable);
+    public static List<String> immutableStringList(@Nullable Iterable<? extends CharSequence> iterable) {
+        return unmodifiableList(CONVERTER.toList(iterable));
     }
 
     private static final ImmutableConverter<String, CharSequence> CONVERTER =

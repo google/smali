@@ -30,6 +30,8 @@
 
 package com.android.tools.smali.dexlib2.immutable.value;
 
+import static java.util.Collections.unmodifiableList;
+
 import com.android.tools.smali.dexlib2.ValueType;
 import com.android.tools.smali.dexlib2.iface.value.AnnotationEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
@@ -51,11 +53,11 @@ import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.TypeEncodedValue;
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.List;
 
 public class ImmutableEncodedValueFactory {
     @Nonnull
@@ -98,8 +100,7 @@ public class ImmutableEncodedValueFactory {
             case ValueType.METHOD_TYPE:
                 return ImmutableMethodTypeEncodedValue.of((MethodTypeEncodedValue) encodedValue);
             default:
-                Preconditions.checkArgument(false);
-                return null;
+                throw new IllegalArgumentException("Invalid value type.");
         }
     }
 
@@ -139,9 +140,9 @@ public class ImmutableEncodedValueFactory {
     }
 
     @Nonnull
-    public static ImmutableList<ImmutableEncodedValue> immutableListOf
+    public static List<ImmutableEncodedValue> immutableListOf
             (@Nullable Iterable<? extends EncodedValue> list) {
-        return CONVERTER.toList(list);
+        return unmodifiableList(CONVERTER.toList(list));
     }
 
     private static final ImmutableConverter<ImmutableEncodedValue, EncodedValue> CONVERTER =

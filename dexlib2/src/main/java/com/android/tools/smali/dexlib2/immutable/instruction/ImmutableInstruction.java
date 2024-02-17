@@ -30,6 +30,8 @@
 
 package com.android.tools.smali.dexlib2.immutable.instruction;
 
+import static java.util.Collections.unmodifiableList;
+
 import com.android.tools.smali.dexlib2.Format;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.ArrayPayload;
@@ -71,8 +73,9 @@ import com.android.tools.smali.dexlib2.iface.instruction.formats.SparseSwitchPay
 import com.android.tools.smali.dexlib2.iface.instruction.formats.UnknownInstruction;
 import com.android.tools.smali.dexlib2.util.Preconditions;
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction;
+
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -182,8 +185,8 @@ public abstract class ImmutableInstruction implements Instruction {
     }
 
     @Nonnull
-    public static ImmutableList<ImmutableInstruction> immutableListOf(Iterable<? extends Instruction> list) {
-        return CONVERTER.toList(list);
+    public static List<ImmutableInstruction> immutableListOf(Iterable<? extends Instruction> list) {
+        return unmodifiableList(CONVERTER.toList(list));
     }
 
     private static final ImmutableConverter<ImmutableInstruction, Instruction> CONVERTER =

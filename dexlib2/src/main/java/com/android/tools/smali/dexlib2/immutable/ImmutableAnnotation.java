@@ -30,21 +30,23 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
+import static java.util.Collections.unmodifiableSet;
+
 import com.android.tools.smali.dexlib2.base.BaseAnnotation;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.AnnotationElement;
 import com.android.tools.smali.util.ImmutableConverter;
 import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Set;
 
 public class ImmutableAnnotation extends BaseAnnotation {
     protected final int visibility;
     @Nonnull protected final String type;
-    @Nonnull protected final ImmutableSet<? extends ImmutableAnnotationElement> elements;
+    @Nonnull protected final Set<? extends ImmutableAnnotationElement> elements;
 
     public ImmutableAnnotation(int visibility,
                                @Nonnull String type,
@@ -56,7 +58,7 @@ public class ImmutableAnnotation extends BaseAnnotation {
 
     public ImmutableAnnotation(int visibility,
                                @Nonnull String type,
-                               @Nullable ImmutableSet<? extends ImmutableAnnotationElement> elements) {
+                               @Nullable Set<? extends ImmutableAnnotationElement> elements) {
         this.visibility = visibility;
         this.type = type;
         this.elements = ImmutableUtils.nullToEmptySet(elements);
@@ -74,11 +76,11 @@ public class ImmutableAnnotation extends BaseAnnotation {
 
     @Override public int getVisibility() { return visibility; }
     @Nonnull @Override public String getType() { return type; }
-    @Nonnull @Override public ImmutableSet<? extends ImmutableAnnotationElement> getElements() { return elements; }
+    @Nonnull @Override public Set<? extends ImmutableAnnotationElement> getElements() { return elements; }
 
     @Nonnull
-    public static ImmutableSet<ImmutableAnnotation> immutableSetOf(@Nullable Iterable<? extends Annotation> list) {
-        return CONVERTER.toSet(list);
+    public static Set<ImmutableAnnotation> immutableSetOf(@Nullable Iterable<? extends Annotation> list) {
+        return unmodifiableSet(CONVERTER.toSet(list));
     }
 
     private static final ImmutableConverter<ImmutableAnnotation, Annotation> CONVERTER =

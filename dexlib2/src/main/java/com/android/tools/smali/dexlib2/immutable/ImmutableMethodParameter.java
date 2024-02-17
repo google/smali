@@ -30,21 +30,21 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
+import static java.util.Collections.unmodifiableList;
+
 import com.android.tools.smali.dexlib2.base.BaseMethodParameter;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.MethodParameter;
 import com.android.tools.smali.util.ImmutableConverter;
-import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
+import java.util.List;
 
 public class ImmutableMethodParameter extends BaseMethodParameter {
     @Nonnull protected final String type;
-    @Nonnull protected final ImmutableSet<? extends ImmutableAnnotation> annotations;
+    @Nonnull protected final Set<? extends ImmutableAnnotation> annotations;
     @Nullable protected final String name;
 
     public ImmutableMethodParameter(@Nonnull String type,
@@ -52,14 +52,6 @@ public class ImmutableMethodParameter extends BaseMethodParameter {
                                     @Nullable String name) {
         this.type = type;
         this.annotations = ImmutableAnnotation.immutableSetOf(annotations);
-        this.name = name;
-    }
-
-    public ImmutableMethodParameter(@Nonnull String type,
-                                    @Nullable ImmutableSet<? extends ImmutableAnnotation> annotations,
-                                    @Nullable String name) {
-        this.type = type;
-        this.annotations = ImmutableUtils.nullToEmptySet(annotations);
         this.name = name;
     }
 
@@ -81,9 +73,9 @@ public class ImmutableMethodParameter extends BaseMethodParameter {
     @Nullable @Override public String getSignature() { return null; }
 
     @Nonnull
-    public static ImmutableList<ImmutableMethodParameter> immutableListOf(
+    public static List<ImmutableMethodParameter> immutableListOf(
             @Nullable Iterable<? extends MethodParameter> list) {
-        return CONVERTER.toList(list);
+        return unmodifiableList(CONVERTER.toList(list));
     }
 
     private static final ImmutableConverter<ImmutableMethodParameter, MethodParameter> CONVERTER =

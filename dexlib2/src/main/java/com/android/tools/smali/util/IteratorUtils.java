@@ -31,17 +31,32 @@
 package com.android.tools.smali.util;
 
 import java.util.Iterator;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
+import java.util.function.Predicate;
 
 public final class IteratorUtils {
 
-    public static <T extends @Nullable Object> T getLast(Iterator<T> iterator) {
+    public static <T extends Object> T getLast(Iterator<T> iterator) {
         while (true) {
             T current = iterator.next();
             if (!iterator.hasNext()) {
                 return current;
             }
         }
+    }
+    
+    public static <T extends Object> AbstractIterator<T> filter(
+                Iterator<T> unfiltered, Predicate<? super T> retainIfTrue) {
+        return new AbstractIterator<T>() {
+            @Override
+            protected T computeNext() {
+                while (unfiltered.hasNext()) {
+                    T next = unfiltered.next();
+                    if (retainIfTrue.test(next)) {
+                        return next;
+                    }
+                }
+                return endOfData();
+            }
+        };
     }
 }

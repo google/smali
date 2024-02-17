@@ -30,32 +30,37 @@
 
 package com.android.tools.smali.util;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.unmodifiableSortedSet;
+import static java.util.Collections.unmodifiableList;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ImmutableUtils {
-    @Nonnull public static <T> ImmutableList<T> nullToEmptyList(@Nullable ImmutableList<T> list) {
+    @Nonnull public static <T> List<T> nullToEmptyList(@Nullable List<T> list) {
         if (list == null) {
-            return ImmutableList.of();
+            return Collections.emptyList();
         }
-        return list;
+        return unmodifiableList(list);
     }
 
-    @Nonnull public static <T> ImmutableSet<T> nullToEmptySet(@Nullable ImmutableSet<T> set) {
+    @Nonnull public static <T> Set<T> nullToEmptySet(@Nullable Set<T> set) {
         if (set == null) {
-            return ImmutableSet.of();
+            return Collections.emptySet();
         }
-        return set;
+        return unmodifiableSet(set);
     }
 
-    @Nonnull public static <T> ImmutableSortedSet<T> nullToEmptySortedSet(@Nullable ImmutableSortedSet<T> set) {
+    @Nonnull public static <T> SortedSet<T> nullToEmptySortedSet(@Nullable SortedSet<T> set) {
         if (set == null) {
-            return ImmutableSortedSet.of();
+            return Collections.emptySortedSet();
         }
-        return set;
+        return unmodifiableSortedSet(set);
     }
 }
