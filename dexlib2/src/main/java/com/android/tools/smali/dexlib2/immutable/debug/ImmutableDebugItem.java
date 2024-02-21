@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.dexlib2.immutable.debug;
 
-import static java.util.Collections.unmodifiableList;
-
 import com.android.tools.smali.dexlib2.DebugItemType;
 import com.android.tools.smali.dexlib2.iface.debug.DebugItem;
 import com.android.tools.smali.dexlib2.iface.debug.EndLocal;
@@ -85,7 +83,7 @@ public abstract class ImmutableDebugItem implements DebugItem {
 
     @Nonnull
     public static List<ImmutableDebugItem> immutableListOf(@Nullable Iterable<? extends DebugItem> list) {
-        return unmodifiableList(CONVERTER.toList(list));
+        return CONVERTER.toList(list);
     }
 
     private static final ImmutableConverter<ImmutableDebugItem, DebugItem> CONVERTER =

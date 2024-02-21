@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.dexlib2.immutable.instruction;
 
-import static java.util.Collections.unmodifiableList;
-
 import com.android.tools.smali.util.ImmutableConverter;
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchElement;
 
@@ -64,7 +62,7 @@ public class ImmutableSwitchElement implements SwitchElement {
 
     @Nonnull
     public static List<ImmutableSwitchElement> immutableListOf(@Nullable List<? extends SwitchElement> list) {
-        return unmodifiableList(CONVERTER.toList(list));
+        return CONVERTER.toList(list);
     }
 
     private static final ImmutableConverter<ImmutableSwitchElement, SwitchElement> CONVERTER =

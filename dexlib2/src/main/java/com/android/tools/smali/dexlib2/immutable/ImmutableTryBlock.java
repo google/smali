@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
-import static java.util.Collections.unmodifiableList;
-
 import com.android.tools.smali.dexlib2.base.BaseTryBlock;
 import com.android.tools.smali.dexlib2.iface.ExceptionHandler;
 import com.android.tools.smali.dexlib2.iface.TryBlock;
@@ -74,7 +72,7 @@ public class ImmutableTryBlock extends BaseTryBlock<ImmutableExceptionHandler> {
     @Nonnull
     public static List<ImmutableTryBlock> immutableListOf(
             @Nullable List<? extends TryBlock<? extends ExceptionHandler>> list) {
-        return unmodifiableList(CONVERTER.toList(list));
+        return CONVERTER.toList(list);
     }
 
     private static final ImmutableConverter<ImmutableTryBlock, TryBlock<? extends ExceptionHandler>> CONVERTER =

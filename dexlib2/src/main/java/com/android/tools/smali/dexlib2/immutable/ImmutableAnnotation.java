@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
-import static java.util.Collections.unmodifiableSet;
-
 import com.android.tools.smali.dexlib2.base.BaseAnnotation;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.AnnotationElement;
@@ -80,7 +78,7 @@ public class ImmutableAnnotation extends BaseAnnotation {
 
     @Nonnull
     public static Set<ImmutableAnnotation> immutableSetOf(@Nullable Iterable<? extends Annotation> list) {
-        return unmodifiableSet(CONVERTER.toSet(list));
+        return CONVERTER.toSet(list);
     }
 
     private static final ImmutableConverter<ImmutableAnnotation, Annotation> CONVERTER =

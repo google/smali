@@ -31,12 +31,14 @@
 package com.android.tools.smali.dexlib2.immutable;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableList;
 
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,11 +58,10 @@ public class ImmutableMultiDexContainer implements MultiDexContainer<ImmutableDe
         this.entries = unmodifiableMap(map);
     }
 
-
     @Nonnull
     @Override
     public List<String> getDexEntryNames() {
-        return List.copyOf(entries.keySet());
+        return unmodifiableList(new ArrayList<>(entries.keySet()));
     }
 
     @Nullable

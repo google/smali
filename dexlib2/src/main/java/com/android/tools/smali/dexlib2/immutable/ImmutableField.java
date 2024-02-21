@@ -30,7 +30,7 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
-import static java.util.Collections.unmodifiableSortedSet;
+import static java.util.Collections.unmodifiableSet;
 
 import com.android.tools.smali.dexlib2.HiddenApiRestriction;
 import com.android.tools.smali.dexlib2.base.reference.BaseFieldReference;
@@ -46,6 +46,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -71,8 +72,8 @@ public class ImmutableField extends BaseFieldReference implements Field {
         this.accessFlags = accessFlags;
         this.initialValue = ImmutableEncodedValueFactory.ofNullable(initialValue);
         this.annotations = ImmutableAnnotation.immutableSetOf(annotations);
-        this.hiddenApiRestrictions =
-                hiddenApiRestrictions == null ? Collections.emptySet() : Set.copyOf(hiddenApiRestrictions);
+        this.hiddenApiRestrictions = hiddenApiRestrictions == null ? Collections.emptySet()
+                : unmodifiableSet(new HashSet<>(hiddenApiRestrictions));
     }
 
     public static ImmutableField of(Field field) {
@@ -99,7 +100,7 @@ public class ImmutableField extends BaseFieldReference implements Field {
 
     @Nonnull
     public static SortedSet<ImmutableField> immutableSetOf(@Nullable Iterable<? extends Field> list) {
-        return unmodifiableSortedSet(CONVERTER.toSortedSet(CollectionUtils.naturalOrdering(), list));
+        return CONVERTER.toSortedSet(CollectionUtils.naturalOrdering(), list);
     }
 
     private static final ImmutableConverter<ImmutableField, Field> CONVERTER =

@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.dexlib2.immutable.value;
 
-import static java.util.Collections.unmodifiableList;
-
 import com.android.tools.smali.dexlib2.ValueType;
 import com.android.tools.smali.dexlib2.iface.value.AnnotationEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
@@ -142,7 +140,7 @@ public class ImmutableEncodedValueFactory {
     @Nonnull
     public static List<ImmutableEncodedValue> immutableListOf
             (@Nullable Iterable<? extends EncodedValue> list) {
-        return unmodifiableList(CONVERTER.toList(list));
+        return CONVERTER.toList(list);
     }
 
     private static final ImmutableConverter<ImmutableEncodedValue, EncodedValue> CONVERTER =

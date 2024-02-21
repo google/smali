@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.dexlib2.immutable.instruction;
 
-import static java.util.Collections.unmodifiableList;
-
 import com.android.tools.smali.dexlib2.Format;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.ArrayPayload;
@@ -186,7 +184,7 @@ public abstract class ImmutableInstruction implements Instruction {
 
     @Nonnull
     public static List<ImmutableInstruction> immutableListOf(Iterable<? extends Instruction> list) {
-        return unmodifiableList(CONVERTER.toList(list));
+        return CONVERTER.toList(list);
     }
 
     private static final ImmutableConverter<ImmutableInstruction, Instruction> CONVERTER =

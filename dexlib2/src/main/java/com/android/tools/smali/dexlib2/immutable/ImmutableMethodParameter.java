@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
-import static java.util.Collections.unmodifiableList;
-
 import com.android.tools.smali.dexlib2.base.BaseMethodParameter;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.MethodParameter;
@@ -75,7 +73,7 @@ public class ImmutableMethodParameter extends BaseMethodParameter {
     @Nonnull
     public static List<ImmutableMethodParameter> immutableListOf(
             @Nullable Iterable<? extends MethodParameter> list) {
-        return unmodifiableList(CONVERTER.toList(list));
+        return CONVERTER.toList(list);
     }
 
     private static final ImmutableConverter<ImmutableMethodParameter, MethodParameter> CONVERTER =

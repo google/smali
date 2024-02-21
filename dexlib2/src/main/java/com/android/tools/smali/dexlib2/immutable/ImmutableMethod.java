@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2.immutable;
 
 import static java.util.Collections.unmodifiableSet;
-import static java.util.Collections.unmodifiableSortedSet;
 
 import com.android.tools.smali.dexlib2.HiddenApiRestriction;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodReference;
@@ -47,6 +46,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -77,7 +77,7 @@ public class ImmutableMethod extends BaseMethodReference implements Method {
         this.annotations = ImmutableAnnotation.immutableSetOf(annotations);
         this.hiddenApiRestrictions =
                 hiddenApiRestrictions == null ? Collections.emptySet() : 
-                        unmodifiableSet(Set.copyOf(hiddenApiRestrictions));
+                        unmodifiableSet(new HashSet<>(hiddenApiRestrictions));
         this.methodImplementation = ImmutableMethodImplementation.of(methodImplementation);
     }
 
@@ -126,7 +126,7 @@ public class ImmutableMethod extends BaseMethodReference implements Method {
 
     @Nonnull
     public static SortedSet<ImmutableMethod> immutableSetOf(@Nullable Iterable<? extends Method> list) {
-        return unmodifiableSortedSet(CONVERTER.toSortedSet(CollectionUtils.naturalOrdering(), list));
+        return CONVERTER.toSortedSet(CollectionUtils.naturalOrdering(), list);
     }
 
     private static final ImmutableConverter<ImmutableMethod, Method> CONVERTER =

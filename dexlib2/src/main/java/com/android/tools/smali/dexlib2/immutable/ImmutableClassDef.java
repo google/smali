@@ -30,7 +30,8 @@
 
 package com.android.tools.smali.dexlib2.immutable;
 
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.unmodifiableList;
+
 
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 import com.android.tools.smali.dexlib2.iface.Annotation;
@@ -46,6 +47,7 @@ import com.android.tools.smali.util.IteratorUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -83,7 +85,7 @@ public class ImmutableClassDef extends BaseTypeReference implements ClassDef {
         this.type = type;
         this.accessFlags = accessFlags;
         this.superclass = superclass;
-        this.interfaces = interfaces==null ? Collections.emptyList() : List.copyOf(interfaces);
+        this.interfaces = interfaces == null ? Collections.emptyList() : unmodifiableList(new ArrayList<>(interfaces));
         this.sourceFile = sourceFile;
         this.annotations = ImmutableAnnotation.immutableSetOf(annotations);
         this.staticFields = ImmutableField.immutableSetOf(IteratorUtils.filter(fields.iterator(), FieldUtil.FIELD_IS_STATIC));
@@ -105,7 +107,7 @@ public class ImmutableClassDef extends BaseTypeReference implements ClassDef {
         this.type = type;
         this.accessFlags = accessFlags;
         this.superclass = superclass;
-        this.interfaces = interfaces==null ? Collections.emptyList() : List.copyOf(interfaces);
+        this.interfaces = interfaces == null ? Collections.emptyList() : unmodifiableList(new ArrayList<>(interfaces));
         this.sourceFile = sourceFile;
         this.annotations = ImmutableAnnotation.immutableSetOf(annotations);
         this.staticFields = ImmutableField.immutableSetOf(staticFields);
@@ -178,7 +180,7 @@ public class ImmutableClassDef extends BaseTypeReference implements ClassDef {
 
     @Nonnull
     public static Set<ImmutableClassDef> immutableSetOf(@Nullable Iterable<? extends ClassDef> iterable) {
-        return unmodifiableSet(CONVERTER.toSet(iterable));
+        return CONVERTER.toSet(iterable);
     }
 
     private static final ImmutableConverter<ImmutableClassDef, ClassDef> CONVERTER =
