@@ -34,13 +34,12 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Collections.unmodifiableSortedSet;
 import static java.util.Collections.unmodifiableList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ImmutableUtils {
     @Nonnull public static <T> List<T> nullToEmptyList(@Nullable List<T> list) {

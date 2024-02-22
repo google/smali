@@ -37,7 +37,6 @@ import com.android.tools.smali.dexlib2.immutable.util.CharSequenceConverter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 public class ImmutableMethodReference extends BaseMethodReference implements ImmutableReference {

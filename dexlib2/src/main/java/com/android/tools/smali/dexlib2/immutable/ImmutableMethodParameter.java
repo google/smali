@@ -37,8 +37,8 @@ import com.android.tools.smali.util.ImmutableConverter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 public class ImmutableMethodParameter extends BaseMethodParameter {
     @Nonnull protected final String type;

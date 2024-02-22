@@ -37,7 +37,6 @@ import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

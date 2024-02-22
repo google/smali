@@ -36,7 +36,6 @@ import static java.util.Collections.unmodifiableSortedSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

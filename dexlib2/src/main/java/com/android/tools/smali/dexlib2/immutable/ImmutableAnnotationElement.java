@@ -39,7 +39,6 @@ import com.android.tools.smali.util.ImmutableConverter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Set;
 
 public class ImmutableAnnotationElement extends BaseAnnotationElement {

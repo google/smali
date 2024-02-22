@@ -41,7 +41,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
-
 public class ImmutableAnnotationEncodedValue extends BaseAnnotationEncodedValue implements ImmutableEncodedValue {
     @Nonnull protected final String type;
     @Nonnull protected final Set<? extends ImmutableAnnotationElement> elements;

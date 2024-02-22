@@ -38,12 +38,11 @@ import com.android.tools.smali.dexlib2.util.Preconditions;
 
 import com.android.tools.smali.dexlib2.iface.instruction.formats.ArrayPayload;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 
 public class ImmutableArrayPayload extends ImmutableInstruction implements ArrayPayload {

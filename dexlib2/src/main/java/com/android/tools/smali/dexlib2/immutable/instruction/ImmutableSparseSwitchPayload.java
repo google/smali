@@ -35,10 +35,9 @@ import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.SparseSwitchPayload;
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchElement;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class ImmutableSparseSwitchPayload extends ImmutableInstruction implements
     SparseSwitchPayload {

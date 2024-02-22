@@ -35,7 +35,6 @@ import com.android.tools.smali.dexlib2.AccessFlags;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.function.Predicate;
 
 public final class FieldUtil {

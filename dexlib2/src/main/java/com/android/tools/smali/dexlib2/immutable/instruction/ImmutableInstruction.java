@@ -73,9 +73,8 @@ import com.android.tools.smali.dexlib2.util.Preconditions;
 import com.android.tools.smali.util.ImmutableConverter;
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public abstract class ImmutableInstruction implements Instruction {
     @Nonnull protected final Opcode opcode;

@@ -32,7 +32,6 @@ package com.android.tools.smali.dexlib2.immutable;
 
 import static java.util.Collections.unmodifiableList;
 
-
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
@@ -50,9 +49,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.List;
 
 
 public class ImmutableClassDef extends BaseTypeReference implements ClassDef {

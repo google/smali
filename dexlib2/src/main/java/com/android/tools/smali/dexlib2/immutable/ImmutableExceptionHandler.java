@@ -36,7 +36,6 @@ import com.android.tools.smali.util.ImmutableConverter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 public class ImmutableExceptionHandler extends BaseExceptionHandler implements ExceptionHandler {

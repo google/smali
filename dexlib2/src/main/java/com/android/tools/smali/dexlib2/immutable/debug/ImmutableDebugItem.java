@@ -44,7 +44,6 @@ import com.android.tools.smali.util.ImmutableConverter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 public abstract class ImmutableDebugItem implements DebugItem {

@@ -35,7 +35,6 @@ import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 
 import javax.annotation.Nonnull;
-
 import java.util.Collection;
 import java.util.List;
 
