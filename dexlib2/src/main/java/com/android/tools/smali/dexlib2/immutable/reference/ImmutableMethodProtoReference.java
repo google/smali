@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2.immutable.reference;
 
 import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodProtoReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodProtoReference;
 import com.android.tools.smali.dexlib2.immutable.util.CharSequenceConverter;
@@ -41,10 +40,10 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ImmutableMethodProtoReference extends BaseMethodProtoReference implements ImmutableReference {
-    @Nonnull protected final ImmutableList<String> parameters;
+    @Nonnull protected final List<String> parameters;
     @Nonnull protected final String returnType;
 
-    public ImmutableMethodProtoReference(@Nullable ImmutableList<String> parameters,
+    public ImmutableMethodProtoReference(@Nullable List<String> parameters,
                                          @Nonnull String returnType) {
         this.parameters = ImmutableUtils.nullToEmptyList(parameters);
         this.returnType = returnType;

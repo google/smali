@@ -36,10 +36,10 @@ import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 import com.android.tools.smali.dexlib2.immutable.value.ImmutableEncodedValue;
 import com.android.tools.smali.dexlib2.immutable.value.ImmutableEncodedValueFactory;
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Set;
 
 public class ImmutableAnnotationElement extends BaseAnnotationElement {
     @Nonnull protected final String name;
@@ -70,7 +70,7 @@ public class ImmutableAnnotationElement extends BaseAnnotationElement {
     @Nonnull @Override public EncodedValue getValue() { return value; }
 
     @Nonnull
-    public static ImmutableSet<ImmutableAnnotationElement> immutableSetOf(
+    public static Set<ImmutableAnnotationElement> immutableSetOf(
             @Nullable Iterable<? extends AnnotationElement> list) {
         return CONVERTER.toSet(list);
     }

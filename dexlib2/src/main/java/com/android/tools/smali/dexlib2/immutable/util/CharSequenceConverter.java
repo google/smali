@@ -31,17 +31,17 @@
 package com.android.tools.smali.dexlib2.immutable.util;
 
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public final class CharSequenceConverter {
     private CharSequenceConverter() {
     }
 
     @Nonnull
-    public static ImmutableList<String> immutableStringList(@Nullable Iterable<? extends CharSequence> iterable) {
+    public static List<String> immutableStringList(@Nullable Iterable<? extends CharSequence> iterable) {
         return CONVERTER.toList(iterable);
     }
 

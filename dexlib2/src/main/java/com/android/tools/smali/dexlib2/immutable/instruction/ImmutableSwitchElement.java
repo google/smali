@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2.immutable.instruction;
 
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchElement;
 
 import javax.annotation.Nonnull;
@@ -62,7 +61,7 @@ public class ImmutableSwitchElement implements SwitchElement {
     @Override public int getOffset() { return offset; }
 
     @Nonnull
-    public static ImmutableList<ImmutableSwitchElement> immutableListOf(@Nullable List<? extends SwitchElement> list) {
+    public static List<ImmutableSwitchElement> immutableListOf(@Nullable List<? extends SwitchElement> list) {
         return CONVERTER.toList(list);
     }
 

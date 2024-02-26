@@ -33,8 +33,6 @@ package com.android.tools.smali.dexlib2.immutable.instruction;
 import com.android.tools.smali.dexlib2.Format;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.SparseSwitchPayload;
-import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchElement;
 
 import javax.annotation.Nonnull;
@@ -45,17 +43,11 @@ public class ImmutableSparseSwitchPayload extends ImmutableInstruction implement
     SparseSwitchPayload {
     public static final Opcode OPCODE = Opcode.SPARSE_SWITCH_PAYLOAD;
 
-    @Nonnull protected final ImmutableList<? extends ImmutableSwitchElement> switchElements;
+    @Nonnull protected final List<? extends ImmutableSwitchElement> switchElements;
 
     public ImmutableSparseSwitchPayload(@Nullable List<? extends SwitchElement> switchElements) {
         super(OPCODE);
         this.switchElements = ImmutableSwitchElement.immutableListOf(switchElements);
-    }
-
-    public ImmutableSparseSwitchPayload(
-            @Nullable ImmutableList<? extends ImmutableSwitchElement> switchElements) {
-        super(OPCODE);
-        this.switchElements = ImmutableUtils.nullToEmptyList(switchElements);
     }
 
     @Nonnull

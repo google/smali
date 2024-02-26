@@ -31,7 +31,7 @@
 package com.android.tools.smali.dexlib2.immutable.reference;
 
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.collect.ImmutableList;
+
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference;
 
@@ -57,7 +57,7 @@ public class ImmutableTypeReference extends BaseTypeReference implements Immutab
     @Nonnull @Override public String getType() { return type; }
 
     @Nonnull
-    public static ImmutableList<ImmutableTypeReference> immutableListOf(@Nullable List<? extends TypeReference> list) {
+    public static List<ImmutableTypeReference> immutableListOf(@Nullable List<? extends TypeReference> list) {
         return CONVERTER.toList(list);
     }
 

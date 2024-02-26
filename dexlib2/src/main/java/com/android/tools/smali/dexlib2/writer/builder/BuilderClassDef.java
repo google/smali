@@ -36,10 +36,10 @@ import com.android.tools.smali.dexlib2.writer.DexWriter;
 import com.google.common.base.Functions;
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderArrayEncodedValue;
+import com.android.tools.smali.util.IteratorUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -95,8 +95,10 @@ public class BuilderClassDef extends BaseTypeReference implements ClassDef {
         this.annotations = annotations;
         this.staticFields = staticFields;
         this.instanceFields = instanceFields;
-        this.directMethods = ImmutableSortedSet.copyOf(Iterables.filter(methods, MethodUtil.METHOD_IS_DIRECT));
-        this.virtualMethods = ImmutableSortedSet.copyOf(Iterables.filter(methods, MethodUtil.METHOD_IS_VIRTUAL));
+        this.directMethods = ImmutableSortedSet.copyOf((Iterator<? extends BuilderMethod>)IteratorUtils
+                .filter(methods.iterator(), MethodUtil.METHOD_IS_DIRECT));
+        this.virtualMethods = ImmutableSortedSet.copyOf((Iterator<? extends BuilderMethod>)IteratorUtils
+                .filter(methods.iterator(), MethodUtil.METHOD_IS_VIRTUAL));
         this.staticInitializers = staticInitializers;
     }
 

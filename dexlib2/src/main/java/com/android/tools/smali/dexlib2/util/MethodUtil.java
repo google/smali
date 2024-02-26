@@ -30,7 +30,6 @@
 
 package com.android.tools.smali.dexlib2.util;
 
-import com.google.common.base.Predicate;
 import com.android.tools.smali.dexlib2.AccessFlags;
 import com.android.tools.smali.dexlib2.iface.Method;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
@@ -39,19 +38,20 @@ import com.android.tools.smali.util.CharSequenceUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.function.Predicate;
 
 public final class MethodUtil {
     private static int directMask = AccessFlags.STATIC.getValue() | AccessFlags.PRIVATE.getValue() |
             AccessFlags.CONSTRUCTOR.getValue();
 
     public static Predicate<Method> METHOD_IS_DIRECT = new Predicate<Method>() {
-        @Override public boolean apply(@Nullable Method input) {
+        @Override public boolean test(@Nullable Method input) {
             return input != null && isDirect(input);
         }
     };
 
     public static Predicate<Method> METHOD_IS_VIRTUAL = new Predicate<Method>() {
-        @Override public boolean apply(@Nullable Method input) {
+        @Override public boolean test(@Nullable Method input) {
             return input != null && !isDirect(input);
         }
     };

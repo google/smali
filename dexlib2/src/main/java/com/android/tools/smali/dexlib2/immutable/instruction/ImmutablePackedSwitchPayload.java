@@ -34,8 +34,6 @@ import com.android.tools.smali.dexlib2.Format;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.PackedSwitchPayload;
 import com.android.tools.smali.dexlib2.util.Preconditions;
-import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchElement;
 
 import javax.annotation.Nonnull;
@@ -46,17 +44,11 @@ public class ImmutablePackedSwitchPayload extends ImmutableInstruction implement
     PackedSwitchPayload {
     public static final Opcode OPCODE = Opcode.PACKED_SWITCH_PAYLOAD;
 
-    @Nonnull protected final ImmutableList<? extends ImmutableSwitchElement> switchElements;
+    @Nonnull protected final List<? extends ImmutableSwitchElement> switchElements;
 
     public ImmutablePackedSwitchPayload(@Nullable List<? extends SwitchElement> switchElements) {
         super(OPCODE);
         this.switchElements = Preconditions.checkSequentialOrderedKeys(ImmutableSwitchElement.immutableListOf(switchElements));
-    }
-
-    public ImmutablePackedSwitchPayload(
-            @Nullable ImmutableList<? extends ImmutableSwitchElement> switchElements) {
-        super(OPCODE);
-        this.switchElements = Preconditions.checkSequentialOrderedKeys(ImmutableUtils.nullToEmptyList(switchElements));
     }
 
     @Nonnull

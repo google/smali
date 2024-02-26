@@ -41,10 +41,10 @@ import com.android.tools.smali.dexlib2.iface.debug.SetSourceFile;
 import com.android.tools.smali.dexlib2.iface.debug.StartLocal;
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.util.ImmutableConverter;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class ImmutableDebugItem implements DebugItem {
     protected final int codeAddress;
@@ -81,7 +81,7 @@ public abstract class ImmutableDebugItem implements DebugItem {
     @Override public int getCodeAddress() { return codeAddress; }
 
     @Nonnull
-    public static ImmutableList<ImmutableDebugItem> immutableListOf(@Nullable Iterable<? extends DebugItem> list) {
+    public static List<ImmutableDebugItem> immutableListOf(@Nullable Iterable<? extends DebugItem> list) {
         return CONVERTER.toList(list);
     }
 

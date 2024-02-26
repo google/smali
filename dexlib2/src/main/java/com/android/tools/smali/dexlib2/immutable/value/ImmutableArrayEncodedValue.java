@@ -30,22 +30,22 @@
 
 package com.android.tools.smali.dexlib2.immutable.value;
 
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.base.value.BaseArrayEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.List;
 
 public class ImmutableArrayEncodedValue extends BaseArrayEncodedValue implements ImmutableEncodedValue {
-    @Nonnull protected final ImmutableList<? extends ImmutableEncodedValue> value;
+    @Nonnull protected final List<? extends ImmutableEncodedValue> value;
 
     public ImmutableArrayEncodedValue(@Nonnull Collection<? extends EncodedValue> value) {
         this.value = ImmutableEncodedValueFactory.immutableListOf(value);
     }
 
-    public ImmutableArrayEncodedValue(@Nonnull ImmutableList<ImmutableEncodedValue> value) {
+    public ImmutableArrayEncodedValue(@Nonnull List<ImmutableEncodedValue> value) {
         this.value = value;
     }
 
@@ -56,5 +56,5 @@ public class ImmutableArrayEncodedValue extends BaseArrayEncodedValue implements
         return new ImmutableArrayEncodedValue(arrayEncodedValue.getValue());
     }
 
-    @Nonnull public ImmutableList<? extends ImmutableEncodedValue> getValue() { return value; }
+    @Nonnull public List<? extends ImmutableEncodedValue> getValue() { return value; }
 }

@@ -34,8 +34,6 @@ import com.android.tools.smali.dexlib2.base.BaseTryBlock;
 import com.android.tools.smali.dexlib2.iface.ExceptionHandler;
 import com.android.tools.smali.dexlib2.iface.TryBlock;
 import com.android.tools.smali.util.ImmutableConverter;
-import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,7 +42,7 @@ import java.util.List;
 public class ImmutableTryBlock extends BaseTryBlock<ImmutableExceptionHandler> {
     protected final int startCodeAddress;
     protected final int codeUnitCount;
-    @Nonnull protected final ImmutableList<? extends ImmutableExceptionHandler> exceptionHandlers;
+    @Nonnull protected final List<? extends ImmutableExceptionHandler> exceptionHandlers;
 
     public ImmutableTryBlock(int startCodeAddress,
                              int codeUnitCount,
@@ -52,14 +50,6 @@ public class ImmutableTryBlock extends BaseTryBlock<ImmutableExceptionHandler> {
         this.startCodeAddress = startCodeAddress;
         this.codeUnitCount = codeUnitCount;
         this.exceptionHandlers = ImmutableExceptionHandler.immutableListOf(exceptionHandlers);
-    }
-
-    public ImmutableTryBlock(int startCodeAddress,
-                             int codeUnitCount,
-                             @Nullable ImmutableList<? extends ImmutableExceptionHandler> exceptionHandlers) {
-        this.startCodeAddress = startCodeAddress;
-        this.codeUnitCount = codeUnitCount;
-        this.exceptionHandlers = ImmutableUtils.nullToEmptyList(exceptionHandlers);
     }
 
     public static ImmutableTryBlock of(TryBlock<? extends ExceptionHandler> tryBlock) {
@@ -75,12 +65,12 @@ public class ImmutableTryBlock extends BaseTryBlock<ImmutableExceptionHandler> {
     @Override public int getStartCodeAddress() { return startCodeAddress; }
     @Override public int getCodeUnitCount() { return codeUnitCount; }
 
-    @Nonnull @Override public ImmutableList<? extends ImmutableExceptionHandler> getExceptionHandlers() {
+    @Nonnull @Override public List<? extends ImmutableExceptionHandler> getExceptionHandlers() {
         return exceptionHandlers;
     }
 
     @Nonnull
-    public static ImmutableList<ImmutableTryBlock> immutableListOf(
+    public static List<ImmutableTryBlock> immutableListOf(
             @Nullable List<? extends TryBlock<? extends ExceptionHandler>> list) {
         return CONVERTER.toList(list);
     }

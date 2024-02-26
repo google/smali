@@ -30,36 +30,33 @@
 
 package com.android.tools.smali.dexlib2.immutable.instruction;
 
+import static java.util.Collections.unmodifiableList;
+
 import com.android.tools.smali.dexlib2.Format;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.util.Preconditions;
-import com.android.tools.smali.util.ImmutableUtils;
-import com.google.common.collect.ImmutableList;
+
 import com.android.tools.smali.dexlib2.iface.instruction.formats.ArrayPayload;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 
 public class ImmutableArrayPayload extends ImmutableInstruction implements ArrayPayload {
     public static final Opcode OPCODE = Opcode.ARRAY_PAYLOAD;
 
     protected final int elementWidth;
-    @Nonnull protected final ImmutableList<Number> arrayElements;
+    @Nonnull protected final List<Number> arrayElements;
 
-    public ImmutableArrayPayload(int elementWidth,
-                                 @Nullable List<Number> arrayElements) {
+    public ImmutableArrayPayload(int elementWidth, @Nullable List<Number> arrayElements) {
         super(OPCODE);
         this.elementWidth = Preconditions.checkArrayPayloadElementWidth(elementWidth);
         this.arrayElements = Preconditions.checkArrayPayloadElements(elementWidth,
-                arrayElements==null ? ImmutableList.<Number>of() : ImmutableList.copyOf(arrayElements));
-    }
-
-    public ImmutableArrayPayload(int elementWidth,
-                                 @Nullable ImmutableList<Number> arrayElements) {
-        super(OPCODE);
-        this.elementWidth = Preconditions.checkArrayPayloadElementWidth(elementWidth);
-        this.arrayElements = Preconditions.checkArrayPayloadElements(elementWidth, ImmutableUtils.nullToEmptyList(arrayElements));
+                arrayElements == null ? Collections.emptyList()
+                    : unmodifiableList(new ArrayList<>(arrayElements)));
     }
 
     @Nonnull
