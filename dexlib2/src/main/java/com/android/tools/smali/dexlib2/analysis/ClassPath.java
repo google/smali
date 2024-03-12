@@ -43,6 +43,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
@@ -114,13 +115,13 @@ public class ClassPath {
     private static ClassProvider getBasicClasses() {
         // fallbacks for some special classes that we assume are present
         return new DexClassProvider(new ImmutableDexFile(Opcodes.getDefault(),
-            new HashSet<>(Arrays.asList(
+            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                 new ReflectionClassDef(Class.class),
                 new ReflectionClassDef(Cloneable.class),
                 new ReflectionClassDef(Object.class),
                 new ReflectionClassDef(Serializable.class),
                 new ReflectionClassDef(String.class),
-                new ReflectionClassDef(Throwable.class)))));
+                new ReflectionClassDef(Throwable.class))))));
     }
 
     public boolean isArt() {

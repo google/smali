@@ -143,7 +143,7 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
         return new AbstractSet<Field>() {
             @Nonnull @Override public Iterator<Field> iterator() {
                 return new TransformedIterator<java.lang.reflect.Field, Field>(
-                    Arrays.asList(cls.getDeclaredFields()).iterator(),
+                    Arrays.asList(cls.getDeclaredFields()),
                         new Function<java.lang.reflect.Field, Field>() {
                             @Nullable @Override public Field apply(@Nullable java.lang.reflect.Field input) {
                                 return new ReflectionField(input);
@@ -216,7 +216,7 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
             @Nonnull @Override public Iterator<Method> iterator() {
                 Iterator<Method> constructorIterator =
                         new TransformedIterator<Constructor, Method>(
-                            Arrays.asList(cls.getDeclaredConstructors()).iterator(),
+                            Arrays.asList(cls.getDeclaredConstructors()),
                                 new Function<Constructor, Method>() {
                                     @Nullable @Override public Method apply(@Nullable Constructor input) {
                                         return new ReflectionConstructor(input);
@@ -225,7 +225,7 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
 
                 Iterator<Method> methodIterator =
                         new TransformedIterator<java.lang.reflect.Method, Method>(
-                            Arrays.asList(cls.getDeclaredMethods()).iterator(),
+                            Arrays.asList(cls.getDeclaredMethods()),
                                 new Function<java.lang.reflect.Method, Method>() {
                                     @Nullable @Override public Method apply(@Nullable java.lang.reflect.Method input) {
                                         return new ReflectionMethod(input);

@@ -44,6 +44,12 @@ public class TransformedIterator<F extends Object, T extends Object>
     final Iterator<? extends F> backingIterator;
     final Function<F, T> transformFunction;
 
+    public TransformedIterator(Iterable<? extends F> backingIterable,
+            Function<F, T> transformFunction) {
+        this.backingIterator = backingIterable.iterator();
+        this.transformFunction = transformFunction;
+    }
+
     public TransformedIterator(Iterator<? extends F> backingIterator,
             Function<F, T> transformFunction) {
         this.backingIterator = backingIterator;
