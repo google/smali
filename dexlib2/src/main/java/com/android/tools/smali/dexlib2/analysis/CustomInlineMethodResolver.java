@@ -37,14 +37,14 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethod;
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter;
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference;
 import com.android.tools.smali.dexlib2.immutable.util.ParamUtil;
-import com.google.common.io.Files;
+import com.android.tools.smali.util.InputStreamUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.StringReader;
 import javax.annotation.Nonnull;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,8 @@ public class CustomInlineMethodResolver extends InlineMethodResolver {
     }
 
     public CustomInlineMethodResolver(@Nonnull ClassPath classPath, @Nonnull File inlineTable) throws IOException {
-        this(classPath, Files.asCharSource(inlineTable, StandardCharsets.UTF_8).read());
+        this(classPath, new String(
+            InputStreamUtil.toByteArray(new FileInputStream(inlineTable)), StandardCharsets.UTF_8));
     }
 
     @Override

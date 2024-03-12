@@ -35,12 +35,12 @@ import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile;
 import com.android.tools.smali.dexlib2.dexbacked.OatFile;
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,8 +51,8 @@ public class PathEntryLoader {
         return opcodes;
     }
 
-    final Set<File> loadedFiles = Sets.newHashSet();
-    final List<ClassProvider> classProviders = Lists.newArrayList();
+    final Set<File> loadedFiles = new HashSet<>();
+    final List<ClassProvider> classProviders = new ArrayList<>();
 
     public List<ClassProvider> getClassProviders() {
         return classProviders;

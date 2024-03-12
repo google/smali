@@ -31,15 +31,17 @@
 package com.android.tools.smali.util;
 
 import com.android.tools.smali.dexlib2.formatter.DexFormattedWriter;
+import com.android.tools.smali.dexlib2.iface.value.CharEncodedValue;
+
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 public class StringUtils {
 
     /**
-     * @deprecated Use {@link com.android.tools.smali.baksmali.formatter.BaksmaliWriter#writeCharEncodedValue}
+     * @deprecated Use @see com.android.tools.smali.baksmali.formatter.BaksmaliWriter}#writeCharEncodedValue()
      */
     @Deprecated
     public static void writeEscapedChar(Writer writer, char c) throws IOException {
@@ -125,7 +127,7 @@ public class StringUtils {
         return sb.toString();
     }
 
-    public static String join(List<? extends Object> parts, String separator) {
+    public static String join(Collection<? extends Object> parts, String separator) {
         StringBuilder builder = new StringBuilder();
         Iterator<? extends Object> it = parts.iterator();
         if (it.hasNext()) {

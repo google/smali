@@ -34,12 +34,13 @@ import com.android.tools.smali.dexlib2.HiddenApiRestriction;
 import com.android.tools.smali.dexlib2.analysis.reflection.util.ReflectionUtils;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.Field;
-import com.google.common.collect.ImmutableSet;
 import com.android.tools.smali.dexlib2.base.reference.BaseFieldReference;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collections;
 import java.util.Set;
 
 public class ReflectionField extends BaseFieldReference implements Field {
@@ -58,7 +59,7 @@ public class ReflectionField extends BaseFieldReference implements Field {
     }
 
     @Nonnull @Override public Set<? extends Annotation> getAnnotations() {
-        return ImmutableSet.of();
+        return Collections.emptySet();
     }
 
     @Nonnull @Override public String getDefiningClass() {
@@ -74,6 +75,6 @@ public class ReflectionField extends BaseFieldReference implements Field {
     }
 
     @Nonnull @Override public Set<HiddenApiRestriction> getHiddenApiRestrictions() {
-        return ImmutableSet.of();
+        return Collections.emptySet();
     }
 }

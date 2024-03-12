@@ -32,21 +32,20 @@ package com.android.tools.smali.dexlib2.analysis;
 
 import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.analysis.reflection.ReflectionClassDef;
+import com.android.tools.smali.dexlib2.analysis.util.LruCache;
+import com.android.tools.smali.dexlib2.analysis.util.MemoizingSupplier;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.immutable.ImmutableDexFile;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+import com.android.tools.smali.util.IteratorUtils;
 
 import javax.annotation.Nonnull;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ClassPath {
     @Nonnull private final TypeProto unknownClass;
@@ -104,7 +103,7 @@ public class ClassPath {
         loadPrimitiveType("D");
         loadPrimitiveType("L");
 
-        this.classProviders = Lists.newArrayList(classProviders);
+        this.classProviders = (List<ClassProvider>)IteratorUtils.toList(classProviders.iterator());
         this.classProviders.add(getBasicClasses());
     }
 
@@ -114,13 +113,14 @@ public class ClassPath {
 
     private static ClassProvider getBasicClasses() {
         // fallbacks for some special classes that we assume are present
-        return new DexClassProvider(new ImmutableDexFile(Opcodes.getDefault(), ImmutableSet.of(
+        return new DexClassProvider(new ImmutableDexFile(Opcodes.getDefault(),
+            new HashSet<>(Arrays.asList(
                 new ReflectionClassDef(Class.class),
                 new ReflectionClassDef(Cloneable.class),
                 new ReflectionClassDef(Object.class),
                 new ReflectionClassDef(Serializable.class),
                 new ReflectionClassDef(String.class),
-                new ReflectionClassDef(Throwable.class))));
+                new ReflectionClassDef(Throwable.class)))));
     }
 
     public boolean isArt() {
@@ -129,20 +129,18 @@ public class ClassPath {
 
     @Nonnull
     public TypeProto getClass(@Nonnull CharSequence type) {
-        return loadedClasses.getUnchecked(type.toString());
+        return loadedClasses.get(type.toString());
     }
 
-    private final CacheLoader<String, TypeProto> classLoader = new CacheLoader<String, TypeProto>() {
-        @Override public TypeProto load(String type) throws Exception {
-            if (type.charAt(0) == '[') {
-                return new ArrayProto(ClassPath.this, type);
+    @Nonnull private LruCache<String, TypeProto> loadedClasses = new LruCache<String, TypeProto>(30000) {
+        @Override protected TypeProto create(String key) {
+            if (key.charAt(0) == '[') {
+                return new ArrayProto(ClassPath.this, key);
             } else {
-                return new ClassProto(ClassPath.this, type);
+                return new ClassProto(ClassPath.this, key);
             }
         }
     };
-
-    @Nonnull private LoadingCache<String, TypeProto> loadedClasses = CacheBuilder.newBuilder().build(classLoader);
 
     @Nonnull
     public ClassDef getClassDef(String type) {
@@ -164,7 +162,7 @@ public class ClassPath {
         return checkPackagePrivateAccess;
     }
 
-    private final Supplier<OdexedFieldInstructionMapper> fieldInstructionMapperSupplier = Suppliers.memoize(
+    private final Supplier<OdexedFieldInstructionMapper> fieldInstructionMapperSupplier = MemoizingSupplier.memoize(
             new Supplier<OdexedFieldInstructionMapper>() {
                 @Override public OdexedFieldInstructionMapper get() {
                     return new OdexedFieldInstructionMapper(isArt());

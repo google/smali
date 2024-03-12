@@ -37,13 +37,13 @@ import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.Method;
 import com.android.tools.smali.dexlib2.iface.MethodImplementation;
 import com.android.tools.smali.dexlib2.iface.MethodParameter;
-import com.google.common.collect.ImmutableSet;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.AbstractList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -62,7 +62,7 @@ public class ReflectionConstructor extends BaseMethodReference implements Method
             @Override public MethodParameter get(final int index) {
                 return new BaseMethodParameter() {
                     @Nonnull @Override public Set<? extends Annotation> getAnnotations() {
-                        return ImmutableSet.of();
+                        return Collections.emptySet();
                     }
 
                     @Nullable @Override public String getName() {
@@ -86,7 +86,7 @@ public class ReflectionConstructor extends BaseMethodReference implements Method
     }
 
     @Nonnull @Override public Set<? extends Annotation> getAnnotations() {
-        return ImmutableSet.of();
+        return Collections.emptySet();
     }
 
     @Nullable @Override public MethodImplementation getImplementation() {
@@ -120,6 +120,6 @@ public class ReflectionConstructor extends BaseMethodReference implements Method
     }
 
     @Nonnull @Override public Set<HiddenApiRestriction> getHiddenApiRestrictions() {
-        return ImmutableSet.of();
+        return Collections.emptySet();
     }
 }

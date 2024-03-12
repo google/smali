@@ -35,11 +35,10 @@ import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Field;
 import com.android.tools.smali.dexlib2.iface.Method;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterators;
+import com.android.tools.smali.util.ChainedIterator;
+import com.android.tools.smali.util.IteratorUtils;
+import com.android.tools.smali.util.TransformedIterator;
+
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 
 import javax.annotation.Nonnull;
@@ -48,8 +47,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.AbstractSet;
 import java.util.Iterator;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Wraps a ClassDef around a class loaded in the current VM
@@ -79,17 +83,10 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
         return ReflectionUtils.javaToDexName(superClass.getName());
     }
 
-    @Nonnull @Override public List<String> getInterfaces() {
-        return ImmutableList.copyOf(Iterators.transform(Iterators.forArray(cls.getInterfaces()), new Function<Class, String>() {
-            @Nullable
-            @Override
-            public String apply(@Nullable Class input) {
-                if (input == null) {
-                    return null;
-                }
-                return ReflectionUtils.javaToDexName(input.getName());
-            }
-        }));
+    @Nonnull @Override public List<String> getInterfaces() { 
+        return Arrays.asList(cls.getInterfaces()).stream().map(
+            i -> i == null ? null : ReflectionUtils.javaToDexName(i.getName()))
+            .collect(Collectors.toList());
     }
 
     @Nullable @Override public String getSourceFile() {
@@ -97,27 +94,25 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
     }
 
     @Nonnull @Override public Set<? extends Annotation> getAnnotations() {
-        return ImmutableSet.of();
+        return Collections.emptySet();
     }
 
     @Nonnull @Override public Iterable<? extends Field> getStaticFields() {
         return new Iterable<Field>() {
             @Nonnull @Override public Iterator<Field> iterator() {
-                Iterator<java.lang.reflect.Field> staticFields = Iterators.filter(
-                        Iterators.forArray(cls.getDeclaredFields()),
+                Iterator<java.lang.reflect.Field> staticFields = IteratorUtils.filter(
+                        Arrays.asList(cls.getDeclaredFields()).iterator(),
                         new Predicate<java.lang.reflect.Field>() {
-                            @Override public boolean apply(@Nullable java.lang.reflect.Field input) {
+                            @Override public boolean test(@Nullable java.lang.reflect.Field input) {
                                 return input!=null && Modifier.isStatic(input.getModifiers());
                             }
                         });
 
-                return Iterators.transform(staticFields,
-                        new Function<java.lang.reflect.Field, Field>() {
-                            @Nullable @Override public Field apply(@Nullable java.lang.reflect.Field input) {
-                                return new ReflectionField(input);
-                            }
-                        }
-                );
+                return new TransformedIterator<java.lang.reflect.Field, Field>(staticFields, new Function<java.lang.reflect.Field, Field>() {
+                    @Nullable @Override public Field apply(@Nullable java.lang.reflect.Field input) {
+                        return new ReflectionField(input);
+                    }
+                });
             }
         };
     }
@@ -125,15 +120,15 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull @Override public Iterable<? extends Field> getInstanceFields() {
         return new Iterable<Field>() {
             @Nonnull @Override public Iterator<Field> iterator() {
-                Iterator<java.lang.reflect.Field> staticFields = Iterators.filter(
-                        Iterators.forArray(cls.getDeclaredFields()),
+                Iterator<java.lang.reflect.Field> staticFields = IteratorUtils.filter(
+                        Arrays.asList(cls.getDeclaredFields()).iterator(),
                         new Predicate<java.lang.reflect.Field>() {
-                            @Override public boolean apply(@Nullable java.lang.reflect.Field input) {
+                            @Override public boolean test(@Nullable java.lang.reflect.Field input) {
                                 return input!=null && !Modifier.isStatic(input.getModifiers());
                             }
                         });
 
-                return Iterators.transform(staticFields,
+                return new TransformedIterator<java.lang.reflect.Field, Field>(staticFields,
                         new Function<java.lang.reflect.Field, Field>() {
                             @Nullable @Override public Field apply(@Nullable java.lang.reflect.Field input) {
                                 return new ReflectionField(input);
@@ -147,7 +142,8 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull @Override public Set<? extends Field> getFields() {
         return new AbstractSet<Field>() {
             @Nonnull @Override public Iterator<Field> iterator() {
-                return Iterators.transform(Iterators.forArray(cls.getDeclaredFields()),
+                return new TransformedIterator<java.lang.reflect.Field, Field>(
+                    Arrays.asList(cls.getDeclaredFields()).iterator(),
                         new Function<java.lang.reflect.Field, Field>() {
                             @Nullable @Override public Field apply(@Nullable java.lang.reflect.Field input) {
                                 return new ReflectionField(input);
@@ -166,28 +162,30 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
         return new Iterable<Method>() {
             @Nonnull @Override public Iterator<Method> iterator() {
                 Iterator<Method> constructorIterator =
-                        Iterators.transform(Iterators.forArray(cls.getDeclaredConstructors()),
+                        new TransformedIterator<Constructor, Method>(
+                            Arrays.asList(cls.getDeclaredConstructors()).iterator(),
                                 new Function<Constructor, Method>() {
                                     @Nullable @Override public Method apply(@Nullable Constructor input) {
                                         return new ReflectionConstructor(input);
                                     }
                                 });
 
-                Iterator<java.lang.reflect.Method> directMethods = Iterators.filter(
-                        Iterators.forArray(cls.getDeclaredMethods()),
+                Iterator<java.lang.reflect.Method> directMethods = IteratorUtils.filter(
+                        Arrays.asList(cls.getDeclaredMethods()).iterator(),
                         new Predicate<java.lang.reflect.Method>() {
-                            @Override public boolean apply(@Nullable java.lang.reflect.Method input) {
+                            @Override public boolean test(@Nullable java.lang.reflect.Method input) {
                                 return input != null && (input.getModifiers() & DIRECT_MODIFIERS) != 0;
                             }
                         });
 
-                Iterator<Method> methodIterator = Iterators.transform(directMethods,
+                Iterator<Method> methodIterator = new TransformedIterator<java.lang.reflect.Method, Method>(
+                    directMethods,
                         new Function<java.lang.reflect.Method, Method>() {
                             @Nullable @Override public Method apply(@Nullable java.lang.reflect.Method input) {
                                 return new ReflectionMethod(input);
                             }
                         });
-                return Iterators.concat(constructorIterator, methodIterator);
+                return new ChainedIterator<Method>(constructorIterator, methodIterator);
             }
         };
     }
@@ -195,15 +193,15 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull @Override public Iterable<? extends Method> getVirtualMethods() {
         return new Iterable<Method>() {
             @Nonnull @Override public Iterator<Method> iterator() {
-                Iterator<java.lang.reflect.Method> directMethods = Iterators.filter(
-                        Iterators.forArray(cls.getDeclaredMethods()),
+                Iterator<java.lang.reflect.Method> directMethods = IteratorUtils.filter(
+                        Arrays.asList(cls.getDeclaredMethods()).iterator(),
                         new Predicate<java.lang.reflect.Method>() {
-                            @Override public boolean apply(@Nullable java.lang.reflect.Method input) {
+                            @Override public boolean test(@Nullable java.lang.reflect.Method input) {
                                 return input != null && (input.getModifiers() & DIRECT_MODIFIERS) == 0;
                             }
                         });
 
-                return Iterators.transform(directMethods,
+                return new TransformedIterator<java.lang.reflect.Method, Method>(directMethods,
                         new Function<java.lang.reflect.Method, Method>() {
                             @Nullable @Override public Method apply(@Nullable java.lang.reflect.Method input) {
                                 return new ReflectionMethod(input);
@@ -217,7 +215,8 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
         return new AbstractSet<Method>() {
             @Nonnull @Override public Iterator<Method> iterator() {
                 Iterator<Method> constructorIterator =
-                        Iterators.transform(Iterators.forArray(cls.getDeclaredConstructors()),
+                        new TransformedIterator<Constructor, Method>(
+                            Arrays.asList(cls.getDeclaredConstructors()).iterator(),
                                 new Function<Constructor, Method>() {
                                     @Nullable @Override public Method apply(@Nullable Constructor input) {
                                         return new ReflectionConstructor(input);
@@ -225,13 +224,14 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
                                 });
 
                 Iterator<Method> methodIterator =
-                        Iterators.transform(Iterators.forArray(cls.getDeclaredMethods()),
+                        new TransformedIterator<java.lang.reflect.Method, Method>(
+                            Arrays.asList(cls.getDeclaredMethods()).iterator(),
                                 new Function<java.lang.reflect.Method, Method>() {
                                     @Nullable @Override public Method apply(@Nullable java.lang.reflect.Method input) {
                                         return new ReflectionMethod(input);
                                     }
                                 });
-                return Iterators.concat(constructorIterator, methodIterator);
+                return new ChainedIterator<Method>(constructorIterator, methodIterator);
             }
 
             @Override public int size() {

@@ -30,7 +30,10 @@
 
 package com.android.tools.smali.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
 
 public final class IteratorUtils {
@@ -58,5 +61,19 @@ public final class IteratorUtils {
                 return endOfData();
             }
         };
+    }
+
+    public static <T extends Object> List<T> toList(Iterator<T> iterator) {
+        ArrayList<T> list = new ArrayList<T>();
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+        return list;
+    }
+
+    public static <T extends Object> void addAll(Collection<T> collection, Iterator<T> iterator) {
+        while (iterator.hasNext()) {
+            collection.add(iterator.next());
+        }
     }
 }

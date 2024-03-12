@@ -49,6 +49,11 @@ public class ChainedIterator<T extends Object> implements Iterator<T>, Iterable<
         this.iteratorB = iterableB.iterator();
     }
 
+    public ChainedIterator(Iterator<T> iteratorA, Iterator<T> iteratorB) {
+        this.iteratorA = iteratorA;
+        this.iteratorB = iteratorB;
+    }
+
     @Override
     public final boolean hasNext() {
         return iteratorA.hasNext() || iteratorB.hasNext();

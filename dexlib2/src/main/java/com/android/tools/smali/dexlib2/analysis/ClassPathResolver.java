@@ -36,14 +36,13 @@ import com.android.tools.smali.dexlib2.dexbacked.OatFile;
 import com.android.tools.smali.dexlib2.iface.DexFile;
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer.DexEntry;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
+import com.android.tools.smali.util.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class ClassPathResolver {
@@ -182,7 +181,7 @@ public class ClassPathResolver {
         // It's not a local path, so let's try to resolve it as a device path, relative to one of the provided
         // directories
         List<String> pathComponents = splitDevicePath(entry);
-        Joiner pathJoiner = Joiner.on(File.separatorChar);
+        // Joiner pathJoiner = Joiner.on(File.separatorChar);
 
         for (String directory: classPathDirs) {
             File directoryFile = new File(directory);
@@ -191,7 +190,9 @@ public class ClassPathResolver {
             }
 
             for (int i=0; i<pathComponents.size(); i++) {
-                String partialPath = pathJoiner.join(pathComponents.subList(i, pathComponents.size()));
+                String partialPath = StringUtils.join(
+                        pathComponents.subList(i, pathComponents.size()), File.separator);
+                // String partialPath = pathJoiner.join(pathComponents.subList(i, pathComponents.size()));
                 File entryFile = new File(directoryFile, partialPath);
                 if (entryFile.exists() && entryFile.isFile()) {
                     pathEntryLoader.loadEntry(entryFile, true);
@@ -205,7 +206,7 @@ public class ClassPathResolver {
 
     @Nonnull
     private static List<String> splitDevicePath(@Nonnull String path) {
-        return Lists.newArrayList(Splitter.on('/').split(path));
+        return Arrays.asList(path.split("/"));
     }
 
     static class NotFoundException extends Exception {
@@ -250,14 +251,14 @@ public class ClassPathResolver {
         }
 
         if (apiLevel <= 8) {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core.jar",
                     "/system/framework/ext.jar",
                     "/system/framework/framework.jar",
                     "/system/framework/android.policy.jar",
                     "/system/framework/services.jar");
         } else if (apiLevel <= 11) {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core.jar",
                     "/system/framework/bouncycastle.jar",
                     "/system/framework/ext.jar",
@@ -266,7 +267,7 @@ public class ClassPathResolver {
                     "/system/framework/services.jar",
                     "/system/framework/core-junit.jar");
         } else if (apiLevel <= 13) {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core.jar",
                     "/system/framework/apache-xml.jar",
                     "/system/framework/bouncycastle.jar",
@@ -276,7 +277,7 @@ public class ClassPathResolver {
                     "/system/framework/services.jar",
                     "/system/framework/core-junit.jar");
         } else if (apiLevel <= 15) {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core.jar",
                     "/system/framework/core-junit.jar",
                     "/system/framework/bouncycastle.jar",
@@ -288,7 +289,7 @@ public class ClassPathResolver {
                     "/system/framework/filterfw.jar");
         } else if (apiLevel <= 17) {
             // this is correct as of api 17/4.2.2
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core.jar",
                     "/system/framework/core-junit.jar",
                     "/system/framework/bouncycastle.jar",
@@ -300,7 +301,7 @@ public class ClassPathResolver {
                     "/system/framework/services.jar",
                     "/system/framework/apache-xml.jar");
         } else if (apiLevel <= 18) {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core.jar",
                     "/system/framework/core-junit.jar",
                     "/system/framework/bouncycastle.jar",
@@ -313,7 +314,7 @@ public class ClassPathResolver {
                     "/system/framework/services.jar",
                     "/system/framework/apache-xml.jar");
         } else if (apiLevel <= 19) {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core.jar",
                     "/system/framework/conscrypt.jar",
                     "/system/framework/core-junit.jar",
@@ -329,7 +330,7 @@ public class ClassPathResolver {
                     "/system/framework/apache-xml.jar",
                     "/system/framework/webviewchromium.jar");
         } else if (apiLevel <= 22) {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core-libart.jar",
                     "/system/framework/conscrypt.jar",
                     "/system/framework/okhttp.jar",
@@ -344,7 +345,7 @@ public class ClassPathResolver {
                     "/system/framework/android.policy.jar",
                     "/system/framework/apache-xml.jar");
         } else if (apiLevel <= 23) {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core-libart.jar",
                     "/system/framework/conscrypt.jar",
                     "/system/framework/okhttp.jar",
@@ -358,7 +359,7 @@ public class ClassPathResolver {
                     "/system/framework/apache-xml.jar",
                     "/system/framework/org.apache.http.legacy.boot.jar");
         } else /*if (apiLevel <= 24)*/ {
-            return Lists.newArrayList(
+            return Arrays.asList(
                     "/system/framework/core-oj.jar",
                     "/system/framework/core-libart.jar",
                     "/system/framework/conscrypt.jar",
@@ -378,7 +379,7 @@ public class ClassPathResolver {
     private static List<String> bootClassPathForOat(@Nonnull OatFile oatFile) {
         List<String> bcp = oatFile.getBootClassPath();
         if(bcp.isEmpty()) {
-            return Lists.newArrayList("boot.oat");
+            return Arrays.asList("boot.oat");
         } else {
             return replaceElementsSuffix(bcp, ".art", ".oat");
         }
