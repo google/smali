@@ -34,7 +34,6 @@ import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.DexFile;
 
 import javax.annotation.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 

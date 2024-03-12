@@ -39,7 +39,6 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableDexFile;
 import com.android.tools.smali.util.IteratorUtils;
 
 import javax.annotation.Nonnull;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
