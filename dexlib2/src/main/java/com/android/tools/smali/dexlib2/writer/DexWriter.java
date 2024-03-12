@@ -223,6 +223,8 @@ public abstract class DexWriter<
 
     private final IndexSection<?>[] overflowableSections;
 
+    private final Map<ByteBuffer, Integer> debugInfoCaches = new HashMap<>();
+
     protected DexWriter(Opcodes opcodes) {
         this.opcodes = opcodes;
 
@@ -1159,8 +1161,6 @@ public abstract class DexWriter<
             return NO_OFFSET;
         }
 
-        numDebugInfoItems++;
-
         int debugItemOffset = writer.getPosition();
         int startingLineNumber = 0;
 
@@ -1172,9 +1172,14 @@ public abstract class DexWriter<
                 }
             }
         }
-        writer.writeUleb128(startingLineNumber);
 
-        writer.writeUleb128(parameterCount);
+        ByteArrayOutputStream tempByteOutput = new ByteArrayOutputStream();
+        DexDataWriter tempDataWriter = new DexDataWriter(tempByteOutput, 0, 64);
+        DebugWriter tempDebugWriter = new DebugWriter(stringSection, typeSection, tempDataWriter);
+
+        tempDataWriter.writeUleb128(startingLineNumber);
+
+        tempDataWriter.writeUleb128(parameterCount);
         if (parameterNames != null) {
             int index = 0;
             for (StringKey parameterName: parameterNames) {
@@ -1182,21 +1187,32 @@ public abstract class DexWriter<
                     break;
                 }
                 index++;
-                writer.writeUleb128(stringSection.getNullableItemIndex(parameterName) + 1);
+                tempDataWriter.writeUleb128(stringSection.getNullableItemIndex(parameterName) + 1);
             }
         }
 
         if (debugItems != null) {
-            debugWriter.reset(startingLineNumber);
+            tempDebugWriter.reset(startingLineNumber);
 
             for (DebugItem debugItem: debugItems) {
-                classSection.writeDebugItem(debugWriter, debugItem);
+                classSection.writeDebugItem(tempDebugWriter, debugItem);
             }
         }
         // write an END_SEQUENCE opcode, to end the debug item
-        writer.write(0);
+        tempDataWriter.write(0);
 
-        return debugItemOffset;
+        tempDataWriter.flush();
+        byte[] debugInfo = tempByteOutput.toByteArray();
+        ByteBuffer wrapBytes = ByteBuffer.wrap(debugInfo);
+        int cacheBytes = debugInfoCaches.getOrDefault(wrapBytes, -1);
+        if (cacheBytes >= 0) {
+            return cacheBytes;
+        } else {
+            writer.write(debugInfo);
+            debugInfoCaches.put(wrapBytes, debugItemOffset);
+            numDebugInfoItems++;
+            return debugItemOffset;
+        }
     }
 
     private int writeCodeItem(@Nonnull DexDataWriter writer,
