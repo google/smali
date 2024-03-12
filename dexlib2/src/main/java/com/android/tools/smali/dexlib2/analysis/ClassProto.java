@@ -301,7 +301,7 @@ public class ClassProto implements TypeProto {
      */
     @Nonnull
     protected Iterable<ClassDef> getDirectInterfaces() {
-        Iterable<ClassDef> directInterfaces = IteratorUtils.filter(getInterfaces().values().iterator(), new Predicate<ClassDef>() {
+        Iterable<ClassDef> directInterfaces = IteratorUtils.filter(getInterfaces().values(), new Predicate<ClassDef>() {
             @Override public boolean test(@Nullable ClassDef input) {
                 return input != null;
             }
@@ -655,7 +655,7 @@ public class ClassProto implements TypeProto {
 
                 @Nonnull
                 private ArrayList<Field> getSortedInstanceFields(@Nonnull ClassDef classDef) {
-                    ArrayList<Field> fields = (ArrayList<Field>)IteratorUtils.toList(classDef.getInstanceFields().iterator());
+                    ArrayList<Field> fields = (ArrayList<Field>)IteratorUtils.toList(classDef.getInstanceFields());
                     Collections.sort(fields);
                     return fields;
                 }
@@ -782,7 +782,7 @@ public class ClassProto implements TypeProto {
 
                 @Nonnull
                 private ArrayList<Field> getSortedInstanceFields(@Nonnull ClassDef classDef) {
-                    ArrayList<Field> fields = (ArrayList<Field>)IteratorUtils.toList(classDef.getInstanceFields().iterator());
+                    ArrayList<Field> fields = (ArrayList<Field>)IteratorUtils.toList(classDef.getInstanceFields());
                     Collections.sort(fields, new Comparator<Field>() {
                         @Override public int compare(Field field1, Field field2) {
                             int result = Integer.compare(getFieldSortOrder(field1), getFieldSortOrder(field2));
@@ -1121,7 +1121,7 @@ public class ClassProto implements TypeProto {
             if (!isInterface()) {
                 addToVtable(getClassDef().getVirtualMethods(), vtable, true, true);
 
-                List<ClassDef> interfaces = IteratorUtils.toList(getDirectInterfaces().iterator());
+                List<ClassDef> interfaces = IteratorUtils.toList(getDirectInterfaces());
                 Collections.reverse(interfaces);
 
                 List<Method> defaultMethods = new ArrayList<>();
@@ -1213,7 +1213,7 @@ public class ClassProto implements TypeProto {
     private void addToVtable(@Nonnull Iterable<? extends Method> localMethods, @Nonnull List<Method> vtable,
                              boolean replaceExisting, boolean sort) {
         if (sort) {
-            ArrayList<Method> methods = (ArrayList<Method>)IteratorUtils.toList(localMethods.iterator());
+            ArrayList<Method> methods = (ArrayList<Method>)IteratorUtils.toList(localMethods);
             Collections.sort(methods);
             localMethods = methods;
         }

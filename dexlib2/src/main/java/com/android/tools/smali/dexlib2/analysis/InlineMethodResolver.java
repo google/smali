@@ -70,7 +70,7 @@ public abstract class InlineMethodResolver {
     private static Method inlineMethod(int accessFlags, @Nonnull String cls, @Nonnull String name,
                                        @Nonnull String params, @Nonnull String returnType) {
         List<ImmutableMethodParameter> paramList = unmodifiableList(
-            IteratorUtils.toList(ParamUtil.parseParamString(params).iterator()));
+            IteratorUtils.toList(ParamUtil.parseParamString(params)));
         return new ImmutableMethod(cls, name, paramList, returnType, accessFlags, null, null, null);
     }
 

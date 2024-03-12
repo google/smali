@@ -178,9 +178,9 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
         BuilderArrayEncodedValue internedStaticInitializers = null;
         if (fields != null) {
             staticFields = ImmutableSortedSet.copyOf((Iterator<? extends BuilderField>)IteratorUtils
-                    .filter(fields.iterator(), FieldUtil.FIELD_IS_STATIC));
+                    .filter(fields, FieldUtil.FIELD_IS_STATIC));
             instanceFields = ImmutableSortedSet.copyOf((Iterator<? extends BuilderField>)IteratorUtils
-                    .filter(fields.iterator(), FieldUtil.FIELD_IS_INSTANCE));
+                    .filter(fields, FieldUtil.FIELD_IS_INSTANCE));
             ArrayEncodedValue staticInitializers = StaticInitializerUtil.getStaticInitializers(staticFields);
             if (staticInitializers != null) {
                 internedStaticInitializers = encodedArraySection.internArrayEncodedValue(staticInitializers);

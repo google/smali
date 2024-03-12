@@ -87,10 +87,10 @@ public class ImmutableClassDef extends BaseTypeReference implements ClassDef {
         this.interfaces = interfaces == null ? Collections.emptyList() : unmodifiableList(new ArrayList<>(interfaces));
         this.sourceFile = sourceFile;
         this.annotations = ImmutableAnnotation.immutableSetOf(annotations);
-        this.staticFields = ImmutableField.immutableSetOf(IteratorUtils.filter(fields.iterator(), FieldUtil.FIELD_IS_STATIC));
-        this.instanceFields = ImmutableField.immutableSetOf(IteratorUtils.filter(fields.iterator(), FieldUtil.FIELD_IS_INSTANCE));
-        this.directMethods = ImmutableMethod.immutableSetOf(IteratorUtils.filter(methods.iterator(), MethodUtil.METHOD_IS_DIRECT));
-        this.virtualMethods = ImmutableMethod.immutableSetOf(IteratorUtils.filter(methods.iterator(), MethodUtil.METHOD_IS_VIRTUAL));
+        this.staticFields = ImmutableField.immutableSetOf(IteratorUtils.filter(fields, FieldUtil.FIELD_IS_STATIC));
+        this.instanceFields = ImmutableField.immutableSetOf(IteratorUtils.filter(fields, FieldUtil.FIELD_IS_INSTANCE));
+        this.directMethods = ImmutableMethod.immutableSetOf(IteratorUtils.filter(methods, MethodUtil.METHOD_IS_DIRECT));
+        this.virtualMethods = ImmutableMethod.immutableSetOf(IteratorUtils.filter(methods, MethodUtil.METHOD_IS_VIRTUAL));
     }
 
     public ImmutableClassDef(@Nonnull String type,

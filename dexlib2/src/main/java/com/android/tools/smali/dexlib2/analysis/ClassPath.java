@@ -103,7 +103,7 @@ public class ClassPath {
         loadPrimitiveType("D");
         loadPrimitiveType("L");
 
-        this.classProviders = (List<ClassProvider>)IteratorUtils.toList(classProviders.iterator());
+        this.classProviders = (List<ClassProvider>)IteratorUtils.toList(classProviders);
         this.classProviders.add(getBasicClasses());
     }
 

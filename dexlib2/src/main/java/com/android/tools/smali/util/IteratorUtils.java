@@ -46,6 +46,11 @@ public final class IteratorUtils {
             }
         }
     }
+
+    public static <T extends Object> AbstractIterator<T> filter(
+                Iterable<T> unfiltered, Predicate<? super T> retainIfTrue) {
+        return filter(unfiltered.iterator(), retainIfTrue);
+    }
     
     public static <T extends Object> AbstractIterator<T> filter(
                 Iterator<T> unfiltered, Predicate<? super T> retainIfTrue) {
@@ -61,6 +66,10 @@ public final class IteratorUtils {
                 return endOfData();
             }
         };
+    }
+
+    public static <T extends Object> List<T> toList(Iterable<T> iterable) {
+        return toList(iterable.iterator());
     }
 
     public static <T extends Object> List<T> toList(Iterator<T> iterator) {

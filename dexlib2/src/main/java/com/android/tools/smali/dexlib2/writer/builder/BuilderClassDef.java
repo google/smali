@@ -96,9 +96,9 @@ public class BuilderClassDef extends BaseTypeReference implements ClassDef {
         this.staticFields = staticFields;
         this.instanceFields = instanceFields;
         this.directMethods = ImmutableSortedSet.copyOf((Iterator<? extends BuilderMethod>)IteratorUtils
-                .filter(methods.iterator(), MethodUtil.METHOD_IS_DIRECT));
+                .filter(methods, MethodUtil.METHOD_IS_DIRECT));
         this.virtualMethods = ImmutableSortedSet.copyOf((Iterator<? extends BuilderMethod>)IteratorUtils
-                .filter(methods.iterator(), MethodUtil.METHOD_IS_VIRTUAL));
+                .filter(methods, MethodUtil.METHOD_IS_VIRTUAL));
         this.staticInitializers = staticInitializers;
     }
 

@@ -455,7 +455,7 @@ public class MethodAnalyzer {
         int registerCount = methodImpl.getRegisterCount();
 
         List<Instruction> instructions = Collections.unmodifiableList(
-            IteratorUtils.toList(methodImpl.getInstructions().iterator()));
+            IteratorUtils.toList(methodImpl.getInstructions()));
 
         analyzedInstructions.ensureCapacity(instructions.size());
 

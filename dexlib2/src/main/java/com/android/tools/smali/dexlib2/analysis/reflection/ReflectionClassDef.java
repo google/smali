@@ -101,7 +101,7 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
         return new Iterable<Field>() {
             @Nonnull @Override public Iterator<Field> iterator() {
                 Iterator<java.lang.reflect.Field> staticFields = IteratorUtils.filter(
-                        Arrays.asList(cls.getDeclaredFields()).iterator(),
+                        Arrays.asList(cls.getDeclaredFields()),
                         new Predicate<java.lang.reflect.Field>() {
                             @Override public boolean test(@Nullable java.lang.reflect.Field input) {
                                 return input!=null && Modifier.isStatic(input.getModifiers());
@@ -121,7 +121,7 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
         return new Iterable<Field>() {
             @Nonnull @Override public Iterator<Field> iterator() {
                 Iterator<java.lang.reflect.Field> staticFields = IteratorUtils.filter(
-                        Arrays.asList(cls.getDeclaredFields()).iterator(),
+                        Arrays.asList(cls.getDeclaredFields()),
                         new Predicate<java.lang.reflect.Field>() {
                             @Override public boolean test(@Nullable java.lang.reflect.Field input) {
                                 return input!=null && !Modifier.isStatic(input.getModifiers());
@@ -171,7 +171,7 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
                                 });
 
                 Iterator<java.lang.reflect.Method> directMethods = IteratorUtils.filter(
-                        Arrays.asList(cls.getDeclaredMethods()).iterator(),
+                        Arrays.asList(cls.getDeclaredMethods()),
                         new Predicate<java.lang.reflect.Method>() {
                             @Override public boolean test(@Nullable java.lang.reflect.Method input) {
                                 return input != null && (input.getModifiers() & DIRECT_MODIFIERS) != 0;
@@ -194,7 +194,7 @@ public class ReflectionClassDef extends BaseTypeReference implements ClassDef {
         return new Iterable<Method>() {
             @Nonnull @Override public Iterator<Method> iterator() {
                 Iterator<java.lang.reflect.Method> directMethods = IteratorUtils.filter(
-                        Arrays.asList(cls.getDeclaredMethods()).iterator(),
+                        Arrays.asList(cls.getDeclaredMethods()),
                         new Predicate<java.lang.reflect.Method>() {
                             @Override public boolean test(@Nullable java.lang.reflect.Method input) {
                                 return input != null && (input.getModifiers() & DIRECT_MODIFIERS) == 0;
