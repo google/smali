@@ -36,10 +36,7 @@ import java.util.function.Supplier;
  * Based on Guava's NonSerializableMemoizing Supplier. This implementation is thread safe.
  */
 public class MemoizingSupplier<T> implements Supplier<T> {
-    private static final Supplier<Void> SUCCESSFULLY_COMPUTED = () -> {
-        throw new IllegalStateException(); // Should never get called.
-    };
-
+    // Delegate will only be null when the value was successfuly computed
     private volatile Supplier<T> delegate;
     private T value;
 
@@ -53,13 +50,12 @@ public class MemoizingSupplier<T> implements Supplier<T> {
     @Override
     public T get() {
         // Because Supplier is read-heavy, we use the "double-checked locking" pattern.
-        if (delegate != SUCCESSFULLY_COMPUTED) {
+        if (delegate != null) {
             synchronized (this) {
-                if (delegate != SUCCESSFULLY_COMPUTED) {
+                if (delegate != null) {
                     T t = delegate.get();
                     value = t;
-                    delegate = (Supplier<T>) SUCCESSFULLY_COMPUTED;
-                    return t;
+                    delegate = null;
                 }
             }
         }

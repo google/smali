@@ -41,7 +41,8 @@ import java.util.Iterator;
 public class StringUtils {
 
     /**
-     * @deprecated Use @see com.android.tools.smali.baksmali.formatter.BaksmaliWriter}#writeCharEncodedValue()
+     * @deprecated Use @see
+     *             com.android.tools.smali.baksmali.formatter.BaksmaliWriter}#writeCharEncodedValue()
      */
     @Deprecated
     public static void writeEscapedChar(Writer writer, char c) throws IOException {
@@ -53,9 +54,15 @@ public class StringUtils {
             return;
         } else if (c <= 0x7f) {
             switch (c) {
-                case '\n': writer.write("\\n"); return;
-                case '\r': writer.write("\\r"); return;
-                case '\t': writer.write("\\t"); return;
+                case '\n':
+                    writer.write("\\n");
+                    return;
+                case '\r':
+                    writer.write("\\r");
+                    return;
+                case '\t':
+                    writer.write("\\t");
+                    return;
             }
         }
 
@@ -82,9 +89,15 @@ public class StringUtils {
                 continue;
             } else if (c <= 0x7f) {
                 switch (c) {
-                    case '\n': writer.write("\\n"); continue;
-                    case '\r': writer.write("\\r"); continue;
-                    case '\t': writer.write("\\t"); continue;
+                    case '\n':
+                        writer.write("\\n");
+                        continue;
+                    case '\r':
+                        writer.write("\\r");
+                        continue;
+                    case '\t':
+                        writer.write("\\t");
+                        continue;
                 }
             }
 
@@ -111,9 +124,15 @@ public class StringUtils {
                 continue;
             } else if (c <= 0x7f) {
                 switch (c) {
-                    case '\n': sb.append("\\n"); continue;
-                    case '\r': sb.append("\\r"); continue;
-                    case '\t': sb.append("\\t"); continue;
+                    case '\n':
+                        sb.append("\\n");
+                        continue;
+                    case '\r':
+                        sb.append("\\r");
+                        continue;
+                    case '\t':
+                        sb.append("\\t");
+                        continue;
                 }
             }
 
@@ -138,5 +157,36 @@ public class StringUtils {
             builder.append(it.next());
         }
         return builder.toString();
+    }
+
+    // Base on the repeat method in guava Strings, of the same signature.
+    public static String repeat(String string, int count) {
+        if (string == null) {
+            throw new NullPointerException("string == null");
+        }
+
+        if (count <= 1) {
+            if (count >= 0) {
+                throw new IllegalArgumentException("invalid count: " + count);
+            }
+            return (count == 0) ? "" : string;
+        }
+
+        final int len = string.length();
+        final long longSize = (long) len * (long) count;
+        final int size = (int) longSize;
+        if (size != longSize) {
+            throw new ArrayIndexOutOfBoundsException("Required array size too large: " + longSize);
+        }
+
+        final char[] array = new char[size];
+        string.getChars(0, len, array, 0);
+        int n;
+        for (n = len; n < size - n; n <<= 1) {
+            System.arraycopy(array, 0, array, n, n);
+        }
+        System.arraycopy(array, 0, array, n, size - n);
+        return new String(array);
+
     }
 }
