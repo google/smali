@@ -76,15 +76,15 @@ import com.android.tools.smali.dexlib2.util.TypeUtils;
 import com.android.tools.smali.dexlib2.writer.util.TryListBuilder;
 import com.android.tools.smali.util.BitSetUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
+import com.android.tools.smali.util.IteratorUtils;
 import com.android.tools.smali.util.SparseArray;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The MethodAnalyzer performs several functions. It "analyzes" the instructions and infers the register types
@@ -329,14 +329,8 @@ public class MethodAnalyzer {
     }
 
     public List<Instruction> getInstructions() {
-        return Lists.transform(analyzedInstructions.getValues(), new Function<AnalyzedInstruction, Instruction>() {
-            @Nullable @Override public Instruction apply(@Nullable AnalyzedInstruction input) {
-                if (input == null) {
-                    return null;
-                }
-                return input.instruction;
-            }
-        });
+        return analyzedInstructions.getValues().stream().map(
+            input -> input == null ? null : input.instruction).collect(Collectors.toList());
     }
 
     @Nullable
@@ -458,7 +452,8 @@ public class MethodAnalyzer {
     private void buildInstructionList() {
         int registerCount = methodImpl.getRegisterCount();
 
-        ImmutableList<Instruction> instructions = ImmutableList.copyOf(methodImpl.getInstructions());
+        List<Instruction> instructions = Collections.unmodifiableList(
+            IteratorUtils.toList(methodImpl.getInstructions()));
 
         analyzedInstructions.ensureCapacity(instructions.size());
 

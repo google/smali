@@ -36,7 +36,7 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference;
 import com.android.tools.smali.dexlib2.util.TypeUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.base.Strings;
+import com.android.tools.smali.util.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -141,7 +141,7 @@ public class ArrayProto implements TypeProto {
         return other.getCommonSuperclass(this);
     }
 
-    private static final String BRACKETS = Strings.repeat("[", 256);
+    private static final String BRACKETS = StringUtils.repeat("[", 256);
 
     @Nonnull
     private static String makeArrayType(@Nonnull String elementType, int dimensions) {

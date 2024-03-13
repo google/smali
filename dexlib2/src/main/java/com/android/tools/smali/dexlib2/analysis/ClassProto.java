@@ -32,6 +32,7 @@ package com.android.tools.smali.dexlib2.analysis;
 
 import com.android.tools.smali.dexlib2.AccessFlags;
 import com.android.tools.smali.dexlib2.HiddenApiRestriction;
+import com.android.tools.smali.dexlib2.analysis.util.MemoizingSupplier;
 import com.android.tools.smali.dexlib2.analysis.util.TypeProtoUtils;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodReference;
 import com.android.tools.smali.dexlib2.iface.Annotation;
@@ -45,17 +46,9 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.util.AlignmentUtils;
 import com.android.tools.smali.dexlib2.util.MethodUtil;
 import com.android.tools.smali.util.ExceptionWithContext;
+import com.android.tools.smali.util.IteratorUtils;
 import com.android.tools.smali.util.SparseArray;
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicates;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.primitives.Ints;
+import com.android.tools.smali.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,9 +59,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 
 /**
  * A class "prototype". This contains things like the interfaces, the superclass, the vtable and the instance fields
@@ -105,7 +100,7 @@ public class ClassProto implements TypeProto {
     }
 
 
-    @Nonnull private final Supplier<ClassDef> classDefSupplier = Suppliers.memoize(new Supplier<ClassDef>() {
+    @Nonnull private final Supplier<ClassDef> classDefSupplier = MemoizingSupplier.memoize(new Supplier<ClassDef>() {
         @Override public ClassDef get() {
             return classPath.getClassDef(type);
         }
@@ -151,10 +146,10 @@ public class ClassProto implements TypeProto {
      */
     @Nonnull
     private final Supplier<LinkedHashMap<String, ClassDef>> preDefaultMethodInterfaceSupplier =
-            Suppliers.memoize(new Supplier<LinkedHashMap<String, ClassDef>>() {
+            MemoizingSupplier.memoize(new Supplier<LinkedHashMap<String, ClassDef>>() {
                 @Override public LinkedHashMap<String, ClassDef> get() {
                     Set<String> unresolvedInterfaces = new HashSet<>(0);
-                    LinkedHashMap<String, ClassDef> interfaces = Maps.newLinkedHashMap();
+                    LinkedHashMap<String, ClassDef> interfaces = new LinkedHashMap<>();
 
                     try {
                         for (String interfaceType: getClassDef().getInterfaces()) {
@@ -227,10 +222,10 @@ public class ClassProto implements TypeProto {
      */
     @Nonnull
     private final Supplier<LinkedHashMap<String, ClassDef>> postDefaultMethodInterfaceSupplier =
-            Suppliers.memoize(new Supplier<LinkedHashMap<String, ClassDef>>() {
+            MemoizingSupplier.memoize(new Supplier<LinkedHashMap<String, ClassDef>>() {
                 @Override public LinkedHashMap<String, ClassDef> get() {
                     Set<String> unresolvedInterfaces = new HashSet<String>(0);
-                    LinkedHashMap<String, ClassDef> interfaces = Maps.newLinkedHashMap();
+                    LinkedHashMap<String, ClassDef> interfaces = new LinkedHashMap<>();
 
                     String superclass = getSuperclass();
                     if (superclass != null) {
@@ -290,7 +285,7 @@ public class ClassProto implements TypeProto {
     @Nonnull
     protected Set<String> getUnresolvedInterfaces() {
         if (unresolvedInterfaces == null) {
-            return ImmutableSet.of();
+            return Collections.emptySet();
         }
         return unresolvedInterfaces;
     }
@@ -305,12 +300,15 @@ public class ClassProto implements TypeProto {
      */
     @Nonnull
     protected Iterable<ClassDef> getDirectInterfaces() {
-        Iterable<ClassDef> directInterfaces =
-                FluentIterable.from(getInterfaces().values()).filter(Predicates.notNull());
+        Iterable<ClassDef> directInterfaces = IteratorUtils.filter(getInterfaces().values(), new Predicate<ClassDef>() {
+            @Override public boolean test(@Nullable ClassDef input) {
+                return input != null;
+            }
+        });
 
         if (!interfacesFullyResolved) {
             throw new UnresolvedClassException("Interfaces for class %s not fully resolved: %s", getType(),
-                    Joiner.on(',').join(getUnresolvedInterfaces()));
+                    StringUtils.join(getUnresolvedInterfaces(), ","));
         }
 
         return directInterfaces;
@@ -428,15 +426,17 @@ public class ClassProto implements TypeProto {
             return classPath.getUnknownClass();
         }
 
-        List<TypeProto> thisChain = Lists.<TypeProto>newArrayList(this);
-        Iterables.addAll(thisChain, TypeProtoUtils.getSuperclassChain(this));
+        List<TypeProto> thisChain = new ArrayList<>();
+        thisChain.add(this);
+        IteratorUtils.addAll(thisChain, TypeProtoUtils.getSuperclassChain(this).iterator());
 
-        List<TypeProto> otherChain = Lists.newArrayList(other);
-        Iterables.addAll(otherChain, TypeProtoUtils.getSuperclassChain(other));
+        List<TypeProto> otherChain = new ArrayList<>();
+        otherChain.add(other);
+        IteratorUtils.addAll(otherChain, TypeProtoUtils.getSuperclassChain(other).iterator());
 
         // reverse them, so that the first entry is either Ljava/lang/Object; or Ujava/lang/Object;
-        thisChain = Lists.reverse(thisChain);
-        otherChain = Lists.reverse(otherChain);
+        Collections.reverse(thisChain);
+        Collections.reverse(otherChain);
 
         for (int i=Math.min(thisChain.size(), otherChain.size())-1; i>=0; i--) {
             TypeProto typeProto = thisChain.get(i);
@@ -507,7 +507,7 @@ public class ClassProto implements TypeProto {
     }
 
     @Nonnull private final Supplier<SparseArray<FieldReference>> dalvikInstanceFieldsSupplier =
-            Suppliers.memoize(new Supplier<SparseArray<FieldReference>>() {
+            MemoizingSupplier.memoize(new Supplier<SparseArray<FieldReference>>() {
                 @Override public SparseArray<FieldReference> get() {
                     //This is a bit of an "involved" operation. We need to follow the same algorithm that dalvik uses to
                     //arrange fields, so that we end up with the same field offsets (which is needed for deodexing).
@@ -654,7 +654,7 @@ public class ClassProto implements TypeProto {
 
                 @Nonnull
                 private ArrayList<Field> getSortedInstanceFields(@Nonnull ClassDef classDef) {
-                    ArrayList<Field> fields = Lists.newArrayList(classDef.getInstanceFields());
+                    ArrayList<Field> fields = (ArrayList<Field>)IteratorUtils.toList(classDef.getInstanceFields());
                     Collections.sort(fields);
                     return fields;
                 }
@@ -677,21 +677,21 @@ public class ClassProto implements TypeProto {
             if (oatVersion >= 67) {
                 return new FieldGap(offset, size) {
                     @Override public int compareTo(@Nonnull FieldGap o) {
-                        int result = Ints.compare(o.size, size);
+                        int result = Integer.compare(o.size, size);
                         if (result != 0) {
                             return result;
                         }
-                        return Ints.compare(offset, o.offset);
+                        return Integer.compare(offset, o.offset);
                     }
                 };
             } else {
                 return new FieldGap(offset, size) {
                     @Override public int compareTo(@Nonnull FieldGap o) {
-                        int result = Ints.compare(size, o.size);
+                        int result = Integer.compare(size, o.size);
                         if (result != 0) {
                             return result;
                         }
-                        return Ints.compare(o.offset, offset);
+                        return Integer.compare(o.offset, offset);
                     }
                 };
             }
@@ -704,7 +704,7 @@ public class ClassProto implements TypeProto {
     }
 
     @Nonnull private final Supplier<SparseArray<FieldReference>> artInstanceFieldsSupplier =
-            Suppliers.memoize(new Supplier<SparseArray<FieldReference>>() {
+            MemoizingSupplier.memoize(new Supplier<SparseArray<FieldReference>>() {
 
                 @Override public SparseArray<FieldReference> get() {
                     // We need to follow the same algorithm that art uses to arrange fields, so that we end up with the
@@ -781,10 +781,10 @@ public class ClassProto implements TypeProto {
 
                 @Nonnull
                 private ArrayList<Field> getSortedInstanceFields(@Nonnull ClassDef classDef) {
-                    ArrayList<Field> fields = Lists.newArrayList(classDef.getInstanceFields());
+                    ArrayList<Field> fields = (ArrayList<Field>)IteratorUtils.toList(classDef.getInstanceFields());
                     Collections.sort(fields, new Comparator<Field>() {
                         @Override public int compare(Field field1, Field field2) {
-                            int result = Ints.compare(getFieldSortOrder(field1), getFieldSortOrder(field2));
+                            int result = Integer.compare(getFieldSortOrder(field1), getFieldSortOrder(field2));
                             if (result != 0) {
                                 return result;
                             }
@@ -891,9 +891,9 @@ public class ClassProto implements TypeProto {
     }
 
     //TODO: check the case when we have a package private method that overrides an interface method
-    @Nonnull private final Supplier<List<Method>> preDefaultMethodVtableSupplier = Suppliers.memoize(new Supplier<List<Method>>() {
+    @Nonnull private final Supplier<List<Method>> preDefaultMethodVtableSupplier = MemoizingSupplier.memoize(new Supplier<List<Method>>() {
         @Override public List<Method> get() {
-            List<Method> vtable = Lists.newArrayList();
+            List<Method> vtable = new ArrayList<>();
 
             //copy the virtual methods from the superclass
             String superclassType;
@@ -926,7 +926,7 @@ public class ClassProto implements TypeProto {
                 // we don't end up trying to call invoke-virtual using an interface, which will fail verification
                 Iterable<ClassDef> interfaces = getDirectInterfaces();
                 for (ClassDef interfaceDef: interfaces) {
-                    List<Method> interfaceMethods = Lists.newArrayList();
+                    List<Method> interfaceMethods = new ArrayList<>();
                     for (Method interfaceMethod: interfaceDef.getVirtualMethods()) {
                         interfaceMethods.add(new ReparentedMethod(interfaceMethod, type));
                     }
@@ -942,9 +942,9 @@ public class ClassProto implements TypeProto {
      * produce multiple vtable entries for a given virtual method. This supplier duplicates this buggy logic in order to
      * generate an identical vtable
      */
-    @Nonnull private final Supplier<List<Method>> buggyPostDefaultMethodVtableSupplier = Suppliers.memoize(new Supplier<List<Method>>() {
+    @Nonnull private final Supplier<List<Method>> buggyPostDefaultMethodVtableSupplier = MemoizingSupplier.memoize(new Supplier<List<Method>>() {
         @Override public List<Method> get() {
-            List<Method> vtable = Lists.newArrayList();
+            List<Method> vtable = new ArrayList<>();
 
             //copy the virtual methods from the superclass
             String superclassType;
@@ -973,13 +973,13 @@ public class ClassProto implements TypeProto {
             if (!isInterface()) {
                 addToVtable(getClassDef().getVirtualMethods(), vtable, true, true);
 
-                List<String> interfaces = Lists.newArrayList(getInterfaces().keySet());
+                List<String> interfaces = new ArrayList<>(getInterfaces().keySet());
 
-                List<Method> defaultMethods = Lists.newArrayList();
-                List<Method> defaultConflictMethods = Lists.newArrayList();
-                List<Method> mirandaMethods = Lists.newArrayList();
+                List<Method> defaultMethods = new ArrayList<>();
+                List<Method> defaultConflictMethods = new ArrayList<>();
+                List<Method> mirandaMethods = new ArrayList<>();
 
-                final HashMap<MethodReference, Integer> methodOrder = Maps.newHashMap();
+                final HashMap<MethodReference, Integer> methodOrder = new HashMap<>();
 
                 for (int i=interfaces.size()-1; i>=0; i--) {
                     String interfaceType = interfaces.get(i);
@@ -1070,7 +1070,7 @@ public class ClassProto implements TypeProto {
 
                 Comparator<MethodReference> comparator = new Comparator<MethodReference>() {
                     @Override public int compare(MethodReference o1, MethodReference o2) {
-                        return Ints.compare(methodOrder.get(o1), methodOrder.get(o2));
+                        return Integer.compare(methodOrder.get(o1), methodOrder.get(o2));
                     }
                 };
 
@@ -1089,9 +1089,9 @@ public class ClassProto implements TypeProto {
         }
     });
 
-    @Nonnull private final Supplier<List<Method>> postDefaultMethodVtableSupplier = Suppliers.memoize(new Supplier<List<Method>>() {
+    @Nonnull private final Supplier<List<Method>> postDefaultMethodVtableSupplier = MemoizingSupplier.memoize(new Supplier<List<Method>>() {
         @Override public List<Method> get() {
-            List<Method> vtable = Lists.newArrayList();
+            List<Method> vtable = new ArrayList<>();
 
             //copy the virtual methods from the superclass
             String superclassType;
@@ -1120,13 +1120,14 @@ public class ClassProto implements TypeProto {
             if (!isInterface()) {
                 addToVtable(getClassDef().getVirtualMethods(), vtable, true, true);
 
-                Iterable<ClassDef> interfaces = Lists.reverse(Lists.newArrayList(getDirectInterfaces()));
+                List<ClassDef> interfaces = IteratorUtils.toList(getDirectInterfaces());
+                Collections.reverse(interfaces);
 
-                List<Method> defaultMethods = Lists.newArrayList();
-                List<Method> defaultConflictMethods = Lists.newArrayList();
-                List<Method> mirandaMethods = Lists.newArrayList();
+                List<Method> defaultMethods = new ArrayList<>();
+                List<Method> defaultConflictMethods = new ArrayList<>();
+                List<Method> mirandaMethods = new ArrayList<>();
 
-                final HashMap<MethodReference, Integer> methodOrder = Maps.newHashMap();
+                final HashMap<MethodReference, Integer> methodOrder = new HashMap<>();
 
                 for (ClassDef interfaceDef: interfaces) {
                     for (Method interfaceMethod : interfaceDef.getVirtualMethods()) {
@@ -1190,7 +1191,7 @@ public class ClassProto implements TypeProto {
 
                 Comparator<MethodReference> comparator = new Comparator<MethodReference>() {
                     @Override public int compare(MethodReference o1, MethodReference o2) {
-                        return Ints.compare(methodOrder.get(o1), methodOrder.get(o2));
+                        return Integer.compare(methodOrder.get(o1), methodOrder.get(o2));
                     }
                 };
 
@@ -1211,7 +1212,7 @@ public class ClassProto implements TypeProto {
     private void addToVtable(@Nonnull Iterable<? extends Method> localMethods, @Nonnull List<Method> vtable,
                              boolean replaceExisting, boolean sort) {
         if (sort) {
-            ArrayList<Method> methods = Lists.newArrayList(localMethods);
+            ArrayList<Method> methods = (ArrayList<Method>)IteratorUtils.toList(localMethods);
             Collections.sort(methods);
             localMethods = methods;
         }

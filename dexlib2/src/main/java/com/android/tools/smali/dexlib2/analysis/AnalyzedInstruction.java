@@ -42,15 +42,15 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.Reference;
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
@@ -301,7 +301,7 @@ public class AnalyzedInstruction implements Comparable<AnalyzedInstruction> {
     protected boolean overridePredecessorRegisterType(@Nonnull AnalyzedInstruction predecessor, int registerNumber,
                                                       @Nonnull RegisterType registerType, BitSet verifiedInstructions) {
         if (predecessorRegisterOverrides == null) {
-            predecessorRegisterOverrides = Maps.newHashMap();
+            predecessorRegisterOverrides = new HashMap<>();
         }
         predecessorRegisterOverrides.put(new PredecessorOverrideKey(predecessor, registerNumber), registerType);
 
@@ -482,7 +482,7 @@ public class AnalyzedInstruction implements Comparable<AnalyzedInstruction> {
     }
 
     public List<Integer> getSetRegisters() {
-        List<Integer> setRegisters = Lists.newArrayList();
+        List<Integer> setRegisters = new ArrayList<>();
 
         if (instruction.getOpcode().setsRegister()) {
             setRegisters.add(getDestinationRegister());
@@ -667,12 +667,12 @@ public class AnalyzedInstruction implements Comparable<AnalyzedInstruction> {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             PredecessorOverrideKey that = (PredecessorOverrideKey)o;
-            return com.google.common.base.Objects.equal(registerNumber, that.registerNumber) &&
-                    Objects.equal(analyzedInstruction, that.analyzedInstruction);
+            return Objects.equals(registerNumber, that.registerNumber) &&
+                    Objects.equals(analyzedInstruction, that.analyzedInstruction);
         }
 
         @Override public int hashCode() {
-            return Objects.hashCode(analyzedInstruction, registerNumber);
+            return Objects.hash(analyzedInstruction, registerNumber);
         }
     }
 }

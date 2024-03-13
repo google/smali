@@ -30,15 +30,19 @@
 
 package com.android.tools.smali.dexlib2.analysis;
 
+import static java.util.Collections.unmodifiableList;
+
 import com.android.tools.smali.dexlib2.iface.Method;
 import com.android.tools.smali.dexlib2.iface.instruction.InlineIndexInstruction;
 import com.android.tools.smali.dexlib2.iface.instruction.VariableRegisterInstruction;
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod;
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter;
 import com.android.tools.smali.dexlib2.immutable.util.ParamUtil;
-import com.google.common.collect.ImmutableList;
+import com.android.tools.smali.util.IteratorUtils;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class InlineMethodResolver {
     // These are the possible values for the accessFlag field on a resolved inline method
@@ -65,7 +69,8 @@ public abstract class InlineMethodResolver {
     @Nonnull
     private static Method inlineMethod(int accessFlags, @Nonnull String cls, @Nonnull String name,
                                        @Nonnull String params, @Nonnull String returnType) {
-        ImmutableList<ImmutableMethodParameter> paramList = ImmutableList.copyOf(ParamUtil.parseParamString(params));
+        List<ImmutableMethodParameter> paramList = unmodifiableList(
+            IteratorUtils.toList(ParamUtil.parseParamString(params)));
         return new ImmutableMethod(cls, name, paramList, returnType, accessFlags, null, null, null);
     }
 

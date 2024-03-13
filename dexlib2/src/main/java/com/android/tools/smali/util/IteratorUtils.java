@@ -30,7 +30,10 @@
 
 package com.android.tools.smali.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
 
 public final class IteratorUtils {
@@ -42,6 +45,11 @@ public final class IteratorUtils {
                 return current;
             }
         }
+    }
+
+    public static <T extends Object> AbstractIterator<T> filter(
+                Iterable<T> unfiltered, Predicate<? super T> retainIfTrue) {
+        return filter(unfiltered.iterator(), retainIfTrue);
     }
     
     public static <T extends Object> AbstractIterator<T> filter(
@@ -58,5 +66,23 @@ public final class IteratorUtils {
                 return endOfData();
             }
         };
+    }
+
+    public static <T extends Object> List<T> toList(Iterable<T> iterable) {
+        return toList(iterable.iterator());
+    }
+
+    public static <T extends Object> List<T> toList(Iterator<T> iterator) {
+        ArrayList<T> list = new ArrayList<T>();
+        while (iterator.hasNext()) {
+            list.add(iterator.next());
+        }
+        return list;
+    }
+
+    public static <T extends Object> void addAll(Collection<T> collection, Iterator<T> iterator) {
+        while (iterator.hasNext()) {
+            collection.add(iterator.next());
+        }
     }
 }
