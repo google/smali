@@ -223,7 +223,7 @@ public abstract class DexWriter<
 
     private final IndexSection<?>[] overflowableSections;
 
-    private final Map<ByteBuffer, Integer> debugInfoCaches = new HashMap<>();
+    private final Map<DebugInfoCache, Integer> debugInfoCaches = new HashMap<>();
 
     protected DexWriter(Opcodes opcodes) {
         this.opcodes = opcodes;
@@ -1051,8 +1051,6 @@ public abstract class DexWriter<
                                         @Nonnull DeferredOutputStream temp) throws IOException {
         ByteArrayOutputStream ehBuf = new ByteArrayOutputStream();
         debugSectionOffset = offsetWriter.getPosition();
-        DebugWriter<StringKey, TypeKey> debugWriter =
-                new DebugWriter<StringKey, TypeKey>(stringSection, typeSection, offsetWriter);
 
         DexDataWriter codeWriter = new DexDataWriter(temp, 0);
 
@@ -1093,8 +1091,7 @@ public abstract class DexWriter<
                     }
                 }
 
-                int debugItemOffset = writeDebugItem(offsetWriter, debugWriter,
-                        classSection.getParameterNames(methodKey), debugItems);
+                int debugItemOffset = writeDebugItem(offsetWriter, classSection.getParameterNames(methodKey), debugItems);
                 int codeItemOffset;
                 try {
                     codeItemOffset = writeCodeItem(
@@ -1140,7 +1137,6 @@ public abstract class DexWriter<
     }
 
     private int writeDebugItem(@Nonnull DexDataWriter writer,
-                               @Nonnull DebugWriter<StringKey, TypeKey> debugWriter,
                                @Nullable Iterable<? extends StringKey> parameterNames,
                                @Nullable Iterable<? extends DebugItem> debugItems) throws IOException {
         int parameterCount = 0;
@@ -1203,7 +1199,7 @@ public abstract class DexWriter<
 
         tempDataWriter.flush();
         byte[] debugInfo = tempByteOutput.toByteArray();
-        ByteBuffer wrapBytes = ByteBuffer.wrap(debugInfo);
+        DebugInfoCache wrapBytes = new DebugInfoCache(debugInfo);
         int cacheBytes = debugInfoCaches.getOrDefault(wrapBytes, -1);
         if (cacheBytes >= 0) {
             return cacheBytes;
