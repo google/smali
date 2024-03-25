@@ -30,12 +30,12 @@
 
 package com.android.tools.smali.dexlib2;
 
-import com.google.common.collect.ImmutableRangeMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
-import com.google.common.collect.RangeMap;
+import com.android.tools.smali.util.UnmodifiableRangeMap;
+import com.android.tools.smali.util.Range;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public enum Opcode
@@ -348,8 +348,8 @@ public enum Opcode
 
     // values and minApis provide a mapping of api -> bytecode value.
     // the apis in minApis are guaranteed to be
-    public final RangeMap<Integer, Short> apiToValueMap;
-    public final RangeMap<Integer, Short> artVersionToValueMap;
+    public final UnmodifiableRangeMap<Integer, Short> apiToValueMap;
+    public final UnmodifiableRangeMap<Integer, Short> artVersionToValueMap;
 
     public final String name;
     public final int referenceType;
@@ -371,8 +371,8 @@ public enum Opcode
 
     Opcode(List<VersionConstraint> versionConstraints, String opcodeName, int referenceType, int referenceType2,
            Format format, int flags) {
-        ImmutableRangeMap.Builder<Integer, Short> apiToValueBuilder = ImmutableRangeMap.builder();
-        ImmutableRangeMap.Builder<Integer, Short> artVersionToValueBuilder = ImmutableRangeMap.builder();
+            UnmodifiableRangeMap.Builder<Integer, Short> apiToValueBuilder = UnmodifiableRangeMap.builder();
+            UnmodifiableRangeMap.Builder<Integer, Short> artVersionToValueBuilder = UnmodifiableRangeMap.builder();
 
         for (VersionConstraint versionConstraint : versionConstraints) {
             if (!versionConstraint.apiRange.isEmpty()) {
@@ -393,41 +393,41 @@ public enum Opcode
     }
 
     private static List<VersionConstraint> firstApi(int opcodeValue, int api) {
-        return Lists.newArrayList(new VersionConstraint(Range.atLeast(api), Range.openClosed(0, 0), opcodeValue));
+        return Arrays.asList(new VersionConstraint(Range.atLeast(api), Range.openClosed(0, 0), opcodeValue));
     }
 
     private static List<VersionConstraint> lastApi(int opcodeValue, int api) {
-        return Lists.newArrayList(new VersionConstraint(Range.atMost(api), Range.openClosed(0, 0), opcodeValue));
+        return Arrays.asList(new VersionConstraint(Range.atMost(api), Range.openClosed(0, 0), opcodeValue));
     }
 
     private static List<VersionConstraint> betweenApi(int opcodeValue, int minApi, int maxApi) {
-        return Lists.newArrayList(new VersionConstraint(Range.closed(minApi, maxApi), Range.openClosed(0, 0),
+        return Arrays.asList(new VersionConstraint(Range.closed(minApi, maxApi), Range.openClosed(0, 0),
                 opcodeValue));
     }
 
     private static List<VersionConstraint> firstArtVersion(int opcodeValue, int artVersion) {
-        return Lists.newArrayList(new VersionConstraint(Range.openClosed(0, 0), Range.atLeast(artVersion), opcodeValue));
+        return Arrays.asList(new VersionConstraint(Range.openClosed(0, 0), Range.atLeast(artVersion), opcodeValue));
     }
 
     private static List<VersionConstraint> lastArtVersion(int opcodeValue, int artVersion) {
-        return Lists.newArrayList(new VersionConstraint(Range.openClosed(0, 0), Range.atMost(artVersion), opcodeValue));
+        return Arrays.asList(new VersionConstraint(Range.openClosed(0, 0), Range.atMost(artVersion), opcodeValue));
     }
 
     private static List<VersionConstraint> allVersions(int opcodeValue) {
-        return Lists.newArrayList(new VersionConstraint(Range.<Integer>all(), Range.<Integer>all(), opcodeValue));
+        return Arrays.asList(new VersionConstraint(Range.allValues(), Range.allValues(), opcodeValue));
     }
 
     private static List<VersionConstraint> allApis(int opcodeValue) {
-        return Lists.newArrayList(new VersionConstraint(Range.<Integer>all(), Range.openClosed(0, 0), opcodeValue));
+        return Arrays.asList(new VersionConstraint(Range.allValues(), Range.openClosed(0, 0), opcodeValue));
     }
 
     private static List<VersionConstraint> allArtVersions(int opcodeValue) {
-        return Lists.newArrayList(new VersionConstraint(Range.openClosed(0, 0), Range.<Integer>all(), opcodeValue));
+        return Arrays.asList(new VersionConstraint(Range.openClosed(0, 0), Range.allValues(), opcodeValue));
     }
 
     @SuppressWarnings("unchecked")
     private static List<VersionConstraint> combine(List<VersionConstraint>... versionConstraints) {
-        List<VersionConstraint> combinedList = Lists.newArrayList();
+        List<VersionConstraint> combinedList = new ArrayList<>();
         for (List<VersionConstraint> versionConstraintList: versionConstraints) {
             combinedList.addAll(versionConstraintList);
         }
