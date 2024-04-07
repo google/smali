@@ -4,11 +4,10 @@ import java.util.Arrays;
 
 public class DebugInfoCache {
     private final byte[] data;
-    private final int hashCode;
+    private final int threshold = 128;
 
     public DebugInfoCache(byte[] data) {
         this.data = data;
-        this.hashCode = Arrays.hashCode(data);
     }
 
     @Override
@@ -21,6 +20,9 @@ public class DebugInfoCache {
 
     @Override
     public int hashCode() {
-        return hashCode;
+        if (data.length < threshold) {
+            return Arrays.hashCode(data);
+        }
+        return Arrays.asList(data).subList(0, threshold).hashCode();
     }
 }
