@@ -35,13 +35,14 @@ import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.builder.BuilderSwitchPayload;
 import com.android.tools.smali.dexlib2.builder.SwitchLabelElement;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.SparseSwitchPayload;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class BuilderSparseSwitchPayload extends BuilderSwitchPayload implements
     SparseSwitchPayload {
@@ -52,14 +53,14 @@ public class BuilderSparseSwitchPayload extends BuilderSwitchPayload implements
     public BuilderSparseSwitchPayload(@Nullable List<? extends SwitchLabelElement> switchElements) {
         super(OPCODE);
         if (switchElements == null) {
-            this.switchElements = ImmutableList.of();
+            this.switchElements = Collections.emptyList();
         } else {
-            this.switchElements = Lists.transform(switchElements, new Function<SwitchLabelElement, BuilderSwitchElement>() {
+            this.switchElements = switchElements.stream().map(new Function<SwitchLabelElement, BuilderSwitchElement>() {
                 @Nullable @Override public BuilderSwitchElement apply(@Nullable SwitchLabelElement element) {
                     assert element != null;
                     return new BuilderSwitchElement(BuilderSparseSwitchPayload.this, element.key, element.target);
                 }
-            });
+            }).collect(Collectors.toList());
         }
     }
 

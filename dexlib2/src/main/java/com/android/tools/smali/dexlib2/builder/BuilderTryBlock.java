@@ -30,12 +30,13 @@
 
 package com.android.tools.smali.dexlib2.builder;
 
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.base.BaseTryBlock;
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class BuilderTryBlock extends BaseTryBlock<BuilderExceptionHandler> {
@@ -75,6 +76,6 @@ public class BuilderTryBlock extends BaseTryBlock<BuilderExceptionHandler> {
     }
 
     @Nonnull @Override public List<? extends BuilderExceptionHandler> getExceptionHandlers() {
-        return ImmutableList.of(exceptionHandler);
+        return Collections.unmodifiableList(Arrays.asList(exceptionHandler));
     }
 }

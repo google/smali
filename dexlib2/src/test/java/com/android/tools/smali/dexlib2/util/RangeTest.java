@@ -29,10 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- package com.android.tools.smali.util;
+package com.android.tools.smali.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -112,6 +113,129 @@ public class RangeTest {
     }
 
     @Test
+    public void testEquals() {
+        Range<Integer> range1 = Range.closed(1, 10);
+        Range<Integer> range2 = Range.closed(1, 10);
+        assertTrue(range1.equals(range2));
+
+        range1 = Range.open(1, 10);
+        range2 = Range.open(1, 10);
+        assertTrue(range1.equals(range2));
+
+        range1 = Range.closedOpen(1, 10);
+        range2 = Range.closedOpen(1, 10);
+        assertTrue(range1.equals(range2));
+
+        range1 = Range.openClosed(1, 10);
+        range2 = Range.openClosed(1, 10);
+        assertTrue(range1.equals(range2));
+
+        range1 = Range.atLeast(1);
+        range2 = Range.atLeast(1);
+        assertTrue(range1.equals(range2));
+
+        range1 = Range.atMost(10);
+        range2 = Range.atMost(10);
+        assertTrue(range1.equals(range2));
+
+        range1 = Range.allValues();
+        range2 = Range.allValues();
+        assertTrue(range1.equals(range2));
+
+        range1 = Range.closed(1, 10);
+        range2 = Range.closed(1, 11);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.open(1, 10);
+        range2 = Range.open(0, 10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closed(1, 10);
+        range2 = Range.open(1, 10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closed(1, 10);
+        range2 = Range.closedOpen(1, 10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closedOpen(1, 10);
+        range2 = Range.openClosed(1, 10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closed(1, 10);
+        range2 = Range.atLeast(1);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closed(1, 10);
+        range2 = Range.atMost(10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closed(1, 10);
+        range2 = Range.allValues();
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.open(1, 10);
+        range2 = Range.closedOpen(1, 10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.open(1, 10);
+        range2 = Range.openClosed(1, 10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.open(1, 10);
+        range2 = Range.atLeast(1);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.open(1, 10);
+        range2 = Range.atMost(10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.open(1, 10);
+        range2 = Range.allValues();
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closedOpen(1, 10);
+        range2 = Range.openClosed(1, 10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closedOpen(1, 10);
+        range2 = Range.atLeast(1);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closedOpen(1, 10);
+        range2 = Range.atMost(10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.closedOpen(1, 10);
+        range2 = Range.allValues();
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.openClosed(1, 10);
+        range2 = Range.atLeast(1);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.openClosed(1, 10);
+        range2 = Range.atMost(10);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.openClosed(1, 10);
+        range2 = Range.allValues();
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.atLeast(1);
+        range2 = Range.atMost(1);
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.atLeast(1);
+        range2 = Range.allValues();
+        assertFalse(range1.equals(range2));
+
+        range1 = Range.atMost(10);
+        range2 = Range.allValues();
+        assertFalse(range1.equals(range2));
+    }
+
+    @Test
     public void testIsEmpty() {
         Range<Integer> range = Range.closed(1, 1);
         assertFalse(range.isEmpty());
@@ -127,6 +251,15 @@ public class RangeTest {
 
         range = Range.open(4, 5);
         assertFalse(range.isEmpty());
+
+        range = Range.atMost(10);
+        assertFalse(range.isEmpty());
+
+        range = Range.atLeast(10);
+        assertFalse(range.isEmpty());
+
+        range = Range.allValues();
+        assertFalse(range.isEmpty());
     }
 
     @Test
@@ -139,6 +272,28 @@ public class RangeTest {
     public void testGetUpperBound() {
         Range<Integer> range = Range.closed(1, 10);
         assertEquals((Integer) 10, range.getUpperBound());
+    }
+
+    @Test
+    public void testHasLowerBound() {
+        assertTrue(Range.closed(1, 10).hasLowerBound());
+        assertTrue(Range.open(1, 10).hasLowerBound());
+        assertTrue(Range.openClosed(1, 10).hasLowerBound());
+        assertTrue(Range.closedOpen(1, 10).hasLowerBound());
+        assertTrue(Range.atLeast(1).hasLowerBound());
+        assertFalse(Range.atMost(10).hasLowerBound());
+        assertFalse(Range.allValues().hasLowerBound());
+    }
+
+    @Test
+    public void testHasUpperBound() {
+        assertTrue(Range.closed(1, 10).hasUpperBound());
+        assertTrue(Range.open(1, 10).hasUpperBound());
+        assertTrue(Range.openClosed(1, 10).hasUpperBound());
+        assertTrue(Range.closedOpen(1, 10).hasUpperBound());
+        assertFalse(Range.atLeast(1).hasUpperBound());
+        assertTrue(Range.atMost(10).hasUpperBound());
+        assertFalse(Range.allValues().hasUpperBound());
     }
 
     @Test
@@ -286,6 +441,17 @@ public class RangeTest {
     }
 
     @Test
+    public void testIntersection_atLeastAtMost(){
+        Range<Integer> range1 = Range.atLeast(1);
+        Range<Integer> range2 = Range.atLeast(5);
+        assertEquals(Range.atLeast(5), range1.intersection(range2));
+
+        range1 = Range.atMost(1);
+        range2 = Range.atMost(5);
+        assertEquals(Range.atMost(1), range1.intersection(range2));
+    }
+
+    @Test
     public void testRangeLexComparator() {
         List<Range<Integer>> ranges = Arrays.asList(
                 Range.closed(1, 3),
@@ -305,6 +471,29 @@ public class RangeTest {
                         Range.closed(2, 4),
                         Range.closed(3, 4),
                         Range.closed(7, 10)),
+                ranges);
+    }
+
+    @Test
+    public void testRangeLexComparator_openBounds() {
+        List<Range<Integer>> ranges = Arrays.asList(
+                Range.closed(2, 4),
+                Range.closed(1, 4),
+                Range.closed(2, 3),
+                Range.atLeast(7),
+                Range.atMost(3),
+                Range.closed(3, 4),
+                Range.closed(1, 2));
+        ranges.sort(Range.RANGE_LEX_COMPARATOR);
+        assertEquals(
+                Arrays.asList(
+                    Range.atMost(3),
+                    Range.closed(1, 2),
+                    Range.closed(1, 4),
+                    Range.closed(2, 3),
+                    Range.closed(2, 4),
+                    Range.closed(3, 4),
+                    Range.atLeast(7)),
                 ranges);
     }
 }

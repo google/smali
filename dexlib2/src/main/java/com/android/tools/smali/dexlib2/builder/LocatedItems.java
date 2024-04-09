@@ -30,10 +30,9 @@
 
 package com.android.tools.smali.dexlib2.builder;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +49,7 @@ public abstract class LocatedItems<T extends ItemWithLocation> {
     @Nonnull
     private List<T> getItems() {
         if (items == null) {
-            return ImmutableList.of();
+            return Collections.emptyList();
         }
         return items;
     }

@@ -30,14 +30,14 @@
 
 package com.android.tools.smali.util;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSortedSet;
+import com.android.tools.smali.util.ArraySortedSet;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -54,7 +54,7 @@ public class CollectionUtils {
         int index = 0;
         int lastMatchingIndex = -1;
         for (T item: iterable) {
-            if (predicate.apply(item)) {
+            if (predicate.test(item)) {
                 lastMatchingIndex = index;
             }
             index++;
@@ -177,7 +177,7 @@ public class CollectionUtils {
             }
         }
 
-        return ImmutableSortedSet.copyOf(elementComparator, collection);
+        return Collections.unmodifiableSortedSet(ArraySortedSet.of(elementComparator, collection));
     }
 
     @Nonnull

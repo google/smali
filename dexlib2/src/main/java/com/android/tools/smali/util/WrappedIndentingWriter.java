@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.util;
 
-import com.google.common.collect.Lists;
-
 import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -76,7 +74,8 @@ public class WrappedIndentingWriter extends FilterWriter {
     }
 
     private void wrapLine() throws IOException {
-        List<String> wrapped = Lists.newArrayList(StringWrapper.wrapStringOnBreaks(line.toString(), maxWidth));
+        List<String> wrapped = IteratorUtils.toList(
+            StringWrapper.wrapStringOnBreaks(line.toString(), maxWidth));
         out.write(wrapped.get(0), 0, wrapped.get(0).length());
         out.write('\n');
 

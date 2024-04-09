@@ -31,17 +31,32 @@
 package com.android.tools.smali.util;
 
 import java.util.Comparator;
+import java.util.Objects;
 
-// Check against guava range
 public class Range<C extends Comparable> {
     public static final Comparator<Range<?>> RANGE_LEX_COMPARATOR = new Comparator<Range<?>>() {
         @Override
         public int compare(Range<?> left, Range<?> right) {
-            int startComparison = left.lowerBound.compareTo(right.lowerBound);
-            if (startComparison != 0) {
-                return startComparison;
+            int cmp = 0;
+            if (!left.hasLowerBound() && right.hasLowerBound()) {
+                return -1;
+            } else if (!right.hasLowerBound() && left.hasLowerBound()) {
+                return 1;
+            } else if (left.hasLowerBound() && right.hasLowerBound()) {
+                cmp = left.lowerBound.compareTo(right.lowerBound);
             }
-            return left.upperBound.compareTo(right.upperBound);
+
+            if (cmp != 0) {
+                return cmp;
+            }
+            if (!left.hasUpperBound() && right.hasUpperBound()) {
+                return 1;
+            } else if (!right.hasUpperBound() && left.hasUpperBound()) {
+                return -1;
+            } else if (left.hasUpperBound() && right.hasUpperBound()) {
+                cmp = left.upperBound.compareTo(right.upperBound);
+            }
+            return cmp;
         }
     };
 
@@ -70,7 +85,7 @@ public class Range<C extends Comparable> {
         }
         return new Range<>(lowerBound, upperBound, true, true);
     }
-    
+
     public static <C extends Comparable> Range<C> openClosed(C lowerBound, C upperBound) {
         if (lowerBound == null || upperBound == null) {
             throw new NullPointerException();
@@ -105,10 +120,10 @@ public class Range<C extends Comparable> {
         return new Range<>(null, upperBound, false, false);
     }
 
-    public static <C extends Comparable> Range<C> allValues(){
+    public static <C extends Comparable> Range<C> allValues() {
         return new Range<>();
     }
-    
+
     private Range(C lowerBound, C upperBound, boolean lowerOpen, boolean upperOpen) {
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
@@ -116,7 +131,7 @@ public class Range<C extends Comparable> {
         this.upperOpen = upperOpen;
         allValues = false;
     }
-    
+
     private Range() {
         allValues = true;
         lowerBound = null;
@@ -124,11 +139,13 @@ public class Range<C extends Comparable> {
         lowerOpen = false;
         upperOpen = false;
     }
-    
+
     public boolean isEmpty() {
-        return !allValues && lowerBound.equals(upperBound) && (lowerOpen || upperOpen);
+        return !allValues
+                && Objects.equals(lowerBound, upperBound)
+                && (lowerOpen || upperOpen);
     }
-    
+
     public C getLowerBound() {
         return lowerBound;
     }
@@ -148,7 +165,15 @@ public class Range<C extends Comparable> {
     public boolean hasAllValues() {
         return allValues;
     }
-    
+
+    public boolean hasLowerBound() {
+        return lowerBound != null;
+    }
+
+    public boolean hasUpperBound() {
+        return upperBound != null;
+    }
+
     public boolean contains(C value) {
         if (value == null) {
             return false;
@@ -156,7 +181,7 @@ public class Range<C extends Comparable> {
         if (allValues) {
             return true;
         }
-        
+
         if (lowerBound != null) {
             if (lowerOpen && value.compareTo(lowerBound) == 0) {
                 return false;
@@ -175,57 +200,45 @@ public class Range<C extends Comparable> {
         }
         return true;
     }
-    
+
     public boolean isConnected(Range<C> other) {
-        return (lowerBound == null || other.getUpperBound() == null 
-                || lowerBound.compareTo(other.getUpperBound()) <= 0) 
-                && (upperBound == null || other.getLowerBound() == null 
-                || other.getLowerBound().compareTo(upperBound) <= 0);
+        return (!hasLowerBound() || !other.hasUpperBound()
+                || lowerBound.compareTo(other.getUpperBound()) <= 0)
+                && (!hasUpperBound() || !other.hasLowerBound()
+                        || other.getLowerBound().compareTo(upperBound) <= 0);
     }
-    
+
     public Range<C> intersection(Range<C> other) {
         if (!isConnected(other)) {
             return null;
         }
 
-        // select the max of the lowerBounds, if they're equal,
+        // select the max of the lowerBounds. If they're equal,
         // choose the range that has an open lower bound
         Range<C> lowerBoundRange;
-        if (lowerBound == null) {
-            lowerBoundRange = other;
-        } else if (other.getLowerBound() == null) {
-            lowerBoundRange = this;
-        } else if (lowerBound.compareTo(other.getLowerBound()) > 0) {
-            lowerBoundRange = this;
-        } else if (lowerBound.compareTo(other.getLowerBound()) < 0) {
-            lowerBoundRange = other;
-        } else if (lowerOpen) {
-            lowerBoundRange = this;
+        if (!hasLowerBound() || !other.hasLowerBound()) {
+            lowerBoundRange = hasLowerBound() ? this : other;
+        } else if (Objects.equals(lowerBound, other.getLowerBound())) {
+            lowerBoundRange = lowerOpen ? this : other;
         } else {
-            lowerBoundRange = other;
+            lowerBoundRange = lowerBound.compareTo(other.getLowerBound()) > 0 ? this : other;
         }
 
         // and the min of the upperBounds, or the open upper bound if they're equal
         Range<C> upperBoundRange;
-        if (upperBound == null) {
-            upperBoundRange = other;
-        } else if (other.getUpperBound() == null) {
-            upperBoundRange = this;
-        } else if (upperBound.compareTo(other.getUpperBound()) < 0) {
-            upperBoundRange = this;
-        } else if (upperBound.compareTo(other.getUpperBound()) > 0) {
-            upperBoundRange = other;
-        } else if (upperOpen) {
-            upperBoundRange = this;
+        if (!hasUpperBound() || !other.hasUpperBound()) {
+            upperBoundRange = hasUpperBound() ? this : other;
+        } else if (Objects.equals(upperBound, other.getUpperBound())) {
+            upperBoundRange = upperOpen ? this : other;
         } else {
-            upperBoundRange = other;
+            upperBoundRange = upperBound.compareTo(other.getUpperBound()) < 0 ? this : other;
         }
-  
+
         return new Range<C>(
-            lowerBoundRange.getLowerBound(),
-            upperBoundRange.getUpperBound(), 
-            lowerBoundRange.openLowerBound(),
-            upperBoundRange.openUpperBound());
+                lowerBoundRange.getLowerBound(),
+                upperBoundRange.getUpperBound(),
+                lowerBoundRange.openLowerBound(),
+                upperBoundRange.openUpperBound());
     }
 
     @Override
@@ -242,8 +255,8 @@ public class Range<C extends Comparable> {
             return false;
         }
 
-        return lowerBound.equals(other.lowerBound)
-                && upperBound.equals(other.upperBound)
+        return Objects.equals(lowerBound, other.lowerBound)
+                && Objects.equals(upperBound, other.upperBound)
                 && lowerOpen == other.openLowerBound()
                 && upperOpen == other.openUpperBound();
     }

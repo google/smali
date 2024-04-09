@@ -45,7 +45,6 @@ public class UnmodifiableRangeMap<K extends Comparable<?>, V> {
     private static final UnmodifiableRangeMap<Comparable<?>, Object> EMPTY = new UnmodifiableRangeMap<>(
             Collections.emptyList(), Collections.emptyList());
 
-
     /** Returns a new builder for an immutable range map. */
     public static <K extends Comparable<?>, V> Builder<K, V> builder() {
         return new Builder<>();
@@ -97,8 +96,8 @@ public class UnmodifiableRangeMap<K extends Comparable<?>, V> {
          * @throws IllegalArgumentException if any two ranges inserted into this builder overlap
          */
         public UnmodifiableRangeMap<K, V> build() {
-            Collections.sort(entries, (e1, e2) -> 
-                    Range.RANGE_LEX_COMPARATOR.compare(e1.getKey(), e2.getKey()));
+            Collections.sort(entries,
+                    (e1, e2) -> Range.RANGE_LEX_COMPARATOR.compare(e1.getKey(), e2.getKey()));
             ArrayList<Range<K>> rangesList = new ArrayList<>(entries.size());
             ArrayList<V> valuesList = new ArrayList<>(entries.size());
             for (int i = 0; i < entries.size(); i++) {
@@ -128,6 +127,10 @@ public class UnmodifiableRangeMap<K extends Comparable<?>, V> {
 
     @CheckForNull
     public V get(K key) {
+        if (key == null) {
+            return null;
+        }
+
         int index = rangeBinarySearch(ranges, key);
         if (index == -1) {
             return null;
@@ -139,6 +142,10 @@ public class UnmodifiableRangeMap<K extends Comparable<?>, V> {
 
     @CheckForNull
     public Entry<Range<K>, V> getEntry(K key) {
+        if (key == null) {
+            return null;
+        }
+
         int index = rangeBinarySearch(ranges, key);
         if (index == -1) {
             return null;
@@ -150,7 +157,7 @@ public class UnmodifiableRangeMap<K extends Comparable<?>, V> {
 
     private static <T extends Comparable> int rangeBinarySearch(List<Range<T>> l, T key) {
         int low = 0;
-        int high = l.size()-1;
+        int high = l.size() - 1;
 
         while (low <= high) {
             int mid = (low + high) >>> 1;
@@ -159,7 +166,8 @@ public class UnmodifiableRangeMap<K extends Comparable<?>, V> {
                 return mid;
             }
 
-            int cmp = key.compareTo(midRange.getLowerBound());
+            int cmp = midRange.hasLowerBound() ? key.compareTo(midRange.getLowerBound())
+                    : key.compareTo(midRange.getUpperBound());
 
             if (cmp > 0)
                 low = mid + 1;
@@ -168,7 +176,7 @@ public class UnmodifiableRangeMap<K extends Comparable<?>, V> {
             else
                 return mid; // key found
         }
-        return -1;  // key not found
+        return -1; // key not found
     }
 
     public static class UnmodifiableEntry<K, V> implements Map.Entry<K, V> {

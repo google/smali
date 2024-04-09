@@ -34,10 +34,11 @@ import com.android.tools.smali.dexlib2.Format;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.builder.BuilderInstruction;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.ArrayPayload;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collections;
 import java.util.List;
 
 public class BuilderArrayPayload extends BuilderInstruction implements ArrayPayload {
@@ -50,7 +51,7 @@ public class BuilderArrayPayload extends BuilderInstruction implements ArrayPayl
                                @Nullable List<Number> arrayElements) {
         super(OPCODE);
         this.elementWidth = elementWidth;
-        this.arrayElements = arrayElements==null?ImmutableList.<Number>of():arrayElements;
+        this.arrayElements = arrayElements == null ? Collections.emptyList() : arrayElements;
     }
 
     @Override public int getElementWidth() { return elementWidth; }

@@ -30,18 +30,16 @@
 
 package com.android.tools.smali.dexlib2.util;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.util.Hex;
+import com.android.tools.smali.util.StringUtils;
 import com.android.tools.smali.util.TwoColumnOutput;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -65,7 +63,7 @@ public class AnnotatedBytes {
      * is the exclusive end point. The range annotation for a range is associated with the first key for that range.
      * The point annotations for a point are associated with the key at that point.
      */
-    @Nonnull private TreeMap<Integer, AnnotationEndpoint> annotatations = Maps.newTreeMap();
+    @Nonnull private TreeMap<Integer, AnnotationEndpoint> annotatations = new TreeMap<>();
 
     private int cursor;
     private int indentLevel;
@@ -250,7 +248,7 @@ public class AnnotatedBytes {
     private static class AnnotationEndpoint {
         /** Annotations that are associated with a specific point between bytes */
         @Nonnull
-        public final List<AnnotationItem> pointAnnotations = Lists.newArrayList();
+        public final List<AnnotationItem> pointAnnotations = new ArrayList<>();
         /** Annotations that are associated with a range of bytes */
         @Nullable
         public AnnotationItem rangeAnnotation = null;
@@ -284,7 +282,7 @@ public class AnnotatedBytes {
         int rightWidth = getAnnotationWidth();
         int leftWidth = outputWidth - rightWidth - 1;
 
-        String padding = Strings.repeat(" ", 1000);
+        String padding = StringUtils.repeat(" ", 1000);
 
         TwoColumnOutput twoc = new TwoColumnOutput(out, leftWidth, rightWidth, "|");
 

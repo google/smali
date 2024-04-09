@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.util;
 
-import com.google.common.collect.Iterators;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -51,8 +49,18 @@ public class ArraySortedSet<T> implements SortedSet<T> {
         this.arr = arr;
     }
 
+    private ArraySortedSet(@Nonnull Comparator<? super T> comparator, @Nonnull Collection<? extends T> collection) {
+        // we assume arr is already sorted by comparator, and all entries are unique
+        this.comparator = comparator;
+        this.arr = collection.toArray();
+    }
+
     public static <T> ArraySortedSet<T> of(@Nonnull Comparator<? super T> comparator, @Nonnull T[] arr) {
         return new ArraySortedSet<T>(comparator, arr);
+    }
+
+    public static <T> ArraySortedSet<T> of(@Nonnull Comparator<? super T> comparator, @Nonnull Collection<? extends T> collection) {
+        return new ArraySortedSet<T>(comparator, collection);
     }
 
     @Override
@@ -74,7 +82,7 @@ public class ArraySortedSet<T> implements SortedSet<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Iterator<T> iterator() {
-        return Iterators.forArray((T[])arr);
+        return Arrays.asList((T[])arr).iterator();
     }
 
     @Override
@@ -189,7 +197,7 @@ public class ArraySortedSet<T> implements SortedSet<T> {
             if (arr.length != other.size()) {
                 return false;
             }
-            return Iterators.elementsEqual(iterator(), other.iterator());
+            return IteratorUtils.elementsEqual(iterator(), other.iterator());
         }
         if (o instanceof Set) {
             Set other = (Set)o;

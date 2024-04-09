@@ -36,7 +36,6 @@ import com.android.tools.smali.dexlib2.util.EncodedValueUtils;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
 import com.android.tools.smali.util.CollectionUtils;
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.android.tools.smali.dexlib2.base.value.BaseArrayEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
@@ -44,6 +43,7 @@ import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Predicate;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -77,7 +77,7 @@ public class StaticInitializerUtil {
 
     private static final Predicate<Field> HAS_INITIALIZER = new Predicate<Field>() {
         @Override
-        public boolean apply(Field input) {
+        public boolean test(Field input) {
             EncodedValue encodedValue = input.getInitialValue();
             return encodedValue != null && !EncodedValueUtils.isDefaultValue(encodedValue);
         }

@@ -32,11 +32,11 @@ package com.android.tools.smali.dexlib2.rewriter;
 
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class MethodReferenceRewriter implements Rewriter<MethodReference> {
     @Nonnull protected final Rewriters rewriters;
@@ -66,12 +66,12 @@ public class MethodReferenceRewriter implements Rewriter<MethodReference> {
 
         @Override @Nonnull public List<? extends CharSequence> getParameterTypes() {
             return RewriterUtils.rewriteList(rewriters.getTypeRewriter(),
-                    Lists.transform(methodReference.getParameterTypes(),
+                    methodReference.getParameterTypes().stream().map(
                     new Function<CharSequence, String>() {
                         @Nonnull @Override public String apply(CharSequence input) {
                             return input.toString();
                         }
-                    }));
+                    }).collect(Collectors.toList()));
         }
 
         @Override @Nonnull public String getReturnType() {

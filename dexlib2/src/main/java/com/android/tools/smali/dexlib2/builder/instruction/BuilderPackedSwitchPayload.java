@@ -35,11 +35,12 @@ import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.builder.BuilderSwitchPayload;
 import com.android.tools.smali.dexlib2.builder.Label;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.PackedSwitchPayload;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BuilderPackedSwitchPayload extends BuilderSwitchPayload implements
@@ -52,9 +53,9 @@ public class BuilderPackedSwitchPayload extends BuilderSwitchPayload implements
                                       @Nullable List<? extends Label> switchElements) {
         super(OPCODE);
         if (switchElements == null) {
-            this.switchElements = ImmutableList.of();
+            this.switchElements = Collections.emptyList();
         } else {
-            this.switchElements = Lists.newArrayList();
+            this.switchElements = new ArrayList<>();
             int key = startKey;
             for (Label target: switchElements) {
                 this.switchElements.add(new BuilderSwitchElement(this, key++, target));
