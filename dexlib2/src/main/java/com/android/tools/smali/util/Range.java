@@ -33,6 +33,11 @@ package com.android.tools.smali.util;
 import java.util.Comparator;
 import java.util.Objects;
 
+/*
+ * Represents a Range of values of type C. It can have open bounds if the range doesn't include the
+ * bound value. It can also be unbounded on the lower or upper side. Simplified version of a guava
+ * Range.
+ */
 public class Range<C extends Comparable> {
     public static final Comparator<Range<?>> RANGE_LEX_COMPARATOR = new Comparator<Range<?>>() {
         @Override
@@ -174,6 +179,7 @@ public class Range<C extends Comparable> {
         return upperBound != null;
     }
 
+    /* Returns true if value is included in the Range */
     public boolean contains(C value) {
         if (value == null) {
             return false;
@@ -201,6 +207,10 @@ public class Range<C extends Comparable> {
         return true;
     }
 
+    /*
+     * Returns true if there exists a (possibly empty) range which is enclosed by both this range
+     * and other.
+     */
     public boolean isConnected(Range<C> other) {
         return (!hasLowerBound() || !other.hasUpperBound()
                 || lowerBound.compareTo(other.getUpperBound()) <= 0)
@@ -208,6 +218,7 @@ public class Range<C extends Comparable> {
                         || other.getLowerBound().compareTo(upperBound) <= 0);
     }
 
+    /* Returns the maximal range enclosed by both this range and other, if such a range exists. */
     public Range<C> intersection(Range<C> other) {
         if (!isConnected(other)) {
             return null;

@@ -371,8 +371,8 @@ public enum Opcode
 
     Opcode(List<VersionConstraint> versionConstraints, String opcodeName, int referenceType, int referenceType2,
            Format format, int flags) {
-            UnmodifiableRangeMap.Builder<Integer, Short> apiToValueBuilder = UnmodifiableRangeMap.builder();
-            UnmodifiableRangeMap.Builder<Integer, Short> artVersionToValueBuilder = UnmodifiableRangeMap.builder();
+        UnmodifiableRangeMap.Builder<Integer, Short> apiToValueBuilder = UnmodifiableRangeMap.builder();
+        UnmodifiableRangeMap.Builder<Integer, Short> artVersionToValueBuilder = UnmodifiableRangeMap.builder();
 
         for (VersionConstraint versionConstraint : versionConstraints) {
             if (!versionConstraint.apiRange.isEmpty()) {
