@@ -413,10 +413,6 @@ public enum Opcode
         return Arrays.asList(new VersionConstraint(Range.openClosed(0, 0), Range.atMost(artVersion), opcodeValue));
     }
 
-    public static List<VersionConstraint> failedVC(int opcodeValue, int artVersion) {
-        return Arrays.asList(new VersionConstraint(Range.openClosed(0, 0), Range.atMost(artVersion), opcodeValue));
-    }
-
     private static List<VersionConstraint> allVersions(int opcodeValue) {
         return Arrays.asList(new VersionConstraint(Range.allValues(), Range.allValues(), opcodeValue));
     }
