@@ -483,7 +483,7 @@ public enum Opcode
         @Nonnull public final Range<Integer> artVersionRange;
         public final int opcodeValue;
 
-        private VersionConstraint(@Nonnull Range<Integer> apiRange, @Nonnull Range<Integer> artVersionRange,
+        public VersionConstraint(@Nonnull Range<Integer> apiRange, @Nonnull Range<Integer> artVersionRange,
                                  int opcodeValue) {
             this.apiRange = apiRange;
             this.artVersionRange = artVersionRange;
