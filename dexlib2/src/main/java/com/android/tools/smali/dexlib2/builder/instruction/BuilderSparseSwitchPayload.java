@@ -38,7 +38,6 @@ import com.android.tools.smali.dexlib2.iface.instruction.formats.SparseSwitchPay
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;

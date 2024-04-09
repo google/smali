@@ -50,7 +50,7 @@ public class ArraySortedSet<T> implements SortedSet<T> {
     }
 
     private ArraySortedSet(@Nonnull Comparator<? super T> comparator, @Nonnull Collection<? extends T> collection) {
-        // we assume arr is already sorted by comparator, and all entries are unique
+        // we assume collection is already sorted by comparator, and all entries are unique
         this.comparator = comparator;
         this.arr = collection.toArray();
     }
