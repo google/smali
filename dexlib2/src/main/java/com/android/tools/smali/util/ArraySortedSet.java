@@ -44,15 +44,15 @@ public class ArraySortedSet<T> implements SortedSet<T> {
     @Nonnull private final Object[] arr;
 
     private ArraySortedSet(@Nonnull Comparator<? super T> comparator, @Nonnull T[] arr) {
-        // we assume arr is already sorted by comparator, and all entries are unique
         this.comparator = comparator;
         this.arr = arr;
+        assert assertSorted();
     }
 
     private ArraySortedSet(@Nonnull Comparator<? super T> comparator, @Nonnull Collection<? extends T> collection) {
-        // we assume collection is already sorted by comparator, and all entries are unique
         this.comparator = comparator;
         this.arr = collection.toArray();
+        assert assertSorted();
     }
 
     public static <T> ArraySortedSet<T> of(@Nonnull Comparator<? super T> comparator, @Nonnull T[] arr) {
@@ -61,6 +61,12 @@ public class ArraySortedSet<T> implements SortedSet<T> {
 
     public static <T> ArraySortedSet<T> of(@Nonnull Comparator<? super T> comparator, @Nonnull Collection<? extends T> collection) {
         return new ArraySortedSet<T>(comparator, collection);
+    }
+    private boolean assertSorted() {
+        for (int i = 1; i < arr.length; i++) {
+          assert comparator.compare((T)arr[i - 1], (T)arr[i]) < 0;
+        }
+        return true;
     }
 
     @Override

@@ -256,9 +256,9 @@ public class MutableMethodImplementation implements MethodImplementation {
         ArrayList<DebugItem> debugItems = new ArrayList<>();
 
         for (MethodLocation methodLocation: instructionList) {
-            if (methodLocation == null) {
-                throw new NullPointerException();
-            }
+
+            assert methodLocation != null;
+            
             if (fixInstructions) {
                 throw new IllegalStateException("This iterator was invalidated by a change to" +
                             " this MutableMethodImplementation.");

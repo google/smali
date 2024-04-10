@@ -39,9 +39,6 @@ public class CharSequenceUtils {
     private static final Function<Object, String> TO_STRING = new Function<Object,String>() {
         @Override
         public String apply(Object o) {
-            if (o == null) {
-                throw new NullPointerException();
-            }
             return o.toString();
         }
     };
