@@ -30,8 +30,6 @@
 
 package com.android.tools.smali.dexlib2.rewriter;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.android.tools.smali.dexlib2.base.reference.BaseCallSiteReference;
 import com.android.tools.smali.dexlib2.iface.reference.CallSiteReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodHandleReference;
@@ -40,6 +38,8 @@ import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.function.Function;
 
 public class CallSiteReferenceRewriter implements Rewriter<CallSiteReference> {
     @Nonnull protected final Rewriters rewriters;
@@ -79,12 +79,11 @@ public class CallSiteReferenceRewriter implements Rewriter<CallSiteReference> {
         }
 
         @Override @Nonnull public List<? extends EncodedValue> getExtraArguments() {
-            return Lists.transform(callSiteReference.getExtraArguments(),
-                    new Function<EncodedValue, EncodedValue>() {
-                        @Nonnull @Override public EncodedValue apply(EncodedValue encodedValue) {
-                            return RewriterUtils.rewriteValue(rewriters, encodedValue);
-                        }
-                    });
+            return callSiteReference.getExtraArguments().stream().map(new Function<EncodedValue, EncodedValue>() {
+                @Nonnull @Override public EncodedValue apply(EncodedValue encodedValue) {
+                    return RewriterUtils.rewriteValue(rewriters, encodedValue);
+                }
+            }).collect(Collectors.toList());
         }
     }
 }

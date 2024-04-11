@@ -122,11 +122,6 @@ import com.android.tools.smali.dexlib2.iface.instruction.formats.PackedSwitchPay
 import com.android.tools.smali.dexlib2.iface.instruction.formats.SparseSwitchPayload;
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,8 +133,9 @@ import javax.annotation.Nullable;
 
 public class MutableMethodImplementation implements MethodImplementation {
     private final int registerCount;
-    final ArrayList<MethodLocation> instructionList = Lists.newArrayList(new MethodLocation(null, 0, 0));
-    private final ArrayList<BuilderTryBlock> tryBlocks = Lists.newArrayList();
+    final ArrayList<MethodLocation> instructionList = new ArrayList<>(
+        Arrays.asList(new MethodLocation(null, 0, 0)));
+    private final ArrayList<BuilderTryBlock> tryBlocks = new ArrayList<>();
     private boolean fixInstructions = true;
 
     public MutableMethodImplementation(@Nonnull MethodImplementation methodImplementation) {
@@ -162,7 +158,7 @@ public class MutableMethodImplementation implements MethodImplementation {
             codeAddressToIndex[instructionList.get(i).codeAddress] = i;
         }
 
-        List<Task> switchPayloadTasks = Lists.newArrayList();
+        List<Task> switchPayloadTasks = new ArrayList<>();
         index = 0;
         for (final Instruction instruction: methodImplementation.getInstructions()) {
             final MethodLocation location = instructionList.get(index);
@@ -256,17 +252,20 @@ public class MutableMethodImplementation implements MethodImplementation {
         if (fixInstructions) {
             fixInstructions();
         }
-        return Iterables.concat(
-                Iterables.transform(instructionList, new Function<MethodLocation, Iterable<? extends DebugItem>>() {
-                    @Nullable @Override public Iterable<? extends DebugItem> apply(@Nullable MethodLocation input) {
-                        assert input != null;
-                        if (fixInstructions) {
-                            throw new IllegalStateException("This iterator was invalidated by a change to" +
-                                    " this MutableMethodImplementation.");
-                        }
-                        return input.getDebugItems();
-                    }
-                }));
+
+        ArrayList<DebugItem> debugItems = new ArrayList<>();
+
+        for (MethodLocation methodLocation: instructionList) {
+            assert methodLocation != null;
+
+            if (fixInstructions) {
+                throw new IllegalStateException("This iterator was invalidated by a change to" +
+                            " this MutableMethodImplementation.");
+            }
+            debugItems.addAll(methodLocation.getDebugItems());
+        }
+
+        return Collections.unmodifiableList(debugItems);
     }
 
     public void addCatch(@Nullable TypeReference type, @Nonnull Label from,
@@ -438,7 +437,7 @@ public class MutableMethodImplementation implements MethodImplementation {
     }
 
     private void fixInstructions() {
-        HashSet<MethodLocation> payloadLocations = Sets.newHashSet();
+        HashSet<MethodLocation> payloadLocations = new HashSet<>();
 
         for (MethodLocation location: instructionList) {
             BuilderInstruction instruction = location.instruction;
@@ -1104,7 +1103,7 @@ public class MutableMethodImplementation implements MethodImplementation {
             baseAddress = switchLocation.codeAddress;
         }
 
-        List<Label> labels = Lists.newArrayList();
+        List<Label> labels = new ArrayList<>();
         for (SwitchElement element: switchElements) {
             labels.add(newLabel(codeAddressToIndex, element.getOffset() + baseAddress));
         }
@@ -1129,7 +1128,7 @@ public class MutableMethodImplementation implements MethodImplementation {
             baseAddress = switchLocation.codeAddress;
         }
 
-        List<SwitchLabelElement> labelElements = Lists.newArrayList();
+        List<SwitchLabelElement> labelElements = new ArrayList<>();
         for (SwitchElement element: switchElements) {
             labelElements.add(new SwitchLabelElement(element.getKey(),
                     newLabel(codeAddressToIndex, element.getOffset() + baseAddress)));

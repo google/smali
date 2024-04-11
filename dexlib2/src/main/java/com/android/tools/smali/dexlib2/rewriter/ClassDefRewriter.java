@@ -35,7 +35,7 @@ import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Field;
 import com.android.tools.smali.dexlib2.iface.Method;
-import com.google.common.collect.Iterators;
+import com.android.tools.smali.util.ChainedIterator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -100,7 +100,8 @@ public class ClassDefRewriter implements Rewriter<ClassDef> {
                 @Nonnull
                 @Override
                 public Iterator<Field> iterator() {
-                    return Iterators.concat(getStaticFields().iterator(), getInstanceFields().iterator());
+                    return new ChainedIterator(
+                        getStaticFields().iterator(), getInstanceFields().iterator());
                 }
             };
         }
@@ -120,7 +121,8 @@ public class ClassDefRewriter implements Rewriter<ClassDef> {
                 @Nonnull
                 @Override
                 public Iterator<Method> iterator() {
-                    return Iterators.concat(getDirectMethods().iterator(), getVirtualMethods().iterator());
+                    return new ChainedIterator(
+                        getDirectMethods().iterator(), getVirtualMethods().iterator());
                 }
             };
         }

@@ -40,7 +40,7 @@ import java.util.function.Function;
  * The returned iterator supports {@code remove()} if {@code backingIterator} does.
  */
 public class TransformedIterator<F extends Object, T extends Object>
-        implements Iterator<T> {
+        implements Iterator<T>, Iterable<T> {
     final Iterator<? extends F> backingIterator;
     final Function<F, T> transformFunction;
 
@@ -69,5 +69,10 @@ public class TransformedIterator<F extends Object, T extends Object>
     @Override
     public final void remove() {
         backingIterator.remove();
+    }
+
+    @Override
+    public final Iterator<T> iterator() {
+        return this;
     }
 }

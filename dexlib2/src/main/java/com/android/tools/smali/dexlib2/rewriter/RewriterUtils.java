@@ -53,14 +53,14 @@ import com.android.tools.smali.dexlib2.iface.value.MethodEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.MethodHandleEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.MethodTypeEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.TypeEncodedValue;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 import java.util.AbstractList;
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -183,12 +183,11 @@ public class RewriterUtils {
         return new BaseMethodProtoReference() {
             @Nonnull @Override public List<? extends CharSequence> getParameterTypes() {
                 return rewriteList(typeRewriter,
-                        Lists.transform(methodProtoReference.getParameterTypes(),
+                        methodProtoReference.getParameterTypes().stream().map(
                         new Function<CharSequence, String>() {
                             @Nonnull @Override public String apply(CharSequence input) {
                                 return input.toString();
-                            }
-                        }));
+                            }}).collect(Collectors.toList()));
             }
 
             @Nonnull @Override public String getReturnType() {

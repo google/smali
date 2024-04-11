@@ -33,20 +33,22 @@ package com.android.tools.smali.dexlib2.util;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Method;
 import com.android.tools.smali.dexlib2.iface.MethodImplementation;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.android.tools.smali.dexlib2.AccessFlags;
 import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction;
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.Reference;
+import com.android.tools.smali.util.IteratorUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SyntheticAccessorResolver {
     public static final int METHOD = 0;
@@ -70,17 +72,17 @@ public class SyntheticAccessorResolver {
 
     private final SyntheticAccessorFSM syntheticAccessorFSM;
     private final Map<String, ClassDef> classDefMap;
-    private final Map<MethodReference, AccessedMember> resolvedAccessors = Maps.newConcurrentMap();
+    private final Map<MethodReference, AccessedMember> resolvedAccessors = new ConcurrentHashMap<>();
 
     public SyntheticAccessorResolver(@Nonnull Opcodes opcodes, @Nonnull Iterable<? extends ClassDef> classDefs) {
         this.syntheticAccessorFSM = new SyntheticAccessorFSM(opcodes);
-        ImmutableMap.Builder<String, ClassDef> builder = ImmutableMap.builder();
+        HashMap<String, ClassDef> classDefMap = new HashMap<>();
 
         for (ClassDef classDef: classDefs) {
-            builder.put(classDef.getType(), classDef);
+            classDefMap.put(classDef.getType(), classDef);
         }
 
-        this.classDefMap = builder.build();
+        this.classDefMap = Collections.unmodifiableMap(classDefMap);
     }
 
     public static boolean looksLikeSyntheticAccessor(String methodName) {
@@ -122,7 +124,8 @@ public class SyntheticAccessorResolver {
             return null;
         }
 
-        List<Instruction> instructions = ImmutableList.copyOf(matchedMethodImpl.getInstructions());
+        List<Instruction> instructions = Collections.unmodifiableList(
+            IteratorUtils.toList(matchedMethodImpl.getInstructions()));
 
 
         int accessType = syntheticAccessorFSM.test(instructions);

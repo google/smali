@@ -30,21 +30,25 @@
 
 package com.android.tools.smali.util;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.collect.Lists;
+import java.util.function.Function;
+import java.util.Iterator;
 
 import java.util.List;
 
 public class CharSequenceUtils {
-    private static final Function<Object, String> TO_STRING = Functions.toStringFunction();
+    private static final Function<Object, String> TO_STRING = new Function<Object,String>() {
+        @Override
+        public String apply(Object o) {
+            return o.toString();
+        }
+    };
 
     public static int listHashCode(List<? extends CharSequence> list) {
-        return Lists.transform(list, TO_STRING).hashCode();
+        return IteratorUtils.toList((Iterator)new TransformedIterator(list.iterator(), TO_STRING)).hashCode();
     }
 
     public static boolean listEquals(List<? extends CharSequence> list1, List<? extends CharSequence> list2) {
-        return Lists.transform(list1, TO_STRING).equals(
-                Lists.transform(list2, TO_STRING));
+        return IteratorUtils.toList((Iterator)new TransformedIterator(list1.iterator(), TO_STRING)).equals(
+                IteratorUtils.toList((Iterator)new TransformedIterator(list2.iterator(), TO_STRING)));
     }
 }

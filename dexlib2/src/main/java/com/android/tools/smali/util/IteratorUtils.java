@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public final class IteratorUtils {
@@ -84,5 +85,19 @@ public final class IteratorUtils {
         while (iterator.hasNext()) {
             collection.add(iterator.next());
         }
+    }
+
+    public static boolean elementsEqual (Iterator<?> iterator1, Iterator<?> iterator2) {
+        while (iterator1.hasNext()) {
+            if (!iterator2.hasNext()) {
+              return false;
+            }
+            Object o1 = iterator1.next();
+            Object o2 = iterator2.next();
+            if (!Objects.equals(o1, o2)) {
+              return false;
+            }
+        }
+        return !iterator2.hasNext();
     }
 }
