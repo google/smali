@@ -39,7 +39,6 @@ import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.Build
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderMethodTypeEncodedValue;
 
 import javax.annotation.Nonnull;
-
 import java.util.Collections;
 import java.util.List;
 
