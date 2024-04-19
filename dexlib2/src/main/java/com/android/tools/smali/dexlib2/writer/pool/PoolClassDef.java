@@ -30,14 +30,13 @@
 
 package com.android.tools.smali.dexlib2.writer.pool;
 
+import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Field;
 import com.android.tools.smali.util.ArraySortedSet;
 import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.IteratorUtils;
-
-import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
@@ -66,14 +65,14 @@ class PoolClassDef extends BaseTypeReference implements ClassDef {
         this.classDef = classDef;
 
         interfaces = new TypeListPool.Key<List<String>>(Collections.unmodifiableList(new ArrayList<>(classDef.getInterfaces())));
-        staticFields = ArraySortedSet.copyOf(CollectionUtils.usingToStringOrdering(), 
+        staticFields = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(), 
             IteratorUtils.toList(classDef.getStaticFields()));
-        instanceFields = ArraySortedSet.copyOf(CollectionUtils.usingToStringOrdering(), 
+        instanceFields = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(), 
             IteratorUtils.toList(classDef.getInstanceFields()));
-        directMethods = ArraySortedSet.copyOf(CollectionUtils.usingToStringOrdering(),
+        directMethods = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(),
                 IteratorUtils.toList(classDef.getDirectMethods()).stream().map(PoolMethod.TRANSFORM)
                         .collect(Collectors.toList()));
-        virtualMethods = ArraySortedSet.of(CollectionUtils.usingToStringOrdering(),
+        virtualMethods = ArraySortedSet.of(CollectionUtils.naturalOrdering(),
                 IteratorUtils.toList(classDef.getVirtualMethods()).stream().map(PoolMethod.TRANSFORM)
                 .collect(Collectors.toList()));
     }

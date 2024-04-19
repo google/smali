@@ -79,8 +79,8 @@ public final class InputStreamUtil {
         // reading and so all of the bytes in each new allocated buffer are available for reading
         // from
         // the stream.
-        for (int bufSize = initialBufferSize; totalLen < MAX_ARRAY_LEN; bufSize = saturatedMultiply(
-                bufSize, bufSize < 4096 ? 4 : 2)) {
+        for (int bufSize = initialBufferSize; totalLen < MAX_ARRAY_LEN; bufSize = 
+                saturatedMultiply(bufSize, bufSize < 4096 ? 4 : 2)) {
             byte[] buf = new byte[min(bufSize, MAX_ARRAY_LEN - totalLen)];
             bufs.add(buf);
             int off = 0;
@@ -109,11 +109,11 @@ public final class InputStreamUtil {
         long value = (long) a * b;
         if (value > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;
-        }
-        if (value < Integer.MIN_VALUE) {
+          }
+          if (value < Integer.MIN_VALUE) {
             return Integer.MIN_VALUE;
-        }
-        return (int) value;
+          }
+          return (int) value;
     }
 
     private static byte[] combineBuffers(Queue<byte[]> bufs, int totalLen) {
@@ -211,9 +211,7 @@ public final class InputStreamUtil {
      * @throws EOFException if this stream reaches the end before reading all the bytes.
      * @throws IOException if an I/O error occurs.
      */
-    public static void readFully(@Nonnull
-    InputStream in, @Nonnull
-    byte[] b) throws IOException {
+    public static void readFully(@Nonnull InputStream in, @Nonnull byte[] b) throws IOException {
         int read = read(in, b, 0, b.length);
         if (read != b.length) {
             throw new EOFException(
@@ -247,9 +245,7 @@ public final class InputStreamUtil {
      * @throws IndexOutOfBoundsException if {@code off} is negative, if {@code len} is negative, or
      *             if {@code off + len} is greater than {@code b.length}
      */
-    public static int read(@Nonnull
-    InputStream in, @Nonnull
-    byte[] b, int off, int len) throws IOException {
+    public static int read(@Nonnull InputStream in, @Nonnull byte[] b, int off, int len) throws IOException {
         if (off < 0 || len < 0 || off + len > b.length) {
             throw new IndexOutOfBoundsException("trying to read invalid offset/length range");
         }

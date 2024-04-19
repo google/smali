@@ -179,10 +179,10 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
         SortedSet<BuilderField> instanceFields = null;
         BuilderArrayEncodedValue internedStaticInitializers = null;
         if (fields != null) {
-            staticFields = ArraySortedSet.copyOf(CollectionUtils.usingToStringOrdering(),
+            staticFields = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(),
                     IteratorUtils.toList((Iterator<? extends BuilderField>) IteratorUtils
                             .filter(fields, FieldUtil.FIELD_IS_STATIC)));
-            instanceFields = ArraySortedSet.copyOf(CollectionUtils.usingToStringOrdering(),
+            instanceFields = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(),
                     IteratorUtils.toList((Iterator<? extends BuilderField>) IteratorUtils
                             .filter(fields, FieldUtil.FIELD_IS_INSTANCE)));
             ArrayEncodedValue staticInitializers = StaticInitializerUtil
@@ -276,14 +276,8 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
         if (methodParameters == null) {
             return Collections.emptyList();
         }
-        return Collections.unmodifiableList(methodParameters.stream().map(
-            new Function<MethodParameter, BuilderMethodParameter>() {
-                @Nullable @Override
-                public BuilderMethodParameter apply(MethodParameter input) {
-                    return internMethodParameter(input);
-                }
-            }
-        ).collect(Collectors.toList()));
+        return Collections.unmodifiableList(methodParameters.stream().map(methodParam ->
+            internMethodParameter(methodParam)).collect(Collectors.toList()));
     }
 
     @Nonnull private BuilderMethodParameter internMethodParameter(@Nonnull MethodParameter methodParameter) {
@@ -332,7 +326,7 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
                 writer.writeLong(((LongEncodedValue)encodedValue).getValue());
                 break;
             case ValueType.METHOD:
-                writer.writeMethod(((BuilderMethodEncodedValue) encodedValue).methodReference);
+                writer.writeMethod(((BuilderMethodEncodedValue)encodedValue).methodReference);
                 break;
             case ValueType.NULL:
                 writer.writeNull();
@@ -359,13 +353,8 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
 
     @Nonnull Set<? extends BuilderAnnotationElement> internAnnotationElements(
             @Nonnull Set<? extends AnnotationElement> elements) {
-        return Collections.unmodifiableSet(elements.stream().map(
-            new Function<AnnotationElement, BuilderAnnotationElement>() {
-                            @Nullable @Override
-                            public BuilderAnnotationElement apply(AnnotationElement input) {
-                                return internAnnotationElement(input);
-                            }
-                        }).collect(Collectors.toSet()));
+        return Collections.unmodifiableSet(elements.stream().map(annotationElement ->
+            internAnnotationElement(annotationElement)).collect(Collectors.toSet()));
     }
 
     @Nonnull private BuilderAnnotationElement internAnnotationElement(@Nonnull AnnotationElement annotationElement) {
@@ -431,13 +420,8 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
     }
 
     @Nonnull private BuilderArrayEncodedValue internArrayEncodedValue(@Nonnull ArrayEncodedValue value) {
-        return new BuilderArrayEncodedValue(Collections.unmodifiableList(value.getValue().stream().map(
-            new Function<EncodedValue, BuilderEncodedValue>() {
-                @Nullable @Override public BuilderEncodedValue apply(EncodedValue input) {
-                    return internEncodedValue(input);
-                }
-            }
-        ).collect(Collectors.toList())));
+        return new BuilderArrayEncodedValue(Collections.unmodifiableList(value.getValue().stream()
+            .map(encodedVal -> internEncodedValue(encodedVal)).collect(Collectors.toList())));
     }
 
     @Nonnull private BuilderEnumEncodedValue internEnumEncodedValue(@Nonnull EnumEncodedValue value) {

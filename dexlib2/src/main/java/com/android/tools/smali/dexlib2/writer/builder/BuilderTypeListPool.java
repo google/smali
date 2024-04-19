@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -63,7 +64,7 @@ class BuilderTypeListPool extends BaseBuilderPool implements
         BuilderTypeList typeList = new BuilderTypeList(
                 types.stream()
                         .map(type -> dexBuilder.typeSection.internType(type.toString()))
-                        .collect(java.util.stream.Collectors.toList()));
+                        .collect(Collectors.toList()));
 
         ret = internedItems.putIfAbsent(typeList, typeList);
         return ret==null?typeList:ret;
