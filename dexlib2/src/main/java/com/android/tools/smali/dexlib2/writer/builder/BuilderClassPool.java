@@ -287,11 +287,8 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
 
     @Nullable @Override
     public Iterable<? extends BuilderStringReference> getParameterNames(@Nonnull BuilderMethod method) {
-        return method.getParameters().stream().map(new Function<BuilderMethodParameter, BuilderStringReference>() {
-            @Nullable @Override public BuilderStringReference apply(BuilderMethodParameter input) {
-                return input.name;
-            }
-        }).collect(Collectors.toList());
+        return method.getParameters().stream().map(
+            builderMethodParameter -> builderMethodParameter.name).collect(Collectors.toList());
     }
 
     @Override public int getRegisterCount(@Nonnull BuilderMethod builderMethod) {

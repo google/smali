@@ -60,8 +60,8 @@ public class StaticInitializerUtil {
                 public List<? extends EncodedValue> getValue() {
                     return new AbstractForwardSequentialList<EncodedValue>() {
                         @Nonnull @Override public Iterator<EncodedValue> iterator() {
-                            return sortedStaticFields.stream().map(GET_INITIAL_VALUE)
-                                .limit(lastIndex + 1).collect(Collectors.toList()).iterator();
+                            return sortedStaticFields.stream().limit(lastIndex + 1)
+                                .map(GET_INITIAL_VALUE).collect(Collectors.toList()).iterator();
                         }
 
                         @Override public int size() {

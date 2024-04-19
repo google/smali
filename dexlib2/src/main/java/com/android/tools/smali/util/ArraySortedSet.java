@@ -70,8 +70,7 @@ public class ArraySortedSet<T> implements SortedSet<T> {
     /* Copies without duplicates and sorts the given collection to create an ArraySortedSet from it */
     public static <T> ArraySortedSet<T> copyOf(@Nonnull Comparator<? super T> comparator, @Nonnull Collection<? extends T> collection) {
         List<T> tmp = (List<T>)collection.stream().distinct().sorted(comparator).collect(Collectors.toList());
-        T[] arr = (T[])tmp.toArray();
-        return new ArraySortedSet<T>(comparator, arr);
+        return new ArraySortedSet<T>(comparator, (T[])tmp.toArray());
     }
 
     private boolean assertSorted() {
