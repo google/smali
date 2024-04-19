@@ -34,10 +34,11 @@ import com.android.tools.smali.dexlib2.base.BaseTryBlock;
 import com.android.tools.smali.dexlib2.iface.ExceptionHandler;
 import com.android.tools.smali.dexlib2.iface.TryBlock;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.collect.Lists;
+import com.android.tools.smali.util.IteratorUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -101,7 +102,7 @@ public class TryListBuilder<EH extends ExceptionHandler>
 
         public int startCodeAddress;
         public int endCodeAddress;
-        @Nonnull public List<EH> exceptionHandlers = Lists.newArrayList();
+        @Nonnull public List<EH> exceptionHandlers = new ArrayList<>();
 
         public MutableTryBlock(int startCodeAddress, int endCodeAddress) {
             this.startCodeAddress = startCodeAddress;
@@ -112,7 +113,7 @@ public class TryListBuilder<EH extends ExceptionHandler>
                                @Nonnull List<EH> exceptionHandlers) {
             this.startCodeAddress = startCodeAddress;
             this.endCodeAddress = endCodeAddress;
-            this.exceptionHandlers = Lists.newArrayList(exceptionHandlers);
+            this.exceptionHandlers = new ArrayList<>(exceptionHandlers);
         }
 
         @Override public int getStartCodeAddress() {
@@ -312,7 +313,7 @@ public class TryListBuilder<EH extends ExceptionHandler>
     }
 
     public List<TryBlock<EH>> getTryBlocks() {
-        return Lists.newArrayList(new Iterator<TryBlock<EH>>() {
+        return IteratorUtils.toList(new Iterator<TryBlock<EH>>() {
             // The next TryBlock to return. This has already been merged, if needed.
             @Nullable private MutableTryBlock<EH> next;
 

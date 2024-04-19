@@ -35,15 +35,15 @@ import com.android.tools.smali.dexlib2.immutable.value.ImmutableEncodedValueFact
 import com.android.tools.smali.dexlib2.util.EncodedValueUtils;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
 import com.android.tools.smali.util.CollectionUtils;
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
 import com.android.tools.smali.dexlib2.base.value.BaseArrayEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -60,9 +60,8 @@ public class StaticInitializerUtil {
                 public List<? extends EncodedValue> getValue() {
                     return new AbstractForwardSequentialList<EncodedValue>() {
                         @Nonnull @Override public Iterator<EncodedValue> iterator() {
-                            return FluentIterable.from(sortedStaticFields)
-                                    .limit(lastIndex+1)
-                                    .transform(GET_INITIAL_VALUE).iterator();
+                            return sortedStaticFields.stream().map(GET_INITIAL_VALUE)
+                                .limit(lastIndex + 1).collect(Collectors.toList()).iterator();
                         }
 
                         @Override public int size() {

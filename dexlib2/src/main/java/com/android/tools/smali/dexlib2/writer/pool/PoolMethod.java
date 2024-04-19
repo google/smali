@@ -35,14 +35,13 @@ import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.Method;
 import com.android.tools.smali.dexlib2.iface.MethodImplementation;
 import com.android.tools.smali.dexlib2.iface.MethodParameter;
-import com.google.common.base.Function;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
-
+import java.util.function.Function;
 
 class PoolMethod extends BaseMethodReference implements Method {
     @Nonnull private final Method method;

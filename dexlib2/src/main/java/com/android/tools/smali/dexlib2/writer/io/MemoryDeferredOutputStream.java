@@ -30,11 +30,10 @@
 
 package com.android.tools.smali.dexlib2.writer.io;
 
-import com.google.common.collect.Lists;
-
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,7 +42,7 @@ import java.util.List;
 public class MemoryDeferredOutputStream extends DeferredOutputStream {
     private static final int DEFAULT_BUFFER_SIZE = 16 * 1024;
 
-    private final List<byte[]> buffers = Lists.newArrayList();
+    private final List<byte[]> buffers = new ArrayList<>();
     private byte[] currentBuffer;
     private int currentPosition;
 

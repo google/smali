@@ -32,16 +32,16 @@ package com.android.tools.smali.dexlib2.writer.builder;
 
 import com.android.tools.smali.dexlib2.writer.DexWriter;
 import com.android.tools.smali.dexlib2.writer.StringSection;
-import com.google.common.collect.Maps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 class BuilderStringPool implements StringSection<BuilderStringReference, BuilderStringReference> {
-    @Nonnull private final ConcurrentMap<String, BuilderStringReference> internedItems = Maps.newConcurrentMap();
+    @Nonnull private final ConcurrentMap<String, BuilderStringReference> internedItems = new ConcurrentHashMap<>();
 
     @Nonnull BuilderStringReference internString(@Nonnull String string) {
         BuilderStringReference ret = internedItems.get(string);

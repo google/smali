@@ -31,14 +31,14 @@
 package com.android.tools.smali.dexlib2.writer.builder;
 
 import com.android.tools.smali.dexlib2.writer.DexWriter;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import java.util.AbstractList;
+import java.util.Collections;
 import java.util.List;
 
 public class BuilderTypeList extends AbstractList<BuilderTypeReference> {
-    static final BuilderTypeList EMPTY = new BuilderTypeList(ImmutableList.<BuilderTypeReference>of());
+    static final BuilderTypeList EMPTY = new BuilderTypeList(Collections.emptyList());
 
     @Nonnull final List<? extends BuilderTypeReference> types;
     int offset = DexWriter.NO_OFFSET;

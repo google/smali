@@ -33,21 +33,20 @@ package com.android.tools.smali.dexlib2.writer.builder;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.util.MethodUtil;
 import com.android.tools.smali.dexlib2.writer.DexWriter;
-import com.google.common.base.Functions;
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderArrayEncodedValue;
+import com.android.tools.smali.util.ArraySortedSet;
+import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.IteratorUtils;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 import java.util.AbstractCollection;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -78,13 +77,13 @@ public class BuilderClassDef extends BaseTypeReference implements ClassDef {
                     @Nullable Iterable<? extends BuilderMethod> methods,
                     @Nullable BuilderArrayEncodedValue staticInitializers) {
         if (methods == null) {
-            methods = ImmutableList.of();
+            methods = Collections.emptyList();
         }
         if (staticFields == null) {
-            staticFields = ImmutableSortedSet.of();
+            staticFields = Collections.emptySortedSet();
         }
         if (instanceFields == null) {
-            instanceFields = ImmutableSortedSet.of();
+            instanceFields = Collections.emptySortedSet();
         }
 
         this.type = type;
@@ -95,10 +94,10 @@ public class BuilderClassDef extends BaseTypeReference implements ClassDef {
         this.annotations = annotations;
         this.staticFields = staticFields;
         this.instanceFields = instanceFields;
-        this.directMethods = ImmutableSortedSet.copyOf((Iterator<? extends BuilderMethod>)IteratorUtils
-                .filter(methods, MethodUtil.METHOD_IS_DIRECT));
-        this.virtualMethods = ImmutableSortedSet.copyOf((Iterator<? extends BuilderMethod>)IteratorUtils
-                .filter(methods, MethodUtil.METHOD_IS_VIRTUAL));
+        this.directMethods = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(), IteratorUtils.toList(
+                (Iterator<? extends BuilderMethod>)IteratorUtils.filter(methods, MethodUtil.METHOD_IS_DIRECT)));
+        this.virtualMethods = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(), IteratorUtils.toList(
+                (Iterator<? extends BuilderMethod>)IteratorUtils.filter(methods, MethodUtil.METHOD_IS_VIRTUAL)));
         this.staticInitializers = staticInitializers;
     }
 
@@ -114,15 +113,18 @@ public class BuilderClassDef extends BaseTypeReference implements ClassDef {
 
     @Nonnull @Override
     public List<String> getInterfaces() {
-        return Lists.transform(this.interfaces, Functions.toStringFunction());
+        return this.interfaces.stream()
+                .map(iface -> iface.toString())
+                .collect(Collectors.toList());
     }
 
     @Nonnull @Override public Collection<BuilderField> getFields() {
         return new AbstractCollection<BuilderField>() {
             @Nonnull @Override public Iterator<BuilderField> iterator() {
-                return Iterators.mergeSorted(
-                        ImmutableList.of(staticFields.iterator(), instanceFields.iterator()),
-                        Ordering.natural());
+                ArrayList<BuilderField> fields = new ArrayList<>(staticFields);
+                fields.addAll(instanceFields);
+                Collections.sort(fields, CollectionUtils.naturalOrdering());
+                return fields.iterator();
             }
 
             @Override public int size() {
@@ -134,9 +136,10 @@ public class BuilderClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull @Override public Collection<BuilderMethod> getMethods() {
         return new AbstractCollection<BuilderMethod>() {
             @Nonnull @Override public Iterator<BuilderMethod> iterator() {
-                return Iterators.mergeSorted(
-                        ImmutableList.of(directMethods.iterator(), virtualMethods.iterator()),
-                        Ordering.natural());
+                ArrayList<BuilderMethod> methods = new ArrayList<>(directMethods);
+                methods.addAll(virtualMethods);
+                Collections.sort(methods, CollectionUtils.naturalOrdering());
+                return methods.iterator();
             }
 
             @Override public int size() {

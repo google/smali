@@ -33,29 +33,31 @@ package com.android.tools.smali.dexlib2.writer.pool;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Field;
+import com.android.tools.smali.util.ArraySortedSet;
+import com.android.tools.smali.util.CollectionUtils;
+import com.android.tools.smali.util.IteratorUtils;
+
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Ordering;
 import java.util.AbstractCollection;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 class PoolClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull final ClassDef classDef;
     @Nonnull final TypeListPool.Key<List<String>> interfaces;
-    @Nonnull final ImmutableSortedSet<Field> staticFields;
-    @Nonnull final ImmutableSortedSet<Field> instanceFields;
-    @Nonnull final ImmutableSortedSet<PoolMethod> directMethods;
-    @Nonnull final ImmutableSortedSet<PoolMethod> virtualMethods;
+    @Nonnull final SortedSet<Field> staticFields;
+    @Nonnull final SortedSet<Field> instanceFields;
+    @Nonnull final SortedSet<PoolMethod> directMethods;
+    @Nonnull final SortedSet<PoolMethod> virtualMethods;
 
     int classDefIndex = DexPool.NO_INDEX;
     int annotationDirectoryOffset = DexPool.NO_OFFSET;
@@ -63,13 +65,17 @@ class PoolClassDef extends BaseTypeReference implements ClassDef {
     PoolClassDef(@Nonnull ClassDef classDef) {
         this.classDef = classDef;
 
-        interfaces = new TypeListPool.Key<List<String>>(ImmutableList.copyOf(classDef.getInterfaces()));
-        staticFields = ImmutableSortedSet.copyOf(classDef.getStaticFields());
-        instanceFields = ImmutableSortedSet.copyOf(classDef.getInstanceFields());
-        directMethods = ImmutableSortedSet.copyOf(
-                Iterables.transform(classDef.getDirectMethods(), PoolMethod.TRANSFORM));
-        virtualMethods = ImmutableSortedSet.copyOf(
-                Iterables.transform(classDef.getVirtualMethods(), PoolMethod.TRANSFORM));
+        interfaces = new TypeListPool.Key<List<String>>(Collections.unmodifiableList(new ArrayList<>(classDef.getInterfaces())));
+        staticFields = ArraySortedSet.copyOf(CollectionUtils.usingToStringOrdering(), 
+            IteratorUtils.toList(classDef.getStaticFields()));
+        instanceFields = ArraySortedSet.copyOf(CollectionUtils.usingToStringOrdering(), 
+            IteratorUtils.toList(classDef.getInstanceFields()));
+        directMethods = ArraySortedSet.copyOf(CollectionUtils.usingToStringOrdering(),
+                IteratorUtils.toList(classDef.getDirectMethods()).stream().map(PoolMethod.TRANSFORM)
+                        .collect(Collectors.toList()));
+        virtualMethods = ArraySortedSet.of(CollectionUtils.usingToStringOrdering(),
+                IteratorUtils.toList(classDef.getVirtualMethods()).stream().map(PoolMethod.TRANSFORM)
+                .collect(Collectors.toList()));
     }
 
     @Nonnull @Override public String getType() {
@@ -107,9 +113,10 @@ class PoolClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull @Override public Collection<Field> getFields() {
         return new AbstractCollection<Field>() {
             @Nonnull @Override public Iterator<Field> iterator() {
-                return Iterators.mergeSorted(
-                        ImmutableList.of(staticFields.iterator(), instanceFields.iterator()),
-                        Ordering.natural());
+                ArrayList<Field> fields = new ArrayList<>(staticFields);
+                fields.addAll(instanceFields);
+                fields.sort(CollectionUtils.naturalOrdering());
+                return fields.iterator();
             }
 
             @Override public int size() {
@@ -129,9 +136,10 @@ class PoolClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull @Override public Collection<PoolMethod> getMethods() {
         return new AbstractCollection<PoolMethod>() {
             @Nonnull @Override public Iterator<PoolMethod> iterator() {
-                return Iterators.mergeSorted(
-                        ImmutableList.of(directMethods.iterator(), virtualMethods.iterator()),
-                        Ordering.natural());
+                ArrayList<PoolMethod> methods = new ArrayList<>(directMethods);
+                methods.addAll(virtualMethods);
+                methods.sort(CollectionUtils.naturalOrdering());
+                return methods.iterator();
             }
 
             @Override public int size() {

@@ -32,19 +32,19 @@ package com.android.tools.smali.dexlib2.writer.builder;
 
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference;
 import com.android.tools.smali.dexlib2.writer.FieldSection;
-import com.google.common.collect.Maps;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class BuilderFieldPool extends BaseBuilderPool
         implements
     FieldSection<BuilderStringReference, BuilderTypeReference, BuilderFieldReference, BuilderField> {
     @Nonnull private final ConcurrentMap<FieldReference, BuilderFieldReference> internedItems =
-            Maps.newConcurrentMap();
+            new ConcurrentHashMap<>();
 
     public BuilderFieldPool(@Nonnull DexBuilder dexBuilder) {
         super(dexBuilder);

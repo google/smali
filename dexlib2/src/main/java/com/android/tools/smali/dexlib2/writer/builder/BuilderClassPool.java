@@ -46,9 +46,8 @@ import com.android.tools.smali.dexlib2.util.EncodedValueUtils;
 import com.android.tools.smali.dexlib2.writer.ClassSection;
 import com.android.tools.smali.dexlib2.writer.DebugWriter;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
+import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation;
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction;
 import com.android.tools.smali.dexlib2.iface.reference.StringReference;
@@ -57,16 +56,17 @@ import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderArrayEncodedValue;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderEncodedValue;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
         BuilderTypeReference, BuilderTypeList, BuilderClassDef, BuilderField, BuilderMethod, BuilderAnnotationSet,
         BuilderArrayEncodedValue> {
     @Nonnull private final ConcurrentMap<String, BuilderClassDef> internedItems =
-            Maps.newConcurrentMap();
+            new ConcurrentHashMap<>();
 
     public BuilderClassPool(@Nonnull DexBuilder dexBuilder) {
         super(dexBuilder);
@@ -91,10 +91,12 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
         return classDef;
     }
 
-    private ImmutableList<BuilderClassDef> sortedClasses = null;
+    private List<BuilderClassDef> sortedClasses = null;
     @Nonnull @Override public Collection<? extends BuilderClassDef> getSortedClasses() {
         if (sortedClasses == null) {
-            sortedClasses = Ordering.natural().immutableSortedCopy(internedItems.values());
+            ArrayList<BuilderClassDef> tmp = new ArrayList<>(internedItems.values());
+            tmp.sort(CollectionUtils.naturalOrdering());
+            sortedClasses = Collections.unmodifiableList(tmp);
         }
         return sortedClasses;
     }
@@ -147,7 +149,7 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
 
     private static final Predicate<Field> HAS_INITIALIZER = new Predicate<Field>() {
         @Override
-        public boolean apply(Field input) {
+        public boolean test(Field input) {
             EncodedValue encodedValue = input.getInitialValue();
             return encodedValue != null && !EncodedValueUtils.isDefaultValue(encodedValue);
         }
@@ -242,7 +244,7 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
     private static final Predicate<BuilderMethodParameter> HAS_PARAMETER_ANNOTATIONS =
             new Predicate<BuilderMethodParameter>() {
                 @Override
-                public boolean apply(BuilderMethodParameter input) {
+                public boolean test(BuilderMethodParameter input) {
                     return input.getAnnotations().size() > 0;
                 }
             };
@@ -258,13 +260,12 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
     @Nullable @Override public List<? extends BuilderAnnotationSet> getParameterAnnotations(
             @Nonnull final BuilderMethod method) {
         final List<? extends BuilderMethodParameter> parameters = method.getParameters();
-        boolean hasParameterAnnotations = Iterables.any(parameters, HAS_PARAMETER_ANNOTATIONS);
+        boolean hasParameterAnnotations = parameters.stream().anyMatch(HAS_PARAMETER_ANNOTATIONS);
 
         if (hasParameterAnnotations) {
             return new AbstractForwardSequentialList<BuilderAnnotationSet>() {
                 @Nonnull @Override public Iterator<BuilderAnnotationSet> iterator() {
-                    return FluentIterable.from(parameters)
-                            .transform(PARAMETER_ANNOTATIONS).iterator();
+                    return parameters.stream().map(PARAMETER_ANNOTATIONS).iterator();
                 }
 
                 @Override public int size() {
@@ -286,11 +287,11 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
 
     @Nullable @Override
     public Iterable<? extends BuilderStringReference> getParameterNames(@Nonnull BuilderMethod method) {
-        return Iterables.transform(method.getParameters(), new Function<BuilderMethodParameter, BuilderStringReference>() {
+        return method.getParameters().stream().map(new Function<BuilderMethodParameter, BuilderStringReference>() {
             @Nullable @Override public BuilderStringReference apply(BuilderMethodParameter input) {
                 return input.name;
             }
-        });
+        }).collect(Collectors.toList());
     }
 
     @Override public int getRegisterCount(@Nonnull BuilderMethod builderMethod) {
@@ -314,7 +315,7 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
     public List<? extends TryBlock<? extends ExceptionHandler>> getTryBlocks(@Nonnull BuilderMethod builderMethod) {
         MethodImplementation impl = builderMethod.getImplementation();
         if (impl == null) {
-            return ImmutableList.of();
+            return Collections.emptyList();
         }
         return impl.getTryBlocks();
     }

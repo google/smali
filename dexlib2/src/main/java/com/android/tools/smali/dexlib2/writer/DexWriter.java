@@ -90,11 +90,6 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodProtoReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.StringReference;
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.primitives.Ints;
 import com.android.tools.smali.dexlib2.base.BaseAnnotation;
 import com.android.tools.smali.dexlib2.base.BaseAnnotationElement;
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation;
@@ -116,8 +111,11 @@ import com.android.tools.smali.dexlib2.writer.io.DeferredOutputStreamFactory;
 import com.android.tools.smali.dexlib2.writer.io.DexDataStore;
 import com.android.tools.smali.dexlib2.writer.io.MemoryDeferredOutputStream;
 import com.android.tools.smali.dexlib2.writer.util.TryListBuilder;
+import com.android.tools.smali.util.ChainedIterator;
 import com.android.tools.smali.util.ExceptionWithContext;
+import com.android.tools.smali.util.IteratorUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -265,7 +263,7 @@ public abstract class DexWriter<
                 public int compare(Entry<? extends CallSiteKey, Integer> o1, Entry<? extends CallSiteKey, Integer> o2) {
                     int offset1 = encodedArraySection.getItemOffset(callSiteSection.getEncodedCallSite(o1.getKey()));
                     int offset2 = encodedArraySection.getItemOffset(callSiteSection.getEncodedCallSite(o2.getKey()));
-                    return Ints.compare(offset1, offset2);
+                    return Integer.compare(offset1, offset2);
                 }
             };
 
@@ -318,7 +316,7 @@ public abstract class DexWriter<
 
     @Nonnull
     public List<String> getMethodReferences() {
-        List<String> methodReferences = Lists.newArrayList();
+        List<String> methodReferences = new ArrayList<>();
         for (Entry<? extends MethodRefKey, Integer> methodReference: methodSection.getItems()) {
             methodReferences.add(DexFormatter.INSTANCE.getMethodDescriptor(methodReference.getKey()));
         }
@@ -327,7 +325,7 @@ public abstract class DexWriter<
 
     @Nonnull
     public List<String> getFieldReferences() {
-        List<String> fieldReferences = Lists.newArrayList();
+        List<String> fieldReferences = new ArrayList<>();
         for (Entry<? extends FieldRefKey, Integer> fieldReference: fieldSection.getItems()) {
             fieldReferences.add(DexFormatter.INSTANCE.getFieldDescriptor(fieldReference.getKey()));
         }
@@ -336,7 +334,7 @@ public abstract class DexWriter<
 
     @Nonnull
     public List<String> getTypeReferences() {
-        List<String> classReferences = Lists.newArrayList();
+        List<String> classReferences = new ArrayList<>();
         for (Entry<? extends TypeKey, Integer> typeReference: typeSection.getItems()) {
             classReferences.add(typeReference.getKey().toString());
         }
@@ -472,7 +470,7 @@ public abstract class DexWriter<
         stringIndexSectionOffset = indexWriter.getPosition();
         stringDataSectionOffset = offsetWriter.getPosition();
         int index = 0;
-        List<Entry<? extends StringKey, Integer>> stringEntries = Lists.newArrayList(stringSection.getItems());
+        List<Entry<? extends StringKey, Integer>> stringEntries = new ArrayList<>(stringSection.getItems());
         Collections.sort(stringEntries, toStringKeyComparator);
 
         for (Map.Entry<? extends StringKey, Integer>  entry: stringEntries) {
@@ -489,7 +487,7 @@ public abstract class DexWriter<
         typeSectionOffset = writer.getPosition();
         int index = 0;
 
-        List<Map.Entry<? extends TypeKey, Integer>> typeEntries = Lists.newArrayList(typeSection.getItems());
+        List<Map.Entry<? extends TypeKey, Integer>> typeEntries = new ArrayList<>(typeSection.getItems());
         Collections.sort(typeEntries, toStringKeyComparator);
 
         for (Map.Entry<? extends TypeKey, Integer> entry : typeEntries) {
@@ -502,7 +500,7 @@ public abstract class DexWriter<
         protoSectionOffset = writer.getPosition();
         int index = 0;
 
-        List<Map.Entry<? extends ProtoRefKey, Integer>> protoEntries = Lists.newArrayList(protoSection.getItems());
+        List<Map.Entry<? extends ProtoRefKey, Integer>> protoEntries = new ArrayList<>(protoSection.getItems());
         Collections.sort(protoEntries, DexWriter.<ProtoRefKey>comparableKeyComparator());
 
         for (Map.Entry<? extends ProtoRefKey, Integer> entry: protoEntries) {
@@ -518,7 +516,7 @@ public abstract class DexWriter<
         fieldSectionOffset = writer.getPosition();
         int index = 0;
 
-        List<Map.Entry<? extends FieldRefKey, Integer>> fieldEntries = Lists.newArrayList(fieldSection.getItems());
+        List<Map.Entry<? extends FieldRefKey, Integer>> fieldEntries = new ArrayList<>(fieldSection.getItems());
         Collections.sort(fieldEntries, DexWriter.<FieldRefKey>comparableKeyComparator());
         
         for (Map.Entry<? extends FieldRefKey, Integer> entry: fieldEntries) {
@@ -534,7 +532,7 @@ public abstract class DexWriter<
         methodSectionOffset = writer.getPosition();
         int index = 0;
 
-        List<Map.Entry<? extends MethodRefKey, Integer>> methodEntries = Lists.newArrayList(methodSection.getItems());
+        List<Map.Entry<? extends MethodRefKey, Integer>> methodEntries = new ArrayList<>(methodSection.getItems());
         Collections.sort(methodEntries, DexWriter.<MethodRefKey>comparableKeyComparator());
         
         for (Map.Entry<? extends MethodRefKey, Integer> entry: methodEntries) {
@@ -551,7 +549,7 @@ public abstract class DexWriter<
         classIndexSectionOffset = indexWriter.getPosition();
         classDataSectionOffset = offsetWriter.getPosition();
 
-        List<Map.Entry<? extends ClassKey, Integer>> classEntriesKeySorted = Lists.newArrayList(classSection.getItems());
+        List<Map.Entry<? extends ClassKey, Integer>> classEntriesKeySorted = new ArrayList<>(classSection.getItems());
         Collections.sort(classEntriesKeySorted, DexWriter.<ClassKey>comparableKeyComparator());
 
         int index = 0;
@@ -566,7 +564,7 @@ public abstract class DexWriter<
         offsetWriter.align();
         hiddenApiRestrictionsOffset = offsetWriter.getPosition();
 
-        List<Map.Entry<? extends ClassKey, Integer>> classEntriesValueSorted = Lists.newArrayList(classSection.getItems());
+        List<Map.Entry<? extends ClassKey, Integer>> classEntriesValueSorted = new ArrayList<>(classSection.getItems());
         classEntriesValueSorted.sort(DexWriter.comparableValueComparator());
         RestrictionsWriter restrictionsWriter = new RestrictionsWriter(dataStore, offsetWriter, classEntriesValueSorted.size());
 
@@ -767,7 +765,7 @@ public abstract class DexWriter<
         callSiteSectionOffset = writer.getPosition();
 
         List<Map.Entry<? extends CallSiteKey, Integer>> callSiteEntries =
-                Lists.newArrayList(callSiteSection.getItems());
+            new ArrayList<>(callSiteSection.getItems());
         Collections.sort(callSiteEntries, callSiteComparator);
 
         int index = 0;
@@ -885,8 +883,9 @@ public abstract class DexWriter<
             writer.writeUbyte(annotationSection.getVisibility(key));
             writer.writeUleb128(typeSection.getItemIndex(annotationSection.getType(key)));
 
-            Collection<? extends AnnotationElement> elements = Ordering.from(BaseAnnotationElement.BY_NAME)
-                    .immutableSortedCopy(annotationSection.getElements(key));
+            List<? extends AnnotationElement> elements = new ArrayList<>(annotationSection.getElements(key));
+            elements.sort(BaseAnnotationElement.BY_NAME);
+            elements = Collections.unmodifiableList(elements);
 
             writer.writeUleb128(elements.size());
 
@@ -904,9 +903,10 @@ public abstract class DexWriter<
             writer.writeInt(0);
         }
         for (Map.Entry<? extends AnnotationSetKey, Integer> entry: annotationSetSection.getItems()) {
-            Collection<? extends AnnotationKey> annotations = Ordering.from(BaseAnnotation.BY_TYPE)
-                    .immutableSortedCopy(annotationSetSection.getAnnotations(entry.getKey()));
-
+            List<? extends AnnotationKey> annotations = new ArrayList<>(annotationSetSection.getAnnotations(entry.getKey()));
+            annotations.sort(BaseAnnotation.BY_TYPE);
+            annotations = Collections.unmodifiableList(annotations);
+            
             writer.align();
             entry.setValue(writer.getPosition());
             writer.writeInt(annotations.size());
@@ -919,7 +919,7 @@ public abstract class DexWriter<
     private void writeAnnotationSetRefs(@Nonnull DexDataWriter writer) throws IOException {
         writer.align();
         annotationSetRefSectionOffset = writer.getPosition();
-        HashMap<List<? extends AnnotationSetKey>, Integer> internedItems = Maps.newHashMap();
+        HashMap<List<? extends AnnotationSetKey>, Integer> internedItems = new HashMap<>();
 
         for (ClassKey classKey: classSection.getSortedClasses()) {
             for (MethodKey methodKey: classSection.getSortedMethods(classKey)) {
@@ -955,7 +955,7 @@ public abstract class DexWriter<
     private void writeAnnotationDirectories(@Nonnull DexDataWriter writer) throws IOException {
         writer.align();
         annotationDirectorySectionOffset = writer.getPosition();
-        HashMap<AnnotationSetKey, Integer> internedItems = Maps.newHashMap();
+        HashMap<AnnotationSetKey, Integer> internedItems = new HashMap<>();
 
         ByteBuffer tempBuffer = ByteBuffer.allocate(65536);
         tempBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -1054,13 +1054,14 @@ public abstract class DexWriter<
 
         DexDataWriter codeWriter = new DexDataWriter(temp, 0);
 
-        List<CodeItemOffset<MethodKey>> codeOffsets = Lists.newArrayList();
+        List<CodeItemOffset<MethodKey>> codeOffsets = new ArrayList<>();
 
         for (ClassKey classKey: classSection.getSortedClasses()) {
             Collection<? extends MethodKey> directMethods = classSection.getSortedDirectMethods(classKey);
             Collection<? extends MethodKey> virtualMethods = classSection.getSortedVirtualMethods(classKey);
 
-            Iterable<MethodKey> methods = Iterables.concat(directMethods, virtualMethods);
+            Iterable<MethodKey> methods = new ChainedIterator<MethodKey>(
+                (Collection<MethodKey>)directMethods, (Collection<MethodKey>)virtualMethods);
 
             for (MethodKey methodKey: methods) {
                 List<? extends TryBlock<? extends ExceptionHandler>> tryBlocks =
@@ -1142,7 +1143,7 @@ public abstract class DexWriter<
         int parameterCount = 0;
         int lastNamedParameterIndex = -1;
         if (parameterNames != null) {
-            parameterCount = Iterables.size(parameterNames);
+            parameterCount = IteratorUtils.size(parameterNames);
             int index = 0;
             for (StringKey parameterName: parameterNames) {
                 if (parameterName != null) {
@@ -1153,7 +1154,8 @@ public abstract class DexWriter<
         }
 
 
-        if (lastNamedParameterIndex == -1 && (debugItems == null || Iterables.isEmpty(debugItems))) {
+        if (lastNamedParameterIndex == -1 && (debugItems == null 
+                || !debugItems.iterator().hasNext())) {
             return NO_OFFSET;
         }
 
@@ -1393,7 +1395,7 @@ public abstract class DexWriter<
                 writer.align();
 
                 // filter out unique lists of exception handlers
-                Map<List<? extends ExceptionHandler>, Integer> exceptionHandlerOffsetMap = Maps.newHashMap();
+                Map<List<? extends ExceptionHandler>, Integer> exceptionHandlerOffsetMap = new HashMap<>();
                 for (TryBlock<? extends ExceptionHandler> tryBlock: tryBlocks) {
                     exceptionHandlerOffsetMap.put(tryBlock.getExceptionHandlers(), 0);
                 }

@@ -33,12 +33,16 @@ package com.android.tools.smali.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
+/* A sorted set implemented with an underlying array. ArraySortedSet is inmutable. */
 public class ArraySortedSet<T> implements SortedSet<T> {
     @Nonnull private final Comparator<? super T> comparator;
     @Nonnull private final Object[] arr;
@@ -62,6 +66,14 @@ public class ArraySortedSet<T> implements SortedSet<T> {
     public static <T> ArraySortedSet<T> of(@Nonnull Comparator<? super T> comparator, @Nonnull Collection<? extends T> collection) {
         return new ArraySortedSet<T>(comparator, collection);
     }
+
+    /* Copies without duplicates and sorts the given collection to create an ArraySortedSet from it */
+    public static <T> ArraySortedSet<T> copyOf(@Nonnull Comparator<? super T> comparator, @Nonnull Collection<? extends T> collection) {
+        List<T> tmp = (List<T>)collection.stream().distinct().sorted(comparator).collect(Collectors.toList());
+        T[] arr = (T[])tmp.toArray();
+        return new ArraySortedSet<T>(comparator, arr);
+    }
+
     private boolean assertSorted() {
         for (int i = 1; i < arr.length; i++) {
           assert comparator.compare((T)arr[i - 1], (T)arr[i]) < 0;

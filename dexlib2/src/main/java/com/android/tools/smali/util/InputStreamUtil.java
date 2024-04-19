@@ -38,6 +38,7 @@ import java.io.DataInput;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
@@ -78,8 +79,8 @@ public final class InputStreamUtil {
         // reading and so all of the bytes in each new allocated buffer are available for reading
         // from
         // the stream.
-        for (int bufSize = initialBufferSize; totalLen < MAX_ARRAY_LEN; bufSize = 
-                saturatedMultiply(bufSize, bufSize < 4096 ? 4 : 2)) {
+        for (int bufSize = initialBufferSize; totalLen < MAX_ARRAY_LEN; bufSize = saturatedMultiply(
+                bufSize, bufSize < 4096 ? 4 : 2)) {
             byte[] buf = new byte[min(bufSize, MAX_ARRAY_LEN - totalLen)];
             bufs.add(buf);
             int off = 0;
@@ -108,11 +109,11 @@ public final class InputStreamUtil {
         long value = (long) a * b;
         if (value > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;
-          }
-          if (value < Integer.MIN_VALUE) {
+        }
+        if (value < Integer.MIN_VALUE) {
             return Integer.MIN_VALUE;
-          }
-          return (int) value;
+        }
+        return (int) value;
     }
 
     private static byte[] combineBuffers(Queue<byte[]> bufs, int totalLen) {
@@ -210,7 +211,9 @@ public final class InputStreamUtil {
      * @throws EOFException if this stream reaches the end before reading all the bytes.
      * @throws IOException if an I/O error occurs.
      */
-    public static void readFully(@Nonnull InputStream in, @Nonnull byte[] b) throws IOException {
+    public static void readFully(@Nonnull
+    InputStream in, @Nonnull
+    byte[] b) throws IOException {
         int read = read(in, b, 0, b.length);
         if (read != b.length) {
             throw new EOFException(
@@ -244,7 +247,9 @@ public final class InputStreamUtil {
      * @throws IndexOutOfBoundsException if {@code off} is negative, if {@code len} is negative, or
      *             if {@code off + len} is greater than {@code b.length}
      */
-    public static int read(@Nonnull InputStream in, @Nonnull byte[] b, int off, int len) throws IOException {
+    public static int read(@Nonnull
+    InputStream in, @Nonnull
+    byte[] b, int off, int len) throws IOException {
         if (off < 0 || len < 0 || off + len > b.length) {
             throw new IndexOutOfBoundsException("trying to read invalid offset/length range");
         }
@@ -256,6 +261,32 @@ public final class InputStreamUtil {
                 break;
             }
             total += result;
+        }
+        return total;
+    }
+
+    /**
+     * Copies all bytes from the input stream to the output stream. Does not close or flush either
+     * stream.
+     *
+     * @param from the input stream to read from
+     * @param to the output stream to write to
+     * @return the number of bytes copied
+     * @throws IOException if an I/O error occurs
+     */
+    public static long copy(InputStream from, OutputStream to) throws IOException {
+        if (from == null || to == null) {
+            throw new NullPointerException();
+        }
+        byte[] buf = new byte[BUFFER_SIZE];
+        long total = 0;
+        while (true) {
+            int r = from.read(buf);
+            if (r == -1) {
+                break;
+            }
+            to.write(buf, 0, r);
+            total += r;
         }
         return total;
     }

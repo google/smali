@@ -30,7 +30,7 @@
 
 package com.android.tools.smali.dexlib2.writer.io;
 
-import com.google.common.io.ByteStreams;
+import com.android.tools.smali.util.InputStreamUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -71,7 +71,7 @@ public class FileDeferredOutputStream extends DeferredOutputStream {
         // did we actually write something out to disk?
         if (count != writtenBytes) {
             InputStream fis = new FileInputStream(backingFile);
-            ByteStreams.copy(fis, dest);
+            InputStreamUtil.copy(fis, dest);
             backingFile.delete();
         }
 

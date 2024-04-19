@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2.writer.builder;
 
 import com.android.tools.smali.dexlib2.writer.MethodSection;
-import com.google.common.collect.Maps;
 import com.android.tools.smali.dexlib2.base.reference.BaseMethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 
@@ -39,12 +38,13 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 class BuilderMethodPool extends BaseBuilderPool implements MethodSection<BuilderStringReference, BuilderTypeReference,
         BuilderMethodProtoReference, BuilderMethodReference, BuilderMethod> {
     @Nonnull private final ConcurrentMap<MethodReference, BuilderMethodReference> internedItems =
-            Maps.newConcurrentMap();
+            new ConcurrentHashMap<>();
 
     public BuilderMethodPool(@Nonnull DexBuilder dexBuilder) {
         super(dexBuilder);
