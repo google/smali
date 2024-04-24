@@ -112,6 +112,7 @@ import com.android.tools.smali.dexlib2.writer.io.DexDataStore;
 import com.android.tools.smali.dexlib2.writer.io.MemoryDeferredOutputStream;
 import com.android.tools.smali.dexlib2.writer.util.TryListBuilder;
 import com.android.tools.smali.util.ChainedIterator;
+import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.util.IteratorUtils;
 
@@ -883,9 +884,8 @@ public abstract class DexWriter<
             writer.writeUbyte(annotationSection.getVisibility(key));
             writer.writeUleb128(typeSection.getItemIndex(annotationSection.getType(key)));
 
-            List<? extends AnnotationElement> elements = new ArrayList<>(annotationSection.getElements(key));
-            elements.sort(BaseAnnotationElement.BY_NAME);
-            elements = Collections.unmodifiableList(elements);
+            Collection<? extends AnnotationElement> elements = CollectionUtils.immutableSortedCopy(
+                annotationSection.getElements(key), BaseAnnotationElement.BY_NAME);
 
             writer.writeUleb128(elements.size());
 
@@ -903,9 +903,8 @@ public abstract class DexWriter<
             writer.writeInt(0);
         }
         for (Map.Entry<? extends AnnotationSetKey, Integer> entry: annotationSetSection.getItems()) {
-            List<? extends AnnotationKey> annotations = new ArrayList<>(annotationSetSection.getAnnotations(entry.getKey()));
-            annotations.sort(BaseAnnotation.BY_TYPE);
-            annotations = Collections.unmodifiableList(annotations);
+            Collection<? extends AnnotationKey> annotations = CollectionUtils.immutableSortedCopy(
+                    annotationSetSection.getAnnotations(entry.getKey()), BaseAnnotation.BY_TYPE);
             
             writer.align();
             entry.setValue(writer.getPosition());

@@ -94,9 +94,8 @@ public class BuilderClassPool extends BaseBuilderPool implements ClassSection<Bu
     private List<BuilderClassDef> sortedClasses = null;
     @Nonnull @Override public Collection<? extends BuilderClassDef> getSortedClasses() {
         if (sortedClasses == null) {
-            ArrayList<BuilderClassDef> tmp = new ArrayList<>(internedItems.values());
-            tmp.sort(CollectionUtils.naturalOrdering());
-            sortedClasses = Collections.unmodifiableList(tmp);
+            sortedClasses = CollectionUtils.immutableSortedCopy(
+                    internedItems.values(), CollectionUtils.naturalOrdering());
         }
         return sortedClasses;
     }

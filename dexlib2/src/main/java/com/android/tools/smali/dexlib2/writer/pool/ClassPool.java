@@ -238,9 +238,8 @@ public class ClassPool extends BasePool<String, PoolClassDef> implements ClassSe
     private List<PoolClassDef> sortedClasses = null;
     @Nonnull @Override public Collection<? extends PoolClassDef> getSortedClasses() {
         if (sortedClasses == null) {
-            sortedClasses = new ArrayList<>(internedItems.values());
-            sortedClasses.sort(CollectionUtils.usingToStringOrdering());
-            sortedClasses = Collections.unmodifiableList(sortedClasses);
+            sortedClasses = CollectionUtils.immutableSortedCopy(
+                    internedItems.values(), CollectionUtils.usingToStringOrdering());
         }
         return sortedClasses;
     }

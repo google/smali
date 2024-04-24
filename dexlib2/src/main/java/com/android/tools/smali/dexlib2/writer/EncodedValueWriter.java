@@ -35,6 +35,7 @@ import com.android.tools.smali.dexlib2.base.BaseAnnotationElement;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodHandleReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
+import com.android.tools.smali.util.CollectionUtils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -82,9 +83,8 @@ public abstract class EncodedValueWriter<StringKey, TypeKey, FieldRefKey extends
         writer.writeUleb128(typeSection.getItemIndex(annotationType));
         writer.writeUleb128(elements.size());
 
-        List<? extends AnnotationElement> sortedElements = new ArrayList<>(elements);
-        sortedElements.sort(BaseAnnotationElement.BY_NAME);
-        sortedElements = Collections.unmodifiableList(sortedElements);
+        List<? extends AnnotationElement> sortedElements = CollectionUtils.immutableSortedCopy(
+                elements, BaseAnnotationElement.BY_NAME);
 
         for (AnnotationElement element: sortedElements) {
             writer.writeUleb128(stringSection.getItemIndex(annotationSection.getElementName(element)));

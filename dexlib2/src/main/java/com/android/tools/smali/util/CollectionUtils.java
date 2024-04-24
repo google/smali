@@ -32,10 +32,12 @@ package com.android.tools.smali.util;
 
 import com.android.tools.smali.util.ArraySortedSet;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.function.Predicate;
 
@@ -222,6 +224,13 @@ public class CollectionUtils {
             if (res != 0) return res;
         }
         return 0;
+    }
+
+    public static <T> List<T> immutableSortedCopy(
+            @Nonnull Collection<T> collection, @Nonnull Comparator<? super T> comparator) {
+        ArrayList<T> copy = new ArrayList<>(collection);
+        copy.sort(comparator);
+        return Collections.unmodifiableList(copy);
     }
 
     public static <T> Comparator<? super T> usingToStringOrdering() {

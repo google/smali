@@ -80,6 +80,7 @@ import com.android.tools.smali.dexlib2.ReferenceType;
 import com.android.tools.smali.dexlib2.iface.instruction.DualReferenceInstruction;
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction;
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchElement;
+import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
 
 import javax.annotation.Nonnull;
@@ -535,9 +536,8 @@ public class InstructionWriter<StringRef extends StringReference, TypeRef extend
         try {
             writer.writeUbyte(0);
             writer.writeUbyte(getOpcodeValue(instruction.getOpcode()) >> 8);
-            List<? extends SwitchElement> elements = new ArrayList<>(instruction.getSwitchElements());
-            elements.sort(switchElementComparator);
-            elements = Collections.unmodifiableList(elements);
+            List<? extends SwitchElement> elements = CollectionUtils.immutableSortedCopy(
+                    instruction.getSwitchElements(), switchElementComparator);
 
             writer.writeUshort(elements.size());
             for (SwitchElement element: elements) {
