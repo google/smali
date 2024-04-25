@@ -30,16 +30,19 @@
 
 package com.android.tools.smali.dexlib2.writer;
 
-import com.google.common.collect.Ordering;
 import com.android.tools.smali.dexlib2.ValueType;
 import com.android.tools.smali.dexlib2.base.BaseAnnotationElement;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodHandleReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
+import com.android.tools.smali.util.CollectionUtils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
+import java.util.Collections;
 
 public abstract class EncodedValueWriter<StringKey, TypeKey, FieldRefKey extends FieldReference,
         MethodRefKey extends MethodReference, AnnotationElement extends com.android.tools.smali.dexlib2.iface.AnnotationElement,
@@ -80,8 +83,8 @@ public abstract class EncodedValueWriter<StringKey, TypeKey, FieldRefKey extends
         writer.writeUleb128(typeSection.getItemIndex(annotationType));
         writer.writeUleb128(elements.size());
 
-        Collection<? extends AnnotationElement> sortedElements = Ordering.from(BaseAnnotationElement.BY_NAME)
-                .immutableSortedCopy(elements);
+        List<? extends AnnotationElement> sortedElements = CollectionUtils.immutableSortedCopy(
+                elements, BaseAnnotationElement.BY_NAME);
 
         for (AnnotationElement element: sortedElements) {
             writer.writeUleb128(stringSection.getItemIndex(annotationSection.getElementName(element)));

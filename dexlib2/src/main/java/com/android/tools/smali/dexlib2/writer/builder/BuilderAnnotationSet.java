@@ -31,16 +31,16 @@
 package com.android.tools.smali.dexlib2.writer.builder;
 
 import com.android.tools.smali.dexlib2.writer.DexWriter;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import java.util.AbstractSet;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
 public class BuilderAnnotationSet extends AbstractSet<BuilderAnnotation> {
     public static final BuilderAnnotationSet EMPTY =
-            new BuilderAnnotationSet(ImmutableSet.<BuilderAnnotation>of());
+            new BuilderAnnotationSet(Collections.emptySet());
 
     @Nonnull final Set<BuilderAnnotation> annotations;
     int offset = DexWriter.NO_OFFSET;

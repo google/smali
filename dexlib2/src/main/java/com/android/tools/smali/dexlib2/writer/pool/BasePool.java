@@ -30,15 +30,14 @@
 
 package com.android.tools.smali.dexlib2.writer.pool;
 
-import com.google.common.collect.Maps;
-
 import javax.annotation.Nonnull;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class BasePool<Key, Value> implements Markable {
     @Nonnull protected final DexPool dexPool;
-    @Nonnull protected final Map<Key, Value> internedItems = Maps.newLinkedHashMap();
+    @Nonnull protected final Map<Key, Value> internedItems = new LinkedHashMap<>();
     private int markedItemCount = -1;
 
     public BasePool(@Nonnull DexPool dexPool) {

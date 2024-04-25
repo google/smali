@@ -32,22 +32,21 @@ package com.android.tools.smali.dexlib2.writer.builder;
 
 import com.android.tools.smali.dexlib2.writer.DexWriter;
 import com.android.tools.smali.dexlib2.writer.TypeListSection;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 class BuilderTypeListPool extends BaseBuilderPool implements
     TypeListSection<BuilderTypeReference, BuilderTypeList> {
     @Nonnull private final ConcurrentMap<List<? extends CharSequence>, BuilderTypeList> internedItems =
-            Maps.newConcurrentMap();
+            new ConcurrentHashMap<>();
 
     public BuilderTypeListPool(@Nonnull DexBuilder dexBuilder) {
         super(dexBuilder);
@@ -64,11 +63,10 @@ class BuilderTypeListPool extends BaseBuilderPool implements
         }
 
         BuilderTypeList typeList = new BuilderTypeList(
-                ImmutableList.copyOf(Iterables.transform(types, new Function<CharSequence, BuilderTypeReference>() {
-                    @Nonnull @Override public BuilderTypeReference apply(CharSequence input) {
-                        return dexBuilder.typeSection.internType(input.toString());
-                    }
-                })));
+            Collections.unmodifiableList(
+                types.stream()
+                        .map(type -> dexBuilder.typeSection.internType(type.toString()))
+                        .collect(Collectors.toList())));
 
         ret = internedItems.putIfAbsent(typeList, typeList);
         return ret==null?typeList:ret;

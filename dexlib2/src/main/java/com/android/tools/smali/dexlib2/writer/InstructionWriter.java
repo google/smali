@@ -74,18 +74,19 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.iface.reference.Reference;
 import com.android.tools.smali.dexlib2.iface.reference.StringReference;
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference;
-import com.google.common.collect.Ordering;
-import com.google.common.primitives.Ints;
 import com.android.tools.smali.dexlib2.Opcode;
 import com.android.tools.smali.dexlib2.Opcodes;
 import com.android.tools.smali.dexlib2.ReferenceType;
 import com.android.tools.smali.dexlib2.iface.instruction.DualReferenceInstruction;
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction;
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchElement;
+import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -535,8 +536,9 @@ public class InstructionWriter<StringRef extends StringReference, TypeRef extend
         try {
             writer.writeUbyte(0);
             writer.writeUbyte(getOpcodeValue(instruction.getOpcode()) >> 8);
-            List<? extends SwitchElement> elements = Ordering.from(switchElementComparator).immutableSortedCopy(
-                    instruction.getSwitchElements());
+            List<? extends SwitchElement> elements = CollectionUtils.immutableSortedCopy(
+                    instruction.getSwitchElements(), switchElementComparator);
+
             writer.writeUshort(elements.size());
             for (SwitchElement element: elements) {
                 writer.writeInt(element.getKey());
@@ -551,7 +553,7 @@ public class InstructionWriter<StringRef extends StringReference, TypeRef extend
 
     private final Comparator<SwitchElement> switchElementComparator = new Comparator<SwitchElement>() {
         @Override public int compare(SwitchElement element1, SwitchElement element2) {
-            return Ints.compare(element1.getKey(), element2.getKey());
+            return Integer.compare(element1.getKey(), element2.getKey());
         }
     };
 

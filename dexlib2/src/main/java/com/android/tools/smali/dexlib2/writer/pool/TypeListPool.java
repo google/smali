@@ -32,12 +32,12 @@ package com.android.tools.smali.dexlib2.writer.pool;
 
 import com.android.tools.smali.dexlib2.writer.DexWriter;
 import com.android.tools.smali.dexlib2.writer.TypeListSection;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.writer.pool.TypeListPool.Key;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class TypeListPool extends BaseNullableOffsetPool<Key<? extends Collection<? extends CharSequence>>>
@@ -64,7 +64,7 @@ public class TypeListPool extends BaseNullableOffsetPool<Key<? extends Collectio
     @Nonnull @Override
     public Collection<? extends CharSequence> getTypes(Key<? extends Collection<? extends CharSequence>> typesKey) {
         if (typesKey == null) {
-            return ImmutableList.of();
+            return Collections.emptyList();
         }
         return typesKey.types;
     }

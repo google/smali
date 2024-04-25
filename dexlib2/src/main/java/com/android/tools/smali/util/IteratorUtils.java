@@ -49,12 +49,12 @@ public final class IteratorUtils {
     }
 
     public static <T extends Object> AbstractIterator<T> filter(
-                Iterable<T> unfiltered, Predicate<? super T> retainIfTrue) {
+            Iterable<T> unfiltered, Predicate<? super T> retainIfTrue) {
         return filter(unfiltered.iterator(), retainIfTrue);
     }
-    
+
     public static <T extends Object> AbstractIterator<T> filter(
-                Iterator<T> unfiltered, Predicate<? super T> retainIfTrue) {
+            Iterator<T> unfiltered, Predicate<? super T> retainIfTrue) {
         return new AbstractIterator<T>() {
             @Override
             protected T computeNext() {
@@ -87,17 +87,27 @@ public final class IteratorUtils {
         }
     }
 
-    public static boolean elementsEqual (Iterator<?> iterator1, Iterator<?> iterator2) {
+    public static boolean elementsEqual(Iterator<?> iterator1, Iterator<?> iterator2) {
         while (iterator1.hasNext()) {
             if (!iterator2.hasNext()) {
-              return false;
+                return false;
             }
             Object o1 = iterator1.next();
             Object o2 = iterator2.next();
             if (!Objects.equals(o1, o2)) {
-              return false;
+                return false;
             }
         }
         return !iterator2.hasNext();
+    }
+
+    public static int size(Iterable<?> iterable) {
+        Iterator<?> iterator = iterable.iterator();
+        int count = 0;
+        while (iterator.hasNext()) {
+            count++;
+            iterator.next();
+        }
+        return count;
     }
 }

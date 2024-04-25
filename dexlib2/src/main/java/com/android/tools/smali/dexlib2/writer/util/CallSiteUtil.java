@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2.writer.util;
 
 import com.android.tools.smali.dexlib2.immutable.value.ImmutableStringEncodedValue;
-import com.google.common.collect.Lists;
 import com.android.tools.smali.dexlib2.base.value.BaseArrayEncodedValue;
 import com.android.tools.smali.dexlib2.base.value.BaseMethodHandleEncodedValue;
 import com.android.tools.smali.dexlib2.base.value.BaseMethodTypeEncodedValue;
@@ -42,6 +41,7 @@ import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CallSiteUtil {
@@ -50,7 +50,7 @@ public class CallSiteUtil {
             @Nonnull
             @Override
             public List<? extends EncodedValue> getValue() {
-                List<EncodedValue> encodedCallSite = Lists.newArrayList();
+                List<EncodedValue> encodedCallSite = new ArrayList<>();
 
                 encodedCallSite.add(new BaseMethodHandleEncodedValue() {
                     @Nonnull

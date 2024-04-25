@@ -33,13 +33,13 @@ package com.android.tools.smali.dexlib2.writer.builder;
 import com.android.tools.smali.dexlib2.MethodHandleType;
 import com.android.tools.smali.dexlib2.writer.MethodHandleSection;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.google.common.collect.Maps;
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodHandleReference;
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -47,7 +47,7 @@ public class BuilderMethodHandlePool extends BaseBuilderPool
         implements
     MethodHandleSection<BuilderMethodHandleReference, BuilderFieldReference, BuilderMethodReference> {
     @Nonnull private final ConcurrentMap<MethodHandleReference, BuilderMethodHandleReference> internedItems =
-            Maps.newConcurrentMap();
+            new ConcurrentHashMap<>();;
 
     public BuilderMethodHandlePool(@Nonnull DexBuilder dexBuilder) {
         super(dexBuilder);

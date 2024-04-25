@@ -32,17 +32,17 @@ package com.android.tools.smali.dexlib2.writer.builder;
 
 import com.android.tools.smali.dexlib2.writer.DexWriter;
 import com.android.tools.smali.dexlib2.writer.TypeSection;
-import com.google.common.collect.Maps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 class BuilderTypePool extends BaseBuilderPool
         implements TypeSection<BuilderStringReference, BuilderTypeReference, BuilderTypeReference> {
-    @Nonnull private final ConcurrentMap<String, BuilderTypeReference> internedItems = Maps.newConcurrentMap();
+    @Nonnull private final ConcurrentMap<String, BuilderTypeReference> internedItems = new ConcurrentHashMap<>();
 
     public BuilderTypePool(@Nonnull DexBuilder dexBuilder) {
         super(dexBuilder);

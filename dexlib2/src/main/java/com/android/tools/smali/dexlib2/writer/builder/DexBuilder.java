@@ -84,22 +84,24 @@ import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.Build
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderShortEncodedValue;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderStringEncodedValue;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderTypeEncodedValue;
+import com.android.tools.smali.util.ArraySortedSet;
+import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.util.IteratorUtils;
-import com.google.common.base.Function;
+import com.android.tools.smali.util.TransformedIterator;
 import com.android.tools.smali.dexlib2.writer.util.StaticInitializerUtil;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Sets;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringReference, BuilderTypeReference,
         BuilderTypeReference, BuilderMethodProtoReference, BuilderFieldReference, BuilderMethodReference,
@@ -140,7 +142,7 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
                                                @Nonnull Set<HiddenApiRestriction> hiddenApiRestrictions,
                                                @Nullable MethodImplementation methodImplementation) {
         if (parameters == null) {
-            parameters = ImmutableList.of();
+            parameters = Collections.emptyList();
         }
         return new BuilderMethod(methodSection.internMethod(definingClass, name, parameters, returnType),
                 internMethodParameters(parameters),
@@ -159,9 +161,9 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
                                                    @Nullable Iterable<? extends BuilderField> fields,
                                                    @Nullable Iterable<? extends BuilderMethod> methods) {
         if (interfaces == null) {
-            interfaces = ImmutableList.of();
+            interfaces = Collections.emptyList();
         } else {
-            Set<String> interfaces_copy = Sets.newHashSet(interfaces);
+            Set<String> interfaces_copy = new HashSet<>(interfaces);
             Iterator<String> interfaceIterator = interfaces.iterator();
             while (interfaceIterator.hasNext()) {
                 String iface = interfaceIterator.next();
@@ -173,15 +175,18 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
             }
         }
 
-        ImmutableSortedSet<BuilderField> staticFields = null;
-        ImmutableSortedSet<BuilderField> instanceFields = null;
+        SortedSet<BuilderField> staticFields = null;
+        SortedSet<BuilderField> instanceFields = null;
         BuilderArrayEncodedValue internedStaticInitializers = null;
         if (fields != null) {
-            staticFields = ImmutableSortedSet.copyOf((Iterator<? extends BuilderField>)IteratorUtils
-                    .filter(fields, FieldUtil.FIELD_IS_STATIC));
-            instanceFields = ImmutableSortedSet.copyOf((Iterator<? extends BuilderField>)IteratorUtils
-                    .filter(fields, FieldUtil.FIELD_IS_INSTANCE));
-            ArrayEncodedValue staticInitializers = StaticInitializerUtil.getStaticInitializers(staticFields);
+            staticFields = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(),
+                    IteratorUtils.toList((Iterator<? extends BuilderField>) IteratorUtils
+                            .filter(fields, FieldUtil.FIELD_IS_STATIC)));
+            instanceFields = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(),
+                    IteratorUtils.toList((Iterator<? extends BuilderField>) IteratorUtils
+                            .filter(fields, FieldUtil.FIELD_IS_INSTANCE)));
+            ArrayEncodedValue staticInitializers = StaticInitializerUtil
+                    .getStaticInitializers(staticFields);
             if (staticInitializers != null) {
                 internedStaticInitializers = encodedArraySection.internArrayEncodedValue(staticInitializers);
             }
@@ -269,14 +274,10 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
     @Nonnull private List<BuilderMethodParameter> internMethodParameters(
             @Nullable List<? extends MethodParameter> methodParameters) {
         if (methodParameters == null) {
-            return ImmutableList.of();
+            return Collections.emptyList();
         }
-        return ImmutableList.copyOf(Iterators.transform(methodParameters.iterator(),
-                new Function<MethodParameter, BuilderMethodParameter>() {
-                    @Nullable @Override public BuilderMethodParameter apply(MethodParameter input) {
-                        return internMethodParameter(input);
-                    }
-                }));
+        return Collections.unmodifiableList(methodParameters.stream().map(methodParam ->
+            internMethodParameter(methodParam)).collect(Collectors.toList()));
     }
 
     @Nonnull private BuilderMethodParameter internMethodParameter(@Nonnull MethodParameter methodParameter) {
@@ -352,14 +353,8 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
 
     @Nonnull Set<? extends BuilderAnnotationElement> internAnnotationElements(
             @Nonnull Set<? extends AnnotationElement> elements) {
-        return ImmutableSet.copyOf(
-                Iterators.transform(elements.iterator(),
-                        new Function<AnnotationElement, BuilderAnnotationElement>() {
-                            @Nullable @Override
-                            public BuilderAnnotationElement apply(AnnotationElement input) {
-                                return internAnnotationElement(input);
-                            }
-                        }));
+        return Collections.unmodifiableSet(elements.stream().map(annotationElement ->
+            internAnnotationElement(annotationElement)).collect(Collectors.toSet()));
     }
 
     @Nonnull private BuilderAnnotationElement internAnnotationElement(@Nonnull AnnotationElement annotationElement) {
@@ -425,14 +420,8 @@ public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringR
     }
 
     @Nonnull private BuilderArrayEncodedValue internArrayEncodedValue(@Nonnull ArrayEncodedValue value) {
-        return new BuilderArrayEncodedValue(
-                ImmutableList.copyOf(
-                        Iterators.transform(value.getValue().iterator(),
-                                new Function<EncodedValue, BuilderEncodedValue>() {
-                                    @Nullable @Override public BuilderEncodedValue apply(EncodedValue input) {
-                                        return internEncodedValue(input);
-                                    }
-                                })));
+        return new BuilderArrayEncodedValue(Collections.unmodifiableList(value.getValue().stream()
+            .map(encodedVal -> internEncodedValue(encodedVal)).collect(Collectors.toList())));
     }
 
     @Nonnull private BuilderEnumEncodedValue internEnumEncodedValue(@Nonnull EnumEncodedValue value) {

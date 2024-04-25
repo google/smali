@@ -33,22 +33,21 @@ package com.android.tools.smali.dexlib2.writer.builder;
 import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.writer.AnnotationSetSection;
 import com.android.tools.smali.dexlib2.writer.DexWriter;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Maps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 class BuilderAnnotationSetPool extends BaseBuilderPool
         implements AnnotationSetSection<BuilderAnnotation, BuilderAnnotationSet> {
     @Nonnull private final ConcurrentMap<Set<? extends Annotation>, BuilderAnnotationSet> internedItems =
-            Maps.newConcurrentMap();
+            new ConcurrentHashMap<>();
 
     public BuilderAnnotationSetPool(@Nonnull DexBuilder dexBuilder) {
         super(dexBuilder);
@@ -65,12 +64,9 @@ class BuilderAnnotationSetPool extends BaseBuilderPool
         }
 
         BuilderAnnotationSet annotationSet = new BuilderAnnotationSet(
-                ImmutableSet.copyOf(Iterators.transform(annotations.iterator(),
-                        new Function<Annotation, BuilderAnnotation>() {
-                            @Nullable @Override public BuilderAnnotation apply(Annotation input) {
-                                return dexBuilder.annotationSection.internAnnotation(input);
-                            }
-                        })));
+            Collections.unmodifiableSet(annotations.stream()
+                .map(annotation -> dexBuilder.annotationSection.internAnnotation(annotation))
+                .collect(Collectors.toSet())));
 
         ret = internedItems.putIfAbsent(annotationSet, annotationSet);
         return ret==null?annotationSet:ret;

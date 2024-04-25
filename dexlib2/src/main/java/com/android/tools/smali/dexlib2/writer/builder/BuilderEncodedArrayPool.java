@@ -33,19 +33,19 @@ package com.android.tools.smali.dexlib2.writer.builder;
 import com.android.tools.smali.dexlib2.writer.EncodedArraySection;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderArrayEncodedValue;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderEncodedValue;
-import com.google.common.collect.Maps;
 import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class BuilderEncodedArrayPool extends BaseBuilderPool implements
     EncodedArraySection<BuilderArrayEncodedValue, BuilderEncodedValue> {
     @Nonnull private final ConcurrentMap<ArrayEncodedValue, BuilderArrayEncodedValue> internedItems =
-            Maps.newConcurrentMap();
+            new ConcurrentHashMap<>();
 
     public BuilderEncodedArrayPool(@Nonnull DexBuilder dexBuilder) {
         super(dexBuilder);

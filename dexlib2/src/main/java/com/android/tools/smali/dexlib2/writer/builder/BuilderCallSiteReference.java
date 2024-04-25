@@ -31,7 +31,6 @@
 package com.android.tools.smali.dexlib2.writer.builder;
 
 import com.android.tools.smali.dexlib2.writer.DexWriter;
-import com.google.common.collect.ImmutableList;
 import com.android.tools.smali.dexlib2.base.reference.BaseCallSiteReference;
 import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue;
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderArrayEncodedValue;
@@ -40,6 +39,7 @@ import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.Build
 import com.android.tools.smali.dexlib2.writer.builder.BuilderEncodedValues.BuilderMethodTypeEncodedValue;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 
 public class BuilderCallSiteReference extends BaseCallSiteReference implements BuilderReference {
@@ -71,7 +71,7 @@ public class BuilderCallSiteReference extends BaseCallSiteReference implements B
 
     @Nonnull @Override public List<? extends BuilderEncodedValue> getExtraArguments() {
         if (encodedCallSite.elements.size() <= 3) {
-            return ImmutableList.of();
+            return Collections.emptyList();
         }
         return encodedCallSite.elements.subList(3, encodedCallSite.elements.size());
     }
