@@ -20,9 +20,11 @@ public class DebugInfoCache {
 
     @Override
     public int hashCode() {
-        if (data.length < threshold) {
-            return Arrays.hashCode(data);
+        int hashSize = Math.min(data.length, threshold);
+        int result = 0;
+        for (int i = 0; i < hashSize; i++) {
+          result = 31 * result + data[i];
         }
-        return Arrays.asList(data).subList(0, threshold).hashCode();
+        return result;
     }
 }
