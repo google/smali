@@ -23,9 +23,7 @@
     ],
 
     static_libs: [
-        "guava",
         "jsr305",
-        "auto_android_annotation_stubs",
     ],
 }
 
@@ -37,12 +35,27 @@ java_library_host {
         ":third_party-smali-dexlib2",
     ],
 
-    libs: [
-        "guava",
+    static_libs: [
+        "jsr305",
     ],
+}
+
+java_library {
+    name: "smali-dexlib2-device",
+
+    srcs: [
+        "src/main/java/**/*.java",
+        ":third_party-smali-dexlib2",
+    ],
+
+    sdk_version: "system_server_current",
+    min_sdk_version: "33",
 
     static_libs: [
         "jsr305",
-        "auto_android_annotation_stubs",
+    ],
+
+    apex_available: [
+        "//apex_available:anyapex",
     ],
 }
