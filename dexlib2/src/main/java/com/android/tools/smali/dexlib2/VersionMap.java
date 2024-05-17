@@ -64,8 +64,8 @@ public class VersionMap {
             case 27:  // Android O/8.1
                 return 38;
             case 28:  // Android P/9
-                return 39;
             case 29:  // Android Q/10
+                return 39;
             case 30:  // Android R/11
             case 31:  // Android S/12
             case 32:  // Android S/12.1
