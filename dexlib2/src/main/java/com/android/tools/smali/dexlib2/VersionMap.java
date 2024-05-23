@@ -42,7 +42,7 @@ public class VersionMap {
             case 38:
                 return 27;
             case 39:
-                return 28;
+                return 29;
             case 40:
                 return 34;
             case 41:
