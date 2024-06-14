@@ -165,7 +165,6 @@ spdxSbom {
         create("release") {
             scm {
                 uri.set("https://github.com/google/smali")
-                //revision.set(project.property("spdxRevision").toString())
                 revision.set(project.version)
             }
             document {
