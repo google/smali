@@ -34,6 +34,7 @@ java_binary_host {
     manifest: "manifest.txt",
 
     static_libs: [
+        "guava",
         "antlr-runtime",
         "jcommander",
         "smali-dexlib2",

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
- // Create a new baksmali.properties file using the correct version
+// Create a new baksmali.properties file using the correct version
 genrule {
     name: "android-baksmali_version",
-    defaults : ["android-smali_version_defaults"],
+    defaults: ["android-smali_version_defaults"],
     out: ["android-baksmali.properties"],
 }
 
@@ -35,6 +35,7 @@ java_binary_host {
     manifest: "manifest.txt",
 
     static_libs: [
+        "guava",
         "smali-dexlib2",
         "android-smali-util",
         "jcommander",
