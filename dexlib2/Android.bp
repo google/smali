@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- java_library_host {
+java_library_host {
     name: "smali-dexlib2",
 
     srcs: [
@@ -25,6 +25,12 @@
     static_libs: [
         "jsr305",
     ],
+
+    errorprone: {
+        javacflags: [
+            "-Xep:ComparableType:WARN",
+        ],
+    },
 }
 
 java_library_host {
@@ -38,6 +44,12 @@ java_library_host {
     static_libs: [
         "jsr305",
     ],
+
+    errorprone: {
+        javacflags: [
+            "-Xep:ComparableType:WARN",
+        ],
+    },
 }
 
 java_library {
@@ -47,14 +59,25 @@ java_library {
         "src/main/java/**/*.java",
         ":third_party-smali-dexlib2",
     ],
-
-    sdk_version: "system_server_current",
-    min_sdk_version: "33",
-
+    
     static_libs: [
         "jsr305",
     ],
 
+    sdk_version: "system_server_current",
+    min_sdk_version: "33",
+
+    optimize: {
+        enabled: true,
+        shrink: true,
+    },
+
+    errorprone: {
+        javacflags: [
+            "-Xep:ComparableType:WARN",
+        ],
+    },
+    
     apex_available: [
         "//apex_available:anyapex",
     ],
