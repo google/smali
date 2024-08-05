@@ -61,7 +61,10 @@ import com.android.tools.smali.dexlib2.writer.util.StaticInitializerUtil;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
 import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.android.tools.smali.util.TransformedIterator;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation;
 import com.android.tools.smali.dexlib2.formatter.DexFormatter;
 import com.android.tools.smali.dexlib2.iface.instruction.DualReferenceInstruction;
@@ -71,7 +74,6 @@ import com.android.tools.smali.dexlib2.iface.value.ArrayEncodedValue;
 import com.android.tools.smali.dexlib2.iface.value.EncodedValue;
 
 import java.util.AbstractCollection;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -79,8 +81,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -361,7 +361,7 @@ public class ClassPool extends BasePool<String, PoolClassDef> implements ClassSe
 
     private static final Predicate<MethodParameter> HAS_PARAMETER_ANNOTATIONS = new Predicate<MethodParameter>() {
         @Override
-        public boolean test(MethodParameter input) {
+        public boolean apply(MethodParameter input) {
             return input.getAnnotations().size() > 0;
         }
     };
@@ -377,12 +377,12 @@ public class ClassPool extends BasePool<String, PoolClassDef> implements ClassSe
     @Nullable @Override public List<? extends Set<? extends Annotation>> getParameterAnnotations(
             @Nonnull final PoolMethod method) {
         final List<? extends MethodParameter> parameters = method.getParameters();
-        boolean hasParameterAnnotations = parameters.stream().anyMatch(HAS_PARAMETER_ANNOTATIONS);
+        boolean hasParameterAnnotations = Iterables.any(parameters, HAS_PARAMETER_ANNOTATIONS);
 
         if (hasParameterAnnotations) {
             return new AbstractForwardSequentialList<Set<? extends Annotation>>() {
                 @Nonnull @Override public Iterator<Set<? extends Annotation>> iterator() {
-                    return new TransformedIterator<>(parameters.iterator(), PARAMETER_ANNOTATIONS);
+		    return FluentIterable.from(parameters).transform(PARAMETER_ANNOTATIONS).iterator();
                 }
 
                 @Override public int size() {
@@ -402,7 +402,7 @@ public class ClassPool extends BasePool<String, PoolClassDef> implements ClassSe
     }
 
     @Nullable @Override public Iterable<CharSequence> getParameterNames(@Nonnull PoolMethod method) {
-        return new TransformedIterator(method.getParameters(), new Function<MethodParameter, CharSequence>() {
+        return Iterables.transform(method.getParameters(), new Function<MethodParameter, CharSequence>() {
             @Nullable @Override public CharSequence apply(MethodParameter input) {
                 return input.getName();
             }
