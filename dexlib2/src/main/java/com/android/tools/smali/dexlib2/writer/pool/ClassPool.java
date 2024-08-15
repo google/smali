@@ -61,7 +61,8 @@ import com.android.tools.smali.dexlib2.writer.util.StaticInitializerUtil;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
 import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
-import com.android.tools.smali.util.TransformedIterator;
+import com.android.tools.smali.util.TransformedIterable;
+import com.android.tools.smali.util.TransformedIterable.TransformedIterator;
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation;
 import com.android.tools.smali.dexlib2.formatter.DexFormatter;
 import com.android.tools.smali.dexlib2.iface.instruction.DualReferenceInstruction;
@@ -402,7 +403,7 @@ public class ClassPool extends BasePool<String, PoolClassDef> implements ClassSe
     }
 
     @Nullable @Override public Iterable<CharSequence> getParameterNames(@Nonnull PoolMethod method) {
-        return new TransformedIterator(method.getParameters(), new Function<MethodParameter, CharSequence>() {
+        return new TransformedIterable(method.getParameters(), new Function<MethodParameter, CharSequence>() {
             @Nullable @Override public CharSequence apply(MethodParameter input) {
                 return input.getName();
             }

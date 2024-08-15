@@ -34,45 +34,63 @@ import java.util.Iterator;
 import java.util.function.Function;
 
 /**
- * An iterator that will return the results of applying {@code transformFunction} to each element of
- * {@code backingIterator}.
- * <p>
- * The returned iterator supports {@code remove()} if {@code backingIterator} does.
- */
-public class TransformedIterator<F extends Object, T extends Object>
-        implements Iterator<T>, Iterable<T> {
-    final Iterator<? extends F> backingIterator;
+  * An wrapping instance that will return the {@code TransformedIterator} of
+  * {@code backingIterator} and {@code transformFunction}.
+  * <p>
+  * The returned iterator supports {@code remove()} if {@code backingIterator} does.
+  */
+public class TransformedIterable<F extends Object, T extends Object>
+        implements Iterable<T> {
+    final Iterable<? extends F> backingIterable;
     final Function<F, T> transformFunction;
 
-    public TransformedIterator(Iterable<? extends F> backingIterable,
+    public TransformedIterable(Iterable<? extends F> backingIterable,
             Function<F, T> transformFunction) {
-        this.backingIterator = backingIterable.iterator();
+        this.backingIterable = backingIterable;
         this.transformFunction = transformFunction;
-    }
-
-    public TransformedIterator(Iterator<? extends F> backingIterator,
-            Function<F, T> transformFunction) {
-        this.backingIterator = backingIterator;
-        this.transformFunction = transformFunction;
-    }
-
-    @Override
-    public final boolean hasNext() {
-        return backingIterator.hasNext();
-    }
-
-    @Override
-    public final T next() {
-        return transformFunction.apply(backingIterator.next());
-    }
-
-    @Override
-    public final void remove() {
-        backingIterator.remove();
     }
 
     @Override
     public final Iterator<T> iterator() {
-        return this;
+        return new TransformedIterator<>(backingIterable.iterator(), transformFunction);
+    }
+
+    /**
+     * An iterator that will return the results of applying {@code transformFunction} to each element of
+     * {@code backingIterator}.
+     * <p>
+     * The returned iterator supports {@code remove()} if {@code backingIterator} does.
+     */
+    public static class TransformedIterator<G extends Object, U extends Object>
+    implements Iterator<U> {
+    final Iterator<? extends G> backingIterator;
+    final Function<G, U> transformFunction;
+
+        public TransformedIterator(Iterable<? extends G> backingIterable,
+            Function<G, U> transformFunction) {
+        this.backingIterator = backingIterable.iterator();
+        this.transformFunction = transformFunction;
+        }
+
+        public TransformedIterator(Iterator<? extends G> backingIterator,
+            Function<G, U> transformFunction) {
+        this.backingIterator = backingIterator;
+        this.transformFunction = transformFunction;
+        }
+
+        @Override
+        public final boolean hasNext() {
+        return backingIterator.hasNext();
+        }
+
+        @Override
+        public final U next() {
+        return transformFunction.apply(backingIterator.next());
+        }
+
+        @Override
+        public final void remove() {
+        backingIterator.remove();
+        }
     }
 }

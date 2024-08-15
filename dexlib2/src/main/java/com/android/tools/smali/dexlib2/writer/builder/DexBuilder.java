@@ -88,7 +88,6 @@ import com.android.tools.smali.util.ArraySortedSet;
 import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.util.IteratorUtils;
-import com.android.tools.smali.util.TransformedIterator;
 import com.android.tools.smali.dexlib2.writer.util.StaticInitializerUtil;
 
 import javax.annotation.Nonnull;
@@ -100,7 +99,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DexBuilder extends DexWriter<BuilderStringReference, BuilderStringReference, BuilderTypeReference,

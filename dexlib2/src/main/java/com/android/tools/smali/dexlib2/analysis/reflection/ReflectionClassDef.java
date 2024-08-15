@@ -35,9 +35,9 @@ import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Field;
 import com.android.tools.smali.dexlib2.iface.Method;
-import com.android.tools.smali.util.ChainedIterator;
+import com.android.tools.smali.util.ChainedIterable.ChainedIterator;
 import com.android.tools.smali.util.IteratorUtils;
-import com.android.tools.smali.util.TransformedIterator;
+import com.android.tools.smali.util.TransformedIterable.TransformedIterator;
 
 import com.android.tools.smali.dexlib2.base.reference.BaseTypeReference;
 

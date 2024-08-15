@@ -37,7 +37,7 @@ import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.util.AbstractForwardSequentialList;
 import com.android.tools.smali.util.InputStreamUtil;
-import com.android.tools.smali.util.TransformedIterator;
+import com.android.tools.smali.util.TransformedIterable.TransformedIterator;
 
 import java.util.function.Function;
 import com.android.tools.smali.dexlib2.dexbacked.OatFile.SymbolTable.Symbol;

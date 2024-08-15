@@ -111,7 +111,7 @@ import com.android.tools.smali.dexlib2.writer.io.DeferredOutputStreamFactory;
 import com.android.tools.smali.dexlib2.writer.io.DexDataStore;
 import com.android.tools.smali.dexlib2.writer.io.MemoryDeferredOutputStream;
 import com.android.tools.smali.dexlib2.writer.util.TryListBuilder;
-import com.android.tools.smali.util.ChainedIterator;
+import com.android.tools.smali.util.ChainedIterable;
 import com.android.tools.smali.util.CollectionUtils;
 import com.android.tools.smali.util.ExceptionWithContext;
 import com.android.tools.smali.util.IteratorUtils;
@@ -1059,7 +1059,7 @@ public abstract class DexWriter<
             Collection<? extends MethodKey> directMethods = classSection.getSortedDirectMethods(classKey);
             Collection<? extends MethodKey> virtualMethods = classSection.getSortedVirtualMethods(classKey);
 
-            Iterable<MethodKey> methods = new ChainedIterator<MethodKey>(
+            Iterable<MethodKey> methods = new ChainedIterable<MethodKey>(
                 (Collection<MethodKey>)directMethods, (Collection<MethodKey>)virtualMethods);
 
             for (MethodKey methodKey: methods) {
