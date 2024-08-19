@@ -97,17 +97,17 @@ subprojects {
 
     ext {
         depends = [
-                guava: 'com.google.guava:guava:31.1-android',
-                findbugs: 'com.google.code.findbugs:jsr305:1.3.9',
-                junit: 'junit:junit:4.12',
+                guava: 'com.google.guava:guava:33.3.0-android',
+                findbugs: 'com.google.code.findbugs:jsr305:3.0.2',
+                junit: 'org.junit.vintage:junit-vintage-engine:5.11.0',
                 mockito: 'org.mockito:mockito-core:5.12.0',
-                antlr_runtime: 'org.antlr:antlr-runtime:3.5.2',
-                antlr: 'org.antlr:antlr:3.5.2',
-                stringtemplate: 'org.antlr:stringtemplate:3.2.1',
+                antlr_runtime: 'org.antlr:antlr-runtime:3.5.3',
+                antlr: 'org.antlr:antlr:3.5.3',
+                stringtemplate: 'org.antlr:stringtemplate:4.0.2',
                 jflex_plugin: 'org.xbib.gradle.plugin:gradle-plugin-jflex:1.1.0',
-                proguard_gradle: 'com.guardsquare:proguard-gradle:7.1.0',
+                proguard_gradle: 'com.guardsquare:proguard-gradle:7.5.0',
                 dx: 'com.google.android.tools:dx:1.7',
-                gson: 'com.google.code.gson:gson:2.3.1',
+                gson: 'com.google.code.gson:gson:2.11.0',
                 jcommander: jcommanderVersion
         ]
     }
@@ -200,11 +200,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.eclipse.jgit:org.eclipse.jgit:2.0.0.201206130900-r'
+        classpath 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
     }
 }
 
 wrapper {
-    gradleVersion = '8.5'
+    gradleVersion = '8.10'
     distributionType = Wrapper.DistributionType.ALL
 }
