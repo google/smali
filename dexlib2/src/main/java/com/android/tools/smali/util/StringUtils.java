@@ -150,7 +150,7 @@ public class StringUtils {
         StringBuilder builder = new StringBuilder();
         Iterator<? extends Object> it = parts.iterator();
         if (it.hasNext()) {
-            builder.append(it.hasNext());
+            builder.append(it.next());
         }
         while (it.hasNext()) {
             builder.append(separator);
