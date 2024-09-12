@@ -43,7 +43,8 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference;
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference;
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference;
 import com.android.tools.smali.dexlib2.writer.DexWriter;
-import com.android.tools.smali.util.ChainedIterator;
+import com.android.tools.smali.util.ChainedIterable;
+import com.android.tools.smali.util.ChainedIterable.ChainedIterator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,8 +74,8 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
     @Nullable private AnnotationsDirectory annotationsDirectory;
 
     public DexBackedClassDef(@Nonnull DexBackedDexFile dexFile,
-                             int classDefOffset,
-                             int hiddenApiRestrictionsOffset) {
+                            int classDefOffset,
+                            int hiddenApiRestrictionsOffset) {
         this.dexFile = dexFile;
         this.classDefOffset = classDefOffset;
 
@@ -301,7 +302,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull
     @Override
     public Iterable<? extends DexBackedField> getFields() {
-        return new ChainedIterator(getStaticFields(), getInstanceFields());
+        return new ChainedIterable(getStaticFields(), getInstanceFields());
     }
 
     @Nonnull
@@ -448,7 +449,7 @@ public class DexBackedClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull
     @Override
     public Iterable<? extends DexBackedMethod> getMethods() {
-        return new ChainedIterator(getDirectMethods(), getVirtualMethods());
+        return new ChainedIterable(getDirectMethods(), getVirtualMethods());
     }
 
     private AnnotationsDirectory getAnnotationsDirectory() {

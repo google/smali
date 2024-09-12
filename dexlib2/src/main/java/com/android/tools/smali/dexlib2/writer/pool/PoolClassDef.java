@@ -72,7 +72,7 @@ class PoolClassDef extends BaseTypeReference implements ClassDef {
         directMethods = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(),
                 IteratorUtils.toList(classDef.getDirectMethods()).stream().map(PoolMethod.TRANSFORM)
                         .collect(Collectors.toList()));
-        virtualMethods = ArraySortedSet.of(CollectionUtils.naturalOrdering(),
+        virtualMethods = ArraySortedSet.copyOf(CollectionUtils.naturalOrdering(),
                 IteratorUtils.toList(classDef.getVirtualMethods()).stream().map(PoolMethod.TRANSFORM)
                 .collect(Collectors.toList()));
     }

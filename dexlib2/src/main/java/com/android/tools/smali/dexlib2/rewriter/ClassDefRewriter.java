@@ -35,11 +35,10 @@ import com.android.tools.smali.dexlib2.iface.Annotation;
 import com.android.tools.smali.dexlib2.iface.ClassDef;
 import com.android.tools.smali.dexlib2.iface.Field;
 import com.android.tools.smali.dexlib2.iface.Method;
-import com.android.tools.smali.util.ChainedIterator;
+import com.android.tools.smali.util.ChainedIterable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -96,14 +95,7 @@ public class ClassDefRewriter implements Rewriter<ClassDef> {
         @Nonnull
         @Override
         public Iterable<? extends Field> getFields() {
-            return new Iterable<Field>() {
-                @Nonnull
-                @Override
-                public Iterator<Field> iterator() {
-                    return new ChainedIterator(
-                        getStaticFields().iterator(), getInstanceFields().iterator());
-                }
-            };
+            return new ChainedIterable(getStaticFields(), getInstanceFields());
         }
 
         @Override @Nonnull public Iterable<? extends Method> getDirectMethods() {
@@ -117,14 +109,7 @@ public class ClassDefRewriter implements Rewriter<ClassDef> {
         @Nonnull
         @Override
         public Iterable<? extends Method> getMethods() {
-            return new Iterable<Method>() {
-                @Nonnull
-                @Override
-                public Iterator<Method> iterator() {
-                    return new ChainedIterator(
-                        getDirectMethods().iterator(), getVirtualMethods().iterator());
-                }
-            };
+            return new ChainedIterable(getDirectMethods(), getVirtualMethods());
         }
     }
 }

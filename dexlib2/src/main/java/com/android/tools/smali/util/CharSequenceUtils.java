@@ -44,11 +44,11 @@ public class CharSequenceUtils {
     };
 
     public static int listHashCode(List<? extends CharSequence> list) {
-        return IteratorUtils.toList((Iterator)new TransformedIterator(list.iterator(), TO_STRING)).hashCode();
+        return IteratorUtils.toList(new TransformedIterable(list, TO_STRING)).hashCode();
     }
 
     public static boolean listEquals(List<? extends CharSequence> list1, List<? extends CharSequence> list2) {
-        return IteratorUtils.toList((Iterator)new TransformedIterator(list1.iterator(), TO_STRING)).equals(
-                IteratorUtils.toList((Iterator)new TransformedIterator(list2.iterator(), TO_STRING)));
+        return IteratorUtils.toList(new TransformedIterable(list1, TO_STRING)).equals(
+                IteratorUtils.toList(new TransformedIterable(list2, TO_STRING)));
     }
 }

@@ -39,7 +39,7 @@ import com.android.tools.smali.dexlib2.iface.Field;
 import com.android.tools.smali.dexlib2.iface.Method;
 import com.android.tools.smali.dexlib2.util.FieldUtil;
 import com.android.tools.smali.dexlib2.util.MethodUtil;
-import com.android.tools.smali.util.ChainedIterator;
+import com.android.tools.smali.util.ChainedIterable;
 import com.android.tools.smali.util.ImmutableConverter;
 import com.android.tools.smali.util.ImmutableUtils;
 import com.android.tools.smali.util.IteratorUtils;
@@ -168,13 +168,13 @@ public class ImmutableClassDef extends BaseTypeReference implements ClassDef {
     @Nonnull
     @Override
     public Iterable<? extends ImmutableField> getFields() {
-        return new ChainedIterator(staticFields, instanceFields);
+        return new ChainedIterable(staticFields, instanceFields);
     }
 
     @Nonnull
     @Override
     public Iterable<? extends ImmutableMethod> getMethods() {
-        return new ChainedIterator(directMethods, virtualMethods);
+        return new ChainedIterable(directMethods, virtualMethods);
     }
 
     @Nonnull
