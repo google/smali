@@ -21,11 +21,15 @@ After the fork the first version released was 3.0.0, which was version 2.5.2 fro
 - [Types, Methods and Fields wiki page](https://github.com/JesusFreke/smali/wiki/TypesMethodsAndFields)
 - [Official dex format reference](https://source.android.com/devices/tech/dalvik/dex-format.html)
 
-### Building
+### Building and testing
+
+sAll building and testing should be done using a version of OpenJDK 11. Newer OpenJDK versions are currently not supported due to issues with some of the tools used in the build process.
+
+#### Building
 ```
 ./gradlew assemble
 ```
-### Command Line Version
+#### Command Line Version
 
 To run the `smali` and `baksmali` tools from the command line build the fat
 jars. The fat jars will be named with the current version followed by the first
@@ -37,14 +41,14 @@ invoked with `java -jar`.
 java -jar smali/build/libs/smali-x.y.z-aaaaaaaa-dirty-fat.jar
 ```
 
-### Testing
+#### Testing
 
 To execute all tests run
 ```
 ./gradlew test
 ```
 
-### Testing Maven Release
+#### Testing Maven Release
 Push a release version to your local maven repository (add
 `-Dmaven.repo.local=<dir>` to override the default local maven repository
 location)
@@ -52,7 +56,11 @@ location)
 ./gradlew release publishToMavenLocal
 ```
 
-### Prepare and build a release version
+### Releasing
+
+Building release versions and releasing to [Google Maven](https://maven.google.com) use Google infrastructure and support scripts maintained as part of the [R8](https://r8.googlesource.com/r8/) repository. The tasks below can only be performed by Google employees.
+
+#### Prepare and build a release version
 To prepare a release update `build.gradle` with the next release version and commit that.
 Then create a tag for that commit with the version.
 ```
@@ -67,5 +75,10 @@ in the R8 repository.
 
 The status of the build on the bot is at https://ci.chromium.org/p/r8/builders/ci/smali.
 
-### Releasing versions on Google Maven
-TBD.
+#### Releasing to Google Maven
+
+When a release version has been built on the bot, it can be released to [Google Maven](https://maven.google.com) by running 
+```
+tools/release_smali.py --version=<version>
+```
+in the R8 repository. This kick off an internal Google approval process to finalize the release.
