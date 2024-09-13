@@ -23,7 +23,7 @@ After the fork the first version released was 3.0.0, which was version 2.5.2 fro
 
 ### Building and testing
 
-sAll building and testing should be done using a version of OpenJDK 11. Newer OpenJDK versions are currently not supported due to issues with some of the tools used in the build process.
+All building and testing should be done using a version of OpenJDK 11. Newer OpenJDK versions are currently not supported due to issues with some of the tools used in the build process.
 
 #### Building
 ```
