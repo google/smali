@@ -34,46 +34,54 @@ import java.lang.Iterable;
 import java.util.Iterator;
 
 /**
- * Combines two iterators into a single iterator. The returned iterator iterates across the elements
- * in {@code a}, followed by the elements in {@code b}. The source iterators are not polled until
- * necessary.
- * <p>
- * The returned iterator does not support {@code remove()}.
+ * An iterable wrapping a {@code ChainedIterator}.
  */
-public class ChainedIterator<T extends Object> implements Iterator<T>, Iterable<T> {
-    Iterator<T> iteratorA;
-    Iterator<T> iteratorB;
+public class ChainedIterable<T extends Object> implements Iterable<T> {
+    Iterable<T> iterableA;
+    Iterable<T> iterableB;
 
-    public ChainedIterator(Iterable<T> iterableA, Iterable<T> iterableB) {
-        this.iteratorA = iterableA.iterator();
-        this.iteratorB = iterableB.iterator();
-    }
-
-    public ChainedIterator(Iterator<T> iteratorA, Iterator<T> iteratorB) {
-        this.iteratorA = iteratorA;
-        this.iteratorB = iteratorB;
-    }
-
-    @Override
-    public final boolean hasNext() {
-        return iteratorA.hasNext() || iteratorB.hasNext();
-    }
-
-    @Override
-    public final T next() {
-        if (iteratorA.hasNext()) {
-            return iteratorA.next();
-        }
-        return iteratorB.next();
-    }
-
-    @Override
-    public final void remove() {
-        throw new UnsupportedOperationException();
+    public ChainedIterable(Iterable<T> iterableA, Iterable<T> iterableB) {
+        this.iterableA = iterableA;
+        this.iterableB = iterableB;
     }
 
     @Override
     public final Iterator<T> iterator() {
-        return this;
+        return new ChainedIterator(iterableA.iterator(), iterableB.iterator());
+    }
+
+    /**
+     * Combines two iterators into a single iterator. The returned iterator iterates across the elements
+     * in {@code a}, followed by the elements in {@code b}. The source iterators are not polled until
+     * necessary.
+     * <p>
+     * The returned iterator does not support {@code remove()}.
+     */
+    public static class ChainedIterator<U extends Object> implements Iterator<U> {
+        Iterator<U> iteratorA;
+        Iterator<U> iteratorB; 
+
+        public ChainedIterator(Iterator<U> iteratorA, Iterator<U> iteratorB) {
+            this.iteratorA = iteratorA;
+            this.iteratorB = iteratorB;
+        }
+
+        @Override
+        public final boolean hasNext() {
+            return iteratorA.hasNext() || iteratorB.hasNext();
+        }
+
+        @Override
+        public final U next() {
+            if (iteratorA.hasNext()) {
+                return iteratorA.next();
+            }
+            return iteratorB.next();
+        }
+
+        @Override
+        public final void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
