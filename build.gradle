@@ -100,7 +100,7 @@ subprojects {
                 guava: 'com.google.guava:guava:33.3.0-android',
                 findbugs: 'com.google.code.findbugs:jsr305:3.0.2',
                 junit: 'org.junit.vintage:junit-vintage-engine:5.11.0',
-                mockito: 'org.mockito:mockito-core:5.12.0',
+                mockito: 'org.mockito:mockito-core:5.13.0',
                 antlr_runtime: 'org.antlr:antlr-runtime:3.5.3',
                 antlr: 'org.antlr:antlr:3.5.3',
                 stringtemplate: 'org.antlr:stringtemplate:4.0.2',
@@ -200,11 +200,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
+        classpath 'org.eclipse.jgit:org.eclipse.jgit:7.0.0.202409031743-r'
     }
 }
 
 wrapper {
-    gradleVersion = '8.10'
+    gradleVersion = '8.10.1'
     distributionType = Wrapper.DistributionType.ALL
 }
