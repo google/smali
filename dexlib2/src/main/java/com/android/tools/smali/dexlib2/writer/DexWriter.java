@@ -1256,6 +1256,8 @@ public abstract class DexWriter<
                     if (paramCount > outParamCount) {
                         outParamCount = paramCount;
                     }
+                } else if (instruction.getOpcode().referenceType == ReferenceType.CALL_SITE) {
+                    outParamCount = ((VariableRegisterInstruction)instruction).getRegisterCount();
                 }
             }
 
