@@ -1243,19 +1243,25 @@ public abstract class DexWriter<
             int codeUnitCount = 0;
             for (Instruction instruction: instructions) {
                 codeUnitCount += instruction.getCodeUnits();
-                if (instruction.getOpcode().referenceType == ReferenceType.METHOD) {
-                    ReferenceInstruction refInsn = (ReferenceInstruction)instruction;
-                    MethodReference methodRef = (MethodReference)refInsn.getReference();
-                    Opcode opcode = instruction.getOpcode();
-                    int paramCount;
-                    if (InstructionUtil.isInvokePolymorphic(opcode)) {
+                int paramCount = 0;
+                switch (instruction.getOpcode().referenceType) {
+                    case ReferenceType.METHOD: {
+                        ReferenceInstruction refInsn = (ReferenceInstruction)instruction;
+                        MethodReference methodRef = (MethodReference)refInsn.getReference();
+                        Opcode opcode = instruction.getOpcode();
+                        if (InstructionUtil.isInvokePolymorphic(opcode)) {
+                            paramCount = ((VariableRegisterInstruction)instruction).getRegisterCount();
+                        } else {
+                            paramCount = MethodUtil.getParameterRegisterCount(methodRef, InstructionUtil.isInvokeStatic(opcode));
+                        }
+                        break;
+                    }
+                    case ReferenceType.CALL_SITE:
                         paramCount = ((VariableRegisterInstruction)instruction).getRegisterCount();
-                    } else {
-                        paramCount = MethodUtil.getParameterRegisterCount(methodRef, InstructionUtil.isInvokeStatic(opcode));
-                    }
-                    if (paramCount > outParamCount) {
-                        outParamCount = paramCount;
-                    }
+                        break;
+                }
+                if (paramCount > outParamCount) {
+                    outParamCount = paramCount;
                 }
             }
 
