@@ -59,7 +59,7 @@ java_library {
         "src/main/java/**/*.java",
         ":third_party-smali-dexlib2",
     ],
-    
+
     static_libs: [
         "jsr305",
     ],
@@ -77,7 +77,7 @@ java_library {
             "-Xep:ComparableType:WARN",
         ],
     },
-    
+
     apex_available: [
         "//apex_available:anyapex",
     ],

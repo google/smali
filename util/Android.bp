@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- java_library_host {
+java_library_host {
     name: "android-smali-util",
     srcs: [
         "src/main/java/**/*.java",
