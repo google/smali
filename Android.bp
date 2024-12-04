@@ -15,7 +15,7 @@
  */
 
 // Create a new properties file using the correct version
- genrule_defaults {
+genrule_defaults {
     name: "android-smali_version_defaults",
     srcs: [":android-smali_build.gradle"],
     cmd: "echo \"application.version=$$(grep -o -e \"^version = '\\(.*\\)'\" $(in) | grep -o -e \"[0-9.]\\+\")-aosp\" > $(out)",
