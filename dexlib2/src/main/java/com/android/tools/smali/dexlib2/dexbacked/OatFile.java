@@ -63,7 +63,7 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
     // These are the "known working" versions that I have manually inspected the source for.
     // Later version may or may not work, depending on what changed.
     private static final int MIN_OAT_VERSION = 56;
-    private static final int MAX_OAT_VERSION = 178;
+    private static final int MAX_OAT_VERSION = 254;
 
     public static final int UNSUPPORTED = 0;
     public static final int SUPPORTED = 1;
@@ -254,7 +254,13 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
 
         public OatHeader(int offset) {
             this.headerOffset = offset;
-            if (getVersion() >= 170) {
+            if (getVersion() >= 225) { // Or 222 ?
+                this.keyValueStoreOffset = 17 * 4;
+            } else if (getVersion() >= 190) {
+                this.keyValueStoreOffset = 16 * 4;
+            } else if (getVersion() >= 180) {
+                this.keyValueStoreOffset = 15 * 4;
+            } else if (getVersion() >= 170) {
                 this.keyValueStoreOffset = 14 * 4;
             } else if (getVersion() >= 166) {
                 this.keyValueStoreOffset = 16 * 4;
@@ -628,7 +634,15 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
                 String filename = new String(buf, offset, filenameLength, Charset.forName("US-ASCII"));
                 offset += filenameLength;
 
+                if (getOatVersion() >= 233){
+                    offset += 8 // Dex File magic
+                }
+
                 offset += 4; // checksum
+
+                if (getOatVersion() >= 232){
+                    offset += 20; // Dex File SHA1 
+                }
 
                 int dexOffset = readSmallUint(offset);
                 offset += 4;
@@ -655,6 +669,14 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
                 }
                 if (getOatVersion() >= 135) {
                     offset += 8; // type bss mapping and string bss mapping offsets
+                }
+                if (getOatVersion() >= 186) {
+                    offset += 4; // public_type_bss_mapping_offset_
+                    offset += 4; // package_type_bss_mapping_offset_
+                }
+                if (getOatVersion() >= 241){
+                    offset += 4; // method_type_bss_mapping_offset_
+
                 }
                 if (getOatVersion() < 75) {
                     // prior to 75, the class offsets are included here directly
