@@ -71,6 +71,7 @@ import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction3rc
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction3rmi;
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction3rms;
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction45cc;
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction4rcc;
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction51l;
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderPackedSwitchPayload;
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderSparseSwitchPayload;
@@ -117,6 +118,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction3rc;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction3rmi;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction3rms;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction45cc;
+import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction4rcc;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction51l;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.PackedSwitchPayload;
 import com.android.tools.smali.dexlib2.iface.instruction.formats.SparseSwitchPayload;
@@ -742,6 +744,9 @@ public class MutableMethodImplementation implements MethodImplementation {
             case Format45cc:
                 setInstruction(location, newBuilderInstruction45cc((Instruction45cc) instruction));
                 return;
+            case Format4rcc:
+                setInstruction(location, newBuilderInstruction4rcc((Instruction4rcc) instruction));
+                return;
             case Format51l:
                 setInstruction(location, newBuilderInstruction51l((Instruction51l)instruction));
                 return;
@@ -1043,6 +1048,17 @@ public class MutableMethodImplementation implements MethodImplementation {
                 instruction.getRegisterE(),
                 instruction.getRegisterF(),
                 instruction.getRegisterG(),
+                instruction.getReference(),
+                instruction.getReference2()
+        );
+    }
+
+    @Nonnull
+    private BuilderInstruction4rcc newBuilderInstruction4rcc(@Nonnull Instruction4rcc instruction) {
+        return new BuilderInstruction4rcc(
+                instruction.getOpcode(),
+                instruction.getStartRegister(),
+                instruction.getRegisterCount(),
                 instruction.getReference(),
                 instruction.getReference2()
         );
