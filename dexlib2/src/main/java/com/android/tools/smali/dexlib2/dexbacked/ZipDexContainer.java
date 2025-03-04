@@ -105,6 +105,8 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
                       entries.put(entry.getName() + (i > 1 ? ("/" + i) : ""), dex);
                       offset += dex.getFileSize();
                     };
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    // This is expected if the dex file is invalid.
                 }
             }
 
