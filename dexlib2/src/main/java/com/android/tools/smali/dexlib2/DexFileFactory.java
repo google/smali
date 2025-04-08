@@ -250,6 +250,8 @@ public final class DexFileFactory {
                 return new SingletonMultiDexContainer(file.getPath(), dexFile);
             } catch (NotADexFile ex) {
                 // just eat it
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                // Inavlid dex file
             }
 
             try {
