@@ -87,7 +87,7 @@ public class ArraySortedSet<T> implements SortedSet<T> {
 
     @Override
     public boolean isEmpty() {
-        return arr.length > 0;
+        return arr.length == 0;
     }
 
     @Override
@@ -110,11 +110,14 @@ public class ArraySortedSet<T> implements SortedSet<T> {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
-        if (a.length <= arr.length) {
-            System.arraycopy(arr, 0, (Object[])a, 0, arr.length);
-            return a;
+        if (a.length < arr.length) {
+            return (T[]) Arrays.copyOf(arr, arr.length, a.getClass());
         }
-        return Arrays.copyOf((T[])arr, arr.length);
+        System.arraycopy(arr, 0, (Object[])a, 0, arr.length);
+        if (a.length > arr.length) {
+            a[arr.length] = null;
+        }
+        return a;
     }
 
     @Override

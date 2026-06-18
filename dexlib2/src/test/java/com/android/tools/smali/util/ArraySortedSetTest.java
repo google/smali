@@ -88,12 +88,44 @@ public class ArraySortedSetTest {
     }
 
     @Test
+    public void testIsEmpty() {
+        ArraySortedSet<Integer> set = ArraySortedSet.of(Comparator.naturalOrder(), new Integer[] { 1 });
+        Assert.assertFalse(set.isEmpty());
+
+        ArraySortedSet<Integer> emptySet = ArraySortedSet.of(Comparator.naturalOrder(), new Integer[0]);
+        Assert.assertTrue(emptySet.isEmpty());
+    }
+
+    @Test
     public void testToArray() {
         ArraySortedSet<Integer> set = ArraySortedSet.of(Comparator.naturalOrder(),
                 Arrays.asList(1, 2, 3));
         Assert.assertArrayEquals(set.toArray(), new Integer[] {
                 1, 2, 3
         });
+    }
+
+    @Test
+    public void testToArrayWithArg() {
+        ArraySortedSet<Integer> set = ArraySortedSet.of(Comparator.naturalOrder(),
+                Arrays.asList(1, 2, 3));
+
+        // Array smaller than set
+        Integer[] small = new Integer[0];
+        Assert.assertArrayEquals(set.toArray(small), new Integer[] { 1, 2, 3 });
+
+        // Array exact size
+        Integer[] exact = new Integer[3];
+        Assert.assertArrayEquals(set.toArray(exact), new Integer[] { 1, 2, 3 });
+
+        // Array larger than set
+        Integer[] large = new Integer[] { 9, 9, 9, 9 };
+        Integer[] res = set.toArray(large);
+        Assert.assertSame(res, large);
+        Assert.assertEquals(res[0], (Integer) 1);
+        Assert.assertEquals(res[1], (Integer) 2);
+        Assert.assertEquals(res[2], (Integer) 3);
+        Assert.assertNull(res[3]);
     }
 
     @Test(expected = UnsupportedOperationException.class)
