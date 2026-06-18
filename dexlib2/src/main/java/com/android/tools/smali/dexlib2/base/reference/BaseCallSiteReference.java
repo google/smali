@@ -48,7 +48,8 @@ public abstract class BaseCallSiteReference extends BaseReference implements Cal
     public boolean equals(Object o) {
         if (o != null && o instanceof CallSiteReference) {
             CallSiteReference other = (CallSiteReference) o;
-            return getMethodHandle().equals(other.getMethodHandle()) &&
+            return getName().equals(other.getName()) &&
+                    getMethodHandle().equals(other.getMethodHandle()) &&
                     getMethodName().equals(other.getMethodName()) &&
                     getMethodProto().equals(other.getMethodProto()) &&
                     getExtraArguments().equals(other.getExtraArguments());

@@ -99,7 +99,7 @@ public interface CallSiteReference extends Reference {
      * Compares this CallSiteReference to another CallSiteReference for equality.
      *
      * This CallSiteReference is equal to another CallSiteReference if all of its fields are equal. That is, if
-     * the return values of getMethodHandle(), getMethodName(), getMethodProto() and getExtraArguments() are all equal.
+     * the return values of getName(), getMethodHandle(), getMethodName(), getMethodProto() and getExtraArguments() are all equal.
      *
      * @param o The object to be compared for equality with this CallSiteReference
      * @return true if the specified object is equal to this CallSiteReference

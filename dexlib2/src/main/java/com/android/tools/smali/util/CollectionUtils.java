@@ -164,7 +164,7 @@ public class CollectionUtils {
         if (isNaturalSortedSet(collection)) {
             return (SortedSet<? extends T>)collection;
         }
-        SortedSet<? extends T> sortedSet = ArraySortedSet.of(NaturalOrdering.INSTANCE, collection.toArray());
+        SortedSet<? extends T> sortedSet = ArraySortedSet.copyOf((Comparator)NaturalOrdering.INSTANCE, collection);
         return Collections.unmodifiableSortedSet(sortedSet);
     }
 
@@ -179,7 +179,7 @@ public class CollectionUtils {
             }
         }
 
-        return Collections.unmodifiableSortedSet(ArraySortedSet.of(elementComparator, collection));
+        return Collections.unmodifiableSortedSet(ArraySortedSet.copyOf(elementComparator, collection));
     }
 
     @Nonnull
@@ -195,35 +195,17 @@ public class CollectionUtils {
 
     public static <T extends Comparable<T>> int compareAsSet(@Nonnull Collection<? extends T> set1,
                                                              @Nonnull Collection<? extends T> set2) {
-        int res = Integer.compare(set1.size(), set2.size());
-        if (res != 0) return res;
-
         SortedSet<? extends T> sortedSet1 = toNaturalSortedSet(set1);
         SortedSet<? extends T> sortedSet2 = toNaturalSortedSet(set2);
-
-        Iterator<? extends T> elements2 = set2.iterator();
-        for (T element1: set1) {
-            res = element1.compareTo(elements2.next());
-            if (res != 0) return res;
-        }
-        return 0;
+        return compareAsIterable(sortedSet1, sortedSet2);
     }
 
     public static <T> int compareAsSet(@Nonnull Comparator<? super T> elementComparator,
                                        @Nonnull Collection<? extends T> list1,
                                        @Nonnull Collection<? extends T> list2) {
-        int res = Integer.compare(list1.size(), list2.size());
-        if (res != 0) return res;
-
         SortedSet<? extends T> set1 = toSortedSet(elementComparator, list1);
         SortedSet<? extends T> set2 = toSortedSet(elementComparator, list2);
-
-        Iterator<? extends T> elements2 = set2.iterator();
-        for (T element1: set1) {
-            res = elementComparator.compare(element1, elements2.next());
-            if (res != 0) return res;
-        }
-        return 0;
+        return compareAsIterable(elementComparator, set1, set2);
     }
 
     public static <T> List<T> immutableSortedCopy(

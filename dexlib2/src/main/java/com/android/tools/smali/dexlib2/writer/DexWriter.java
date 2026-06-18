@@ -264,7 +264,9 @@ public abstract class DexWriter<
                 public int compare(Entry<? extends CallSiteKey, Integer> o1, Entry<? extends CallSiteKey, Integer> o2) {
                     int offset1 = encodedArraySection.getItemOffset(callSiteSection.getEncodedCallSite(o1.getKey()));
                     int offset2 = encodedArraySection.getItemOffset(callSiteSection.getEncodedCallSite(o2.getKey()));
-                    return Integer.compare(offset1, offset2);
+                    int res = Integer.compare(offset1, offset2);
+                    if (res != 0) return res;
+                    return o1.getKey().getName().compareTo(o2.getKey().getName());
                 }
             };
 
@@ -780,9 +782,14 @@ public abstract class DexWriter<
     private void writeMethodHandles(DexDataWriter writer) throws IOException {
         methodHandleSectionOffset = writer.getPosition();
 
+        List<Map.Entry<? extends MethodHandleKey, Integer>> methodHandleEntries =
+                new ArrayList<>(methodHandleSection.getItems());
+        Collections.sort(methodHandleEntries,
+                DexWriter.<MethodHandleKey>comparableKeyComparator());
+
         int index = 0;
 
-        for (Entry<? extends MethodHandleKey, Integer> entry: methodHandleSection.getItems()) {
+        for (Map.Entry<? extends MethodHandleKey, Integer> entry: methodHandleEntries) {
             entry.setValue(index++);
             MethodHandleKey methodHandleReference = entry.getKey();
             writer.writeUshort(methodHandleReference.getMethodHandleType());
@@ -814,7 +821,8 @@ public abstract class DexWriter<
         }
     }
 
-    private void writeEncodedFields(@Nonnull DexDataWriter writer, @Nonnull Collection<? extends FieldKey> fields)
+    private void writeEncodedFields(@Nonnull DexDataWriter writer,
+                                    @Nonnull Collection<? extends FieldKey> fields)
             throws IOException {
         int prevIndex = 0;
         for (FieldKey key: fields) {
@@ -828,7 +836,8 @@ public abstract class DexWriter<
         }
     }
 
-    private void writeEncodedMethods(@Nonnull DexDataWriter writer, @Nonnull Collection<? extends MethodKey> methods)
+    private void writeEncodedMethods(@Nonnull DexDataWriter writer,
+                                     @Nonnull Collection<? extends MethodKey> methods)
             throws IOException {
         int prevIndex = 0;
         for (MethodKey key: methods) {
@@ -846,7 +855,21 @@ public abstract class DexWriter<
     private void writeTypeLists(@Nonnull DexDataWriter writer) throws IOException {
         writer.align();
         typeListSectionOffset = writer.getPosition();
-        for (Map.Entry<? extends TypeListKey, Integer> entry: typeListSection.getItems()) {
+        List<Map.Entry<? extends TypeListKey, Integer>> typeListEntries =
+                new ArrayList<>(typeListSection.getItems());
+        Collections.sort(typeListEntries,
+                new Comparator<Map.Entry<? extends TypeListKey, Integer>>() {
+                    @Override
+                    public int compare(
+                            Map.Entry<? extends TypeListKey, Integer> o1,
+                            Map.Entry<? extends TypeListKey, Integer> o2) {
+                        return CollectionUtils.compareAsIterable(
+                                CollectionUtils.usingToStringOrdering(),
+                                typeListSection.getTypes(o1.getKey()),
+                                typeListSection.getTypes(o2.getKey()));
+                    }
+                });
+        for (Map.Entry<? extends TypeListKey, Integer> entry: typeListEntries) {
             writer.align();
             entry.setValue(writer.getPosition());
 
@@ -861,10 +884,26 @@ public abstract class DexWriter<
     private void writeEncodedArrays(@Nonnull DexDataWriter writer) throws IOException {
         InternalEncodedValueWriter encodedValueWriter = new InternalEncodedValueWriter(writer);
         encodedArraySectionOffset = writer.getPosition();
+        List<Map.Entry<? extends EncodedArrayKey, Integer>> encodedArrayEntries =
+                new ArrayList<>(encodedArraySection.getItems());
+        Collections.sort(encodedArrayEntries,
+                new Comparator<Map.Entry<? extends EncodedArrayKey, Integer>>() {
+                    @Override
+                    public int compare(
+                            Map.Entry<? extends EncodedArrayKey, Integer> o1,
+                            Map.Entry<? extends EncodedArrayKey, Integer> o2) {
+                        List<?> list1 = encodedArraySection.getEncodedValueList(o1.getKey());
+                        List<?> list2 = encodedArraySection.getEncodedValueList(o2.getKey());
+                        return CollectionUtils.compareAsIterable(
+                                (List<Comparable>) list1,
+                                (List<Comparable>) list2);
+                    }
+                });
 
-        for (Map.Entry<? extends EncodedArrayKey, Integer> entry: encodedArraySection.getItems()) {
+        for (Map.Entry<? extends EncodedArrayKey, Integer> entry: encodedArrayEntries) {
             entry.setValue(writer.getPosition());
-            List<? extends EncodedValue> encodedArray = encodedArraySection.getEncodedValueList(entry.getKey());
+            List<? extends EncodedValue> encodedArray =
+                    encodedArraySection.getEncodedValueList(entry.getKey());
             writer.writeUleb128(encodedArray.size());
             for (EncodedValue value: encodedArray) {
                 writeEncodedValue(encodedValueWriter, value);
@@ -876,7 +915,11 @@ public abstract class DexWriter<
         InternalEncodedValueWriter encodedValueWriter = new InternalEncodedValueWriter(writer);
 
         annotationSectionOffset = writer.getPosition();
-        for (Map.Entry<? extends AnnotationKey, Integer> entry: annotationSection.getItems()) {
+        List<Map.Entry<? extends AnnotationKey, Integer>> annotationEntries =
+                new ArrayList<>(annotationSection.getItems());
+        Collections.sort(annotationEntries,
+                DexWriter.<AnnotationKey>comparableKeyComparator());
+        for (Map.Entry<? extends AnnotationKey, Integer> entry: annotationEntries) {
             entry.setValue(writer.getPosition());
 
             AnnotationKey key = entry.getKey();
@@ -890,8 +933,10 @@ public abstract class DexWriter<
             writer.writeUleb128(elements.size());
 
             for (AnnotationElement element: elements) {
-                writer.writeUleb128(stringSection.getItemIndex(annotationSection.getElementName(element)));
-                writeEncodedValue(encodedValueWriter, annotationSection.getElementValue(element));
+                writer.writeUleb128(stringSection.getItemIndex(
+                        annotationSection.getElementName(element)));
+                writeEncodedValue(encodedValueWriter,
+                        annotationSection.getElementValue(element));
             }
         }
     }
@@ -902,7 +947,20 @@ public abstract class DexWriter<
         if (shouldCreateEmptyAnnotationSet()) {
             writer.writeInt(0);
         }
-        for (Map.Entry<? extends AnnotationSetKey, Integer> entry: annotationSetSection.getItems()) {
+        List<Map.Entry<? extends AnnotationSetKey, Integer>> annotationSetEntries =
+                new ArrayList<>(annotationSetSection.getItems());
+        Collections.sort(annotationSetEntries,
+                new Comparator<Map.Entry<? extends AnnotationSetKey, Integer>>() {
+                    @Override
+                    public int compare(
+                            Map.Entry<? extends AnnotationSetKey, Integer> o1,
+                            Map.Entry<? extends AnnotationSetKey, Integer> o2) {
+                        return CollectionUtils.compareAsSet(
+                                annotationSetSection.getAnnotations(o1.getKey()),
+                                annotationSetSection.getAnnotations(o2.getKey()));
+                    }
+                });
+        for (Map.Entry<? extends AnnotationSetKey, Integer> entry: annotationSetEntries) {
             Collection<? extends AnnotationKey> annotations = CollectionUtils.immutableSortedCopy(
                     annotationSetSection.getAnnotations(entry.getKey()), BaseAnnotation.BY_TYPE);
             
