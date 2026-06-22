@@ -59,9 +59,22 @@ import javax.annotation.Nullable;
  */
 public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
 
+    /**
+     * Represents a dex entry in a zip container, including the uncompressed CRC-32 checksum
+     * of the zip entry.
+     */
+    public interface ZipDexEntry extends DexEntry<DexBackedDexFile> {
+        /**
+         * Gets the uncompressed CRC-32 checksum of the zip entry containing this dex file.
+         *
+         * @return The uncompressed CRC-32 checksum of the zip entry
+         */
+        long getCrc();
+    }
+
     private final File zipFilePath;
     @Nullable private final Opcodes opcodes;
-    private TreeMap<String, DexBackedDexFile> entries;
+    private TreeMap<String, ZipDexEntry> entries;
 
     /**
      * Constructs a new ZipDexContainer for the given zip file
@@ -82,11 +95,11 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
         return new ArrayList<>(getEntries().keySet());
     }
 
-    private Map<String, DexBackedDexFile> getEntries() throws IOException {
+    private Map<String, ZipDexEntry> getEntries() throws IOException {
         if (entries != null) {
           return entries;
         }
-        entries = new TreeMap<String, DexBackedDexFile>();
+        entries = new TreeMap<String, ZipDexEntry>();
         try (ZipFile zipFile = getZipFile()) {
             Enumeration<? extends ZipEntry> entriesEnumeration = zipFile.entries();
 
@@ -97,12 +110,39 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
                     continue;
                 }
 
+                long entryCrc = entry.getCrc();
+
                 // There might be several dex files in zip entry since DEX v41.
                 try (InputStream inputStream = zipFile.getInputStream(entry)) {
                     byte[] buf = InputStreamUtil.toByteArray(inputStream);
                     for (int offset = 0, i = 1; offset < buf.length; i++) {
                       DexBackedDexFile dex = new DexBackedDexFile(opcodes, buf, 0, true, offset);
-                      entries.put(entry.getName() + (i > 1 ? ("/" + i) : ""), dex);
+                      String entryName = entry.getName() + (i > 1 ? ("/" + i) : "");
+                      ZipDexEntry dexEntry = new ZipDexEntry() {
+                          @Nonnull
+                          @Override
+                          public String getEntryName() {
+                              return entryName;
+                          }
+
+                          @Nonnull
+                          @Override
+                          public DexBackedDexFile getDexFile() {
+                              return dex;
+                          }
+
+                          @Nonnull
+                          @Override
+                          public MultiDexContainer<DexBackedDexFile> getContainer() {
+                              return ZipDexContainer.this;
+                          }
+
+                          @Override
+                          public long getCrc() {
+                              return entryCrc;
+                          }
+                      };
+                      entries.put(entryName, dexEntry);
                       offset += dex.getFileSize();
                     };
                 }
@@ -119,30 +159,8 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
      * @return A DexEntry, or null if there is no entry with the given name
      * @throws NotADexFile If the entry isn't a dex file
      */
-    @Nullable @Override public DexEntry<DexBackedDexFile> getEntry(@Nonnull String entryName) throws IOException {
-         DexFile dexFile = getEntries().get(entryName);
-         if (dexFile == null) {
-             return null;
-         }
-         return new DexEntry() {
-             @Nonnull
-             @Override
-             public String getEntryName() {
-                 return entryName;
-             }
-
-             @Nonnull
-             @Override
-             public DexFile getDexFile() {
-                 return dexFile;
-             }
-
-             @Nonnull
-             @Override
-             public MultiDexContainer getContainer() {
-                 return ZipDexContainer.this;
-             }
-         };
+    @Nullable @Override public ZipDexEntry getEntry(@Nonnull String entryName) throws IOException {
+         return getEntries().get(entryName);
     }
 
     public boolean isZipFile() {
