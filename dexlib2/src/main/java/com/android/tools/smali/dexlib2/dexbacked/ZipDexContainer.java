@@ -45,10 +45,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.annotation.Nonnull;
@@ -74,7 +76,7 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
 
     private final File zipFilePath;
     @Nullable private final Opcodes opcodes;
-    private TreeMap<String, ZipDexEntry> entries;
+    private Map<String, ZipDexEntry> entries;
 
     /**
      * Constructs a new ZipDexContainer for the given zip file
@@ -88,6 +90,10 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
 
     /**
      * Gets a list of the names of dex files in this zip file.
+     * <p>
+     * The returned list follows a strict deterministic order: it starts with all dex files in
+     * classes.dex, then classes2.dex, etc. sequentially until classesN.dex is missing, followed by
+     * any remaining dex entries in lexicographically sorted order.
      *
      * @return A list of the names of dex files in this zip file
      */
@@ -99,56 +105,79 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
         if (entries != null) {
           return entries;
         }
-        entries = new TreeMap<String, ZipDexEntry>();
+        // LinkedHashMap is used to preserve the strict deterministic insertion ordering of entries.
+        entries = new LinkedHashMap<String, ZipDexEntry>();
         try (ZipFile zipFile = getZipFile()) {
+            Map<String, ZipEntry> validZipEntries = new HashMap<>();
             Enumeration<? extends ZipEntry> entriesEnumeration = zipFile.entries();
 
             while (entriesEnumeration.hasMoreElements()) {
                 ZipEntry entry = entriesEnumeration.nextElement();
-
-                if (!isDex(zipFile, entry)) {
-                    continue;
-                }
-
-                long entryCrc = entry.getCrc();
-
-                // There might be several dex files in zip entry since DEX v41.
-                try (InputStream inputStream = zipFile.getInputStream(entry)) {
-                    byte[] buf = InputStreamUtil.toByteArray(inputStream);
-                    for (int offset = 0, i = 1; offset < buf.length; i++) {
-                      DexBackedDexFile dex = new DexBackedDexFile(opcodes, buf, 0, true, offset);
-                      String entryName = entry.getName() + (i > 1 ? ("/" + i) : "");
-                      ZipDexEntry dexEntry = new ZipDexEntry() {
-                          @Nonnull
-                          @Override
-                          public String getEntryName() {
-                              return entryName;
-                          }
-
-                          @Nonnull
-                          @Override
-                          public DexBackedDexFile getDexFile() {
-                              return dex;
-                          }
-
-                          @Nonnull
-                          @Override
-                          public MultiDexContainer<DexBackedDexFile> getContainer() {
-                              return ZipDexContainer.this;
-                          }
-
-                          @Override
-                          public long getCrc() {
-                              return entryCrc;
-                          }
-                      };
-                      entries.put(entryName, dexEntry);
-                      offset += dex.getFileSize();
-                    };
+                if (isDex(zipFile, entry)) {
+                    validZipEntries.put(entry.getName(), entry);
                 }
             }
 
+            for (int n = 1; ; n++) {
+                String targetName = (n == 1) ? "classes.dex" : ("classes" + n + ".dex");
+                ZipEntry entry = validZipEntries.remove(targetName);
+                if (entry == null) {
+                    break;
+                }
+                loadDexFilesFromZipEntry(zipFile, entry);
+            }
+
+            List<String> remainingNames = new ArrayList<>(validZipEntries.keySet());
+            Collections.sort(remainingNames);
+            for (String remainingName : remainingNames) {
+                ZipEntry entry = validZipEntries.get(remainingName);
+                loadDexFilesFromZipEntry(zipFile, entry);
+            }
+
             return entries;
+        }
+    }
+
+    private void loadDexFilesFromZipEntry(@Nonnull ZipFile zipFile, @Nonnull ZipEntry entry)
+            throws IOException {
+        long entryCrc = entry.getCrc();
+        try (InputStream inputStream = zipFile.getInputStream(entry)) {
+            byte[] buf = InputStreamUtil.toByteArray(inputStream);
+            for (int offset = 0, i = 0; offset < buf.length; i++) {
+              DexBackedDexFile dex = new DexBackedDexFile(opcodes, buf, 0, true, offset);
+              boolean hasSingleEntry = dex.isDexContainerFirstEntry() &&
+                      dex.isDexContainerLastEntry();
+              String entryName = entry.getName() + (hasSingleEntry ? "" : ("/" + i));
+              ZipDexEntry dexEntry = new ZipDexEntry() {
+                  @Nonnull
+                  @Override
+                  public String getEntryName() {
+                      return entryName;
+                  }
+
+                  @Nonnull
+                  @Override
+                  public DexBackedDexFile getDexFile() {
+                      return dex;
+                  }
+
+                  @Nonnull
+                  @Override
+                  public MultiDexContainer<DexBackedDexFile> getContainer() {
+                      return ZipDexContainer.this;
+                  }
+
+                  @Override
+                  public long getCrc() {
+                      return entryCrc;
+                  }
+              };
+              entries.put(entryName, dexEntry);
+              offset += dex.getFileSize();
+              if (dex.isDexContainerLastEntry()) {
+                  break;
+              }
+            };
         }
     }
 
@@ -174,7 +203,8 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
         // just eat it
     }
 
-    protected boolean isDex(@Nonnull ZipFile zipFile, @Nonnull ZipEntry zipEntry) throws IOException {
+    protected boolean isDex(@Nonnull ZipFile zipFile, @Nonnull ZipEntry zipEntry)
+            throws IOException {
         try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(zipEntry))) {
             DexUtil.verifyDexHeader(inputStream);
         } catch (NotADexFile ex) {

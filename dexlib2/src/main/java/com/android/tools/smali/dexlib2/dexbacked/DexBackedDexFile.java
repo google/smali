@@ -90,8 +90,11 @@ public class DexBackedDexFile implements DexFile {
     private final int classStartOffset;
     private final int mapOffset;
     private final int hiddenApiRestrictionsOffset;
+    private final int headerOffset;
+    private final int containerSize;
 
-    protected DexBackedDexFile(@Nullable Opcodes opcodes, @Nonnull byte[] buf, int offset, boolean verifyMagic) {
+    protected DexBackedDexFile(@Nullable Opcodes opcodes, @Nonnull byte[] buf, int offset,
+                               boolean verifyMagic) {
         this(opcodes, buf, offset, verifyMagic, 0);
     }
 
@@ -133,9 +136,15 @@ public class DexBackedDexFile implements DexFile {
             hiddenApiRestrictionsOffset = DexWriter.NO_OFFSET;
         }
 
+        this.headerOffset = header_offset;
         int container_off = 0;
         if (dexVersion >= 41) {
-          container_off = dexBuffer.readSmallUint(header_offset + HeaderItem.CONTAINER_OFF_OFFSET);
+          container_off = dexBuffer.readSmallUint(
+                  header_offset + HeaderItem.CONTAINER_OFF_OFFSET);
+          this.containerSize = dexBuffer.readSmallUint(
+                  header_offset + HeaderItem.CONTAINER_SIZE_OFFSET);
+        } else {
+          this.containerSize = this.fileSize;
         }
         if (container_off != header_offset) {
           throw new DexUtil.InvalidFile(String.format("Unexpected container offset in header"));
@@ -155,6 +164,20 @@ public class DexBackedDexFile implements DexFile {
      */
     public int getFileSize() {
         return fileSize;
+    }
+
+    /**
+     * @return True if this is the first entry in a DEX container (or classic DEX).
+     */
+    public boolean isDexContainerFirstEntry() {
+        return headerOffset == 0;
+    }
+
+    /**
+     * @return True if this is the last entry in a DEX container, ignoring trailing garbage.
+     */
+    public boolean isDexContainerLastEntry() {
+        return headerOffset + fileSize >= containerSize;
     }
 
     protected int getVersion(byte[] buf, int offset, boolean verifyMagic) {
