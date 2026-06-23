@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 
 public class HeaderItem {
     public static final int ITEM_SIZE = 0x70;
+    public static final int MAGIC_SIZE = 8;
 
     private static final byte[] MAGIC_VALUE = new byte[] { 0x64, 0x65, 0x78, 0x0a, 0x00, 0x00, 0x00, 0x00 };
 
@@ -88,7 +89,7 @@ public class HeaderItem {
     public static final int DATA_START_OFFSET = 108;
 
     public static final int CONTAINER_SIZE_OFFSET = 112;
-    public static final int CONTAINER_OFF_OFFSET = 116;
+    public static final int HEADER_OFFSET_OFFSET = 116;
 
     @Nonnull private DexBackedDexFile dexFile;
 
@@ -267,7 +268,7 @@ public class HeaderItem {
      * @return True if the magic value is valid
      */
     public static boolean verifyMagic(byte[] buf, int offset) {
-        if (buf.length - offset < 8) {
+        if (offset < 0 || offset > buf.length || buf.length - offset < MAGIC_SIZE) {
             return false;
         }
 
@@ -297,6 +298,9 @@ public class HeaderItem {
      * @return The dex version if the header is valid or -1 if the header is invalid
      */
     public static int getVersion(byte[] buf, int offset) {
+        if (offset < 0 || offset > buf.length || buf.length - offset < MAGIC_SIZE) {
+            throw new DexBackedDexFile.NotADexFile("File is too short");
+        }
         if (!verifyMagic(buf, offset)) {
             return -1;
         }

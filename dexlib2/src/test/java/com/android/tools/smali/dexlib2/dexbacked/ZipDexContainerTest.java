@@ -146,7 +146,7 @@ public class ZipDexContainerTest {
             writeInt(containerBytes,
                     headerOffset + HeaderItem.CONTAINER_SIZE_OFFSET, containerBytes.length);
             writeInt(containerBytes,
-                    headerOffset + HeaderItem.CONTAINER_OFF_OFFSET, headerOffset);
+                    headerOffset + HeaderItem.HEADER_OFFSET_OFFSET, headerOffset);
         }
 
         File tempZip = File.createTempFile("test_container", ".apk");
@@ -191,7 +191,7 @@ public class ZipDexContainerTest {
             writeInt(containerBytesWithGarbage,
                     headerOffset + HeaderItem.CONTAINER_SIZE_OFFSET, dexBytes.length * 2);
             writeInt(containerBytesWithGarbage,
-                    headerOffset + HeaderItem.CONTAINER_OFF_OFFSET, headerOffset);
+                    headerOffset + HeaderItem.HEADER_OFFSET_OFFSET, headerOffset);
         }
 
         File tempZip = File.createTempFile("test_garbage", ".apk");
@@ -228,7 +228,7 @@ public class ZipDexContainerTest {
         containerBytes[5] = '4';
         containerBytes[6] = '1';
         writeInt(containerBytes, HeaderItem.CONTAINER_SIZE_OFFSET, containerBytes.length);
-        writeInt(containerBytes, HeaderItem.CONTAINER_OFF_OFFSET, 0);
+        writeInt(containerBytes, HeaderItem.HEADER_OFFSET_OFFSET, 0);
 
         File tempZip = File.createTempFile("test_single_container", ".apk");
         tempZip.deleteOnExit();

@@ -83,17 +83,25 @@ public class DexUtil {
      * @throws UnsupportedFile If the dex header is valid, but uses unsupported functionality
      */
     public static int verifyDexHeader(@Nonnull byte[] buf, int offset) {
+        if (offset < 0 || offset > buf.length || buf.length - offset < HeaderItem.MAGIC_SIZE) {
+            throw new NotADexFile("File is too short");
+        }
         int dexVersion = HeaderItem.getVersion(buf, offset);
         if (dexVersion == -1) {
             StringBuilder sb = new StringBuilder("Not a valid dex magic value:");
-            for (int i=0; i<8; i++) {
-                sb.append(String.format(" %02x", buf[i]));
+            for (int i=0; i<HeaderItem.MAGIC_SIZE; i++) {
+                sb.append(String.format(" %02x", buf[offset + i]));
             }
             throw new NotADexFile(sb.toString());
         }
 
         if (!HeaderItem.isSupportedDexVersion(dexVersion)) {
-            throw new UnsupportedFile(String.format("Dex version %03d is not supported", dexVersion));
+            throw new UnsupportedFile(
+                    String.format("Dex version %03d is not supported", dexVersion));
+        }
+
+        if (buf.length - offset < 44) {
+            throw new NotADexFile("File is too short");
         }
 
         int endian = HeaderItem.getEndian(buf, offset);

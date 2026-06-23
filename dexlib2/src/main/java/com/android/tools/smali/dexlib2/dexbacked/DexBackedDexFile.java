@@ -89,7 +89,7 @@ public class DexBackedDexFile implements DexFile {
     private final int classCount;
     private final int classStartOffset;
     private final int mapOffset;
-    private final int hiddenApiRestrictionsOffset;
+    private int hiddenApiRestrictionsOffset = -1;
     private final int headerOffset;
     private final int containerSize;
 
@@ -103,10 +103,20 @@ public class DexBackedDexFile implements DexFile {
                                int offset,
                                boolean verifyMagic,
                                int header_offset) {
+        if (offset < 0 || offset > buf.length) {
+            throw new IndexOutOfBoundsException(
+                    String.format("Invalid offset %d for buffer of length %d", offset, buf.length));
+        }
+        if (header_offset < 0 || buf.length - offset < header_offset) {
+            throw new IndexOutOfBoundsException(String.format(
+                    "Invalid header_offset %d for buffer of length %d at offset %d",
+                    header_offset, buf.length, offset));
+        }
+
         dexBuffer = new DexBuffer(buf, offset);
         dataBuffer = new DexBuffer(buf, offset + getBaseDataOffset());
 
-        int dexVersion = getVersion(buf, offset, verifyMagic);
+        int dexVersion = getVersion(buf, offset + header_offset, verifyMagic);
 
         if (opcodes == null) {
             this.opcodes = getDefaultOpcodes(dexVersion);
@@ -114,7 +124,24 @@ public class DexBackedDexFile implements DexFile {
             this.opcodes = opcodes;
         }
 
+        int requiredHeaderSize = (dexVersion >= 41) ? 120 : 112;
+        if (buf.length - offset - header_offset < requiredHeaderSize) {
+            throw new DexUtil.InvalidFile(String.format(
+                    "File is too short to contain a valid dex header (size: %d, required: %d)",
+                    buf.length - offset - header_offset, requiredHeaderSize));
+        }
+
         fileSize = dexBuffer.readSmallUint(header_offset + HeaderItem.FILE_SIZE_OFFSET);
+        if (fileSize < requiredHeaderSize) {
+            throw new DexUtil.InvalidFile(String.format(
+                    "Invalid file_size %d (smaller than required header size %d)",
+                    fileSize, requiredHeaderSize));
+        }
+        if (fileSize > buf.length - offset - header_offset) {
+            throw new DexUtil.InvalidFile(String.format(
+                    "Invalid file_size %d (exceeds remaining buffer length %d)",
+                    fileSize, buf.length - offset - header_offset));
+        }
         stringCount = dexBuffer.readSmallUint(header_offset + HeaderItem.STRING_COUNT_OFFSET);
         stringStartOffset = dexBuffer.readSmallUint(header_offset + HeaderItem.STRING_START_OFFSET);
         typeCount = dexBuffer.readSmallUint(header_offset + HeaderItem.TYPE_COUNT_OFFSET);
@@ -129,25 +156,28 @@ public class DexBackedDexFile implements DexFile {
         classStartOffset = dexBuffer.readSmallUint(header_offset + HeaderItem.CLASS_START_OFFSET);
         mapOffset = dexBuffer.readSmallUint(header_offset + HeaderItem.MAP_OFFSET);
 
-        MapItem mapItem = getMapItemForSection(ItemType.HIDDENAPI_CLASS_DATA_ITEM);
-        if (mapItem != null) {
-            hiddenApiRestrictionsOffset = mapItem.getOffset();
-        } else {
-            hiddenApiRestrictionsOffset = DexWriter.NO_OFFSET;
-        }
-
         this.headerOffset = header_offset;
         int container_off = 0;
         if (dexVersion >= 41) {
-          container_off = dexBuffer.readSmallUint(
-                  header_offset + HeaderItem.CONTAINER_OFF_OFFSET);
-          this.containerSize = dexBuffer.readSmallUint(
-                  header_offset + HeaderItem.CONTAINER_SIZE_OFFSET);
+            container_off = dexBuffer.readSmallUint(
+                    header_offset + HeaderItem.HEADER_OFFSET_OFFSET);
+            this.containerSize = dexBuffer.readSmallUint(
+                    header_offset + HeaderItem.CONTAINER_SIZE_OFFSET);
+            if (this.containerSize < header_offset + fileSize) {
+                throw new DexUtil.InvalidFile(String.format(
+                        "DEX entry (header_offset: %d, file_size: %d) exceeds container_size %d",
+                        header_offset, fileSize, containerSize));
+            }
+            if (this.containerSize > buf.length - offset) {
+                throw new DexUtil.InvalidFile(String.format(
+                        "Invalid container_size %d (exceeds buffer length %d)",
+                        containerSize, buf.length - offset));
+            }
         } else {
-          this.containerSize = this.fileSize;
+            this.containerSize = this.fileSize;
         }
         if (container_off != header_offset) {
-          throw new DexUtil.InvalidFile(String.format("Unexpected container offset in header"));
+            throw new DexUtil.InvalidFile(String.format("Unexpected container offset in header"));
         }
     }
 
@@ -586,20 +616,33 @@ public class DexBackedDexFile implements DexFile {
         return new DexBackedMethodImplementation(dexFile, method, codeOffset);
     }
 
+    private int getHiddenApiRestrictionsOffset() {
+        if (hiddenApiRestrictionsOffset == -1) {
+            MapItem mapItem = getMapItemForSection(ItemType.HIDDENAPI_CLASS_DATA_ITEM);
+            if (mapItem != null) {
+                hiddenApiRestrictionsOffset = mapItem.getOffset();
+            } else {
+                hiddenApiRestrictionsOffset = DexWriter.NO_OFFSET;
+            }
+        }
+        return hiddenApiRestrictionsOffset;
+    }
+
     private int readHiddenApiRestrictionsOffset(int classIndex) {
-        if (hiddenApiRestrictionsOffset == DexWriter.NO_OFFSET) {
+        int restrictionsOffset = getHiddenApiRestrictionsOffset();
+        if (restrictionsOffset == DexWriter.NO_OFFSET) {
             return DexWriter.NO_OFFSET;
         }
 
         int offset = dexBuffer.readInt(
-                hiddenApiRestrictionsOffset +
+                restrictionsOffset +
                         HiddenApiClassDataItem.OFFSETS_LIST_OFFSET +
                         classIndex * HiddenApiClassDataItem.OFFSET_ITEM_SIZE);
         if (offset == DexWriter.NO_OFFSET) {
             return DexWriter.NO_OFFSET;
         }
 
-        return hiddenApiRestrictionsOffset + offset;
+        return restrictionsOffset + offset;
     }
 
     public static abstract class OptionalIndexedSection<T> extends IndexedSection<T> {
