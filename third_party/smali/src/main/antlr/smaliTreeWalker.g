@@ -98,8 +98,8 @@ import java.util.*;
 
   private byte parseRegister_nibble(String register)
       throws SemanticException {
-    int totalMethodRegisters = method_stack.peek().totalMethodRegisters;
-    int methodParameterRegisters = method_stack.peek().methodParameterRegisters;
+    int totalMethodRegisters = $method::totalMethodRegisters;
+    int methodParameterRegisters = $method::methodParameterRegisters;
 
     //register should be in the format "v12"
     int val = Byte.parseByte(register.substring(1));
@@ -116,8 +116,8 @@ import java.util.*;
   //return a short, because java's byte is signed
   private short parseRegister_byte(String register)
       throws SemanticException {
-    int totalMethodRegisters = method_stack.peek().totalMethodRegisters;
-    int methodParameterRegisters = method_stack.peek().methodParameterRegisters;
+    int totalMethodRegisters = $method::totalMethodRegisters;
+    int methodParameterRegisters = $method::methodParameterRegisters;
     //register should be in the format "v123"
     int val = Short.parseShort(register.substring(1));
     if (register.charAt(0) == 'p') {
@@ -132,8 +132,8 @@ import java.util.*;
   //return an int because java's short is signed
   private int parseRegister_short(String register)
       throws SemanticException {
-    int totalMethodRegisters = method_stack.peek().totalMethodRegisters;
-    int methodParameterRegisters = method_stack.peek().methodParameterRegisters;
+    int totalMethodRegisters = $method::totalMethodRegisters;
+    int methodParameterRegisters = $method::methodParameterRegisters;
     //register should be in the format "v12345"
     int val = Integer.parseInt(register.substring(1));
     if (register.charAt(0) == 'p') {
