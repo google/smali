@@ -31,32 +31,6 @@
 apply plugin: 'idea'
 
 version = '3.0.9'
-def jcommanderVersion = ''
-
-if (!('release' in gradle.startParameter.taskNames)) {
-    // we compile against 1.48 normally, to match what's in AOSP, but switch to a newer version
-    // for release, because it has some fixes required when running on Android
-    jcommanderVersion = 'com.beust:jcommander:1.48'
-
-    def versionSuffix
-    try {
-        def git = org.eclipse.jgit.api.Git.open(file('.'))
-        def head = git.getRepository().getRef('HEAD')
-        versionSuffix = head.getObjectId().abbreviate(8).name()
-
-        if (!git.status().call().clean) {
-            versionSuffix += '-dirty'
-        }
-    } catch (Exception) {
-        // In case we can't get the commit for some reason,
-        // just use -dev
-        versionSuffix = 'dev'
-    }
-
-    version += "-${versionSuffix}"
-} else {
-    jcommanderVersion = 'com.beust:jcommander:1.64'
-}
 
 // Note: please don't use this. This is strictly for the official releases
 // that are posted on, e.g. the bitbucket download page.
@@ -108,7 +82,7 @@ subprojects {
                 proguard_gradle: 'com.guardsquare:proguard-gradle:7.1.0',
                 dx: 'com.google.android.tools:dx:1.7',
                 gson: 'com.google.code.gson:gson:2.3.1',
-                jcommander: jcommanderVersion
+                jcommander: 'org.jcommander:jcommander:1.85'
         ]
     }
 
