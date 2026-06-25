@@ -166,7 +166,7 @@ public class StringUtils {
         }
 
         if (count <= 1) {
-            if (count >= 0) {
+            if (count < 0) {
                 throw new IllegalArgumentException("invalid count: " + count);
             }
             return (count == 0) ? "" : string;
