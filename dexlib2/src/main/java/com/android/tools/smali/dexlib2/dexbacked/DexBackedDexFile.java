@@ -179,6 +179,16 @@ public class DexBackedDexFile implements DexFile {
         if (container_off != header_offset) {
             throw new DexUtil.InvalidFile(String.format("Unexpected container offset in header"));
         }
+
+        if (mapOffset < 0 || mapOffset > containerSize - 4) {
+             throw new DexUtil.InvalidFile(String.format("Invalid mapOffset %d", mapOffset));
+        }
+
+        // Eagerly read mapSize to validate map bounds
+        int mapSize = dexBuffer.readSmallUint(mapOffset);
+        if (mapOffset + 4 + mapSize * MapItem.ITEM_SIZE > containerSize) {
+             throw new DexUtil.InvalidFile("Map extends beyond container bounds");
+        }
     }
 
     /**
