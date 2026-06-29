@@ -137,7 +137,7 @@ public class DexBackedMethodImplementation implements MethodImplementation {
         return Collections.emptyList();
     }
 
-    protected int getDebugOffset() {
+    public int getDebugOffset() {
         return dexFile.getDataBuffer().readInt(codeOffset + CodeItem.DEBUG_INFO_OFFSET);
     }
 

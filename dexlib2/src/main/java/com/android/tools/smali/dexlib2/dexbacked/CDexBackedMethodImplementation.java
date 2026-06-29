@@ -110,7 +110,7 @@ public class CDexBackedMethodImplementation extends DexBackedMethodImplementatio
     }
 
     @Override
-    protected int getDebugOffset() {
+    public int getDebugOffset() {
         CDexBackedDexFile cdexFile = ((CDexBackedDexFile) dexFile);
 
         int debugTableItemOffset = (method.methodIndex / 16) * 4;
