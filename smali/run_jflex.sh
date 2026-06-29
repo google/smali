@@ -18,7 +18,10 @@ EXPECTED_JFLEX_VERSION_STR="This is JFlex $EXPECTED_JFLEX_VERSION"
 SCRIPT_DIR=`dirname $0`
 echo $SCRIPT_DIR
 
-TOP_PATH="$SCRIPT_DIR/../../.."
+# cd to the script directory so we can use relative paths
+cd "$SCRIPT_DIR"
+
+TOP_PATH="../../.."
 
 # Run the java jar when 'JFLEX' is not in the environment
 function exec_jar_jflex {
@@ -52,10 +55,10 @@ then
   exit 1
 fi
 
-JAVA_FILE=$SCRIPT_DIR/src/main/java/com/android/tools/smali/smali/smaliFlexLexer.java
+JAVA_FILE=src/main/java/com/android/tools/smali/smali/smaliFlexLexer.java
 rm -f "$JAVA_FILE"
 
-"$JFLEX" --nobak -d "$SCRIPT_DIR/src/main/java/com/android/tools/smali/smali" "$SCRIPT_DIR/src/main/jflex/smaliLexer.jflex"
+"$JFLEX" --nobak -d "src/main/java/com/android/tools/smali/smali" "src/main/jflex/smaliLexer.jflex"
 
 # delete trailing space from end of each line to make gerrit happy
 sed 's/[ ]*$//' "$JAVA_FILE" > "$JAVA_FILE.tmp"

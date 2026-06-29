@@ -46,6 +46,9 @@ if [[ -z "$ANTLR_JARS" ]]; then
   exit 1
 fi
 
+# cd to the script directory so we can use relative paths
+cd "$SCRIPT_DIR"
+
 function run_antlr() {
   CLASSPATH="$ANTLR_JARS" java 2>&1 "$ANTLR_MAIN" "$@"
 }
@@ -100,12 +103,12 @@ function cleanup_tokens {
   [[ -f "$TOKEN_FILE" ]] && rm "$TOKEN_FILE"
 }
 
-generate_file "$SCRIPT_DIR/src/main/java/com/android/tools/smali/smali/smaliParser.java" "$SCRIPT_DIR/src/main/antlr/smaliParser.g"
-generate_file "$SCRIPT_DIR/src/main/java/com/android/tools/smali/smali/smaliTreeWalker.java" "$SCRIPT_DIR/src/main/antlr/smaliTreeWalker.g"
+generate_file "src/main/java/com/android/tools/smali/smali/smaliParser.java" "src/main/antlr/smaliParser.g"
+generate_file "src/main/java/com/android/tools/smali/smali/smaliTreeWalker.java" "src/main/antlr/smaliTreeWalker.g"
 
 # Clean up the tokens, no longer necessary once the tree walker is generated
-cleanup_tokens "$SCRIPT_DIR/src/main/java/com/android/tools/smali/smali/smaliParser.java"
-cleanup_tokens "$SCRIPT_DIR/src/main/java/com/android/tools/smali/smali/smaliTreeWalker.java"
+cleanup_tokens "src/main/java/com/android/tools/smali/smali/smaliParser.java"
+cleanup_tokens "src/main/java/com/android/tools/smali/smali/smaliTreeWalker.java"
 
 # Uncomment to run interactively
 #run_antlr "$@"
