@@ -104,13 +104,14 @@ public class DexBackedDexFile implements DexFile {
                                boolean verifyMagic,
                                int header_offset) {
         if (offset < 0 || offset > buf.length) {
-            throw new IndexOutOfBoundsException(
+            throw new DexUtil.InvalidFile(
                     String.format("Invalid offset %d for buffer of length %d", offset, buf.length));
         }
         if (header_offset < 0 || buf.length - offset < header_offset) {
-            throw new IndexOutOfBoundsException(String.format(
-                    "Invalid header_offset %d for buffer of length %d at offset %d",
-                    header_offset, buf.length, offset));
+            throw new DexUtil.InvalidFile(
+                    String.format(
+                            "Invalid header_offset %d for buffer of length %d at offset %d",
+                            header_offset, buf.length, offset));
         }
 
         dexBuffer = new DexBuffer(buf, offset);

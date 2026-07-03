@@ -31,7 +31,7 @@
 package com.android.tools.smali.dexlib2.dexbacked;
 
 import com.android.tools.smali.dexlib2.Opcodes;
-import com.android.tools.smali.dexlib2.iface.DexFile;
+import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile.NotADexFile;
 import com.android.tools.smali.dexlib2.iface.MultiDexContainer;
 import com.android.tools.smali.dexlib2.util.DexUtil;
 import com.android.tools.smali.dexlib2.util.DexUtil.InvalidFile;
@@ -76,6 +76,7 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
 
     private final File zipFilePath;
     @Nullable private final Opcodes opcodes;
+    private final boolean ignoreInvalid;
     private Map<String, ZipDexEntry> entries;
 
     /**
@@ -84,8 +85,20 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
      * @param zipFilePath The path to the zip file
      */
     public ZipDexContainer(@Nonnull File zipFilePath, @Nullable Opcodes opcodes) {
+        this(zipFilePath, opcodes, true);
+    }
+
+    /**
+     * Constructs a new ZipDexContainer for the given zip file
+     *
+     * @param zipFilePath The path to the zip file
+     * @param ignoreInvalid If true, invalid dex entries will be silently ignored
+     */
+    public ZipDexContainer(
+            @Nonnull File zipFilePath, @Nullable Opcodes opcodes, boolean ignoreInvalid) {
         this.zipFilePath = zipFilePath;
         this.opcodes = opcodes;
+        this.ignoreInvalid = ignoreInvalid;
     }
 
     /**
@@ -144,40 +157,54 @@ public class ZipDexContainer implements MultiDexContainer<DexBackedDexFile> {
         try (InputStream inputStream = zipFile.getInputStream(entry)) {
             byte[] buf = InputStreamUtil.toByteArray(inputStream);
             for (int offset = 0, i = 0; offset < buf.length; i++) {
-              DexBackedDexFile dex = new DexBackedDexFile(opcodes, buf, 0, true, offset);
-              boolean hasSingleEntry = dex.isDexContainerFirstEntry() &&
-                      dex.isDexContainerLastEntry();
-              String entryName = entry.getName() + (hasSingleEntry ? "" : ("/" + i));
-              ZipDexEntry dexEntry = new ZipDexEntry() {
-                  @Nonnull
-                  @Override
-                  public String getEntryName() {
-                      return entryName;
-                  }
+                final int headerOffset = offset;
+                boolean isLast;
+                int fileSize;
+                try {
+                    DexBackedDexFile dex = new DexBackedDexFile(opcodes, buf, 0, true, headerOffset);
+                    isLast = dex.isDexContainerLastEntry();
+                    fileSize = dex.getFileSize();
+                } catch (NotADexFile | InvalidFile | UnsupportedFile ex) {
+                    if (ignoreInvalid) {
+                        return;
+                    }
+                    isLast = true;
+                    fileSize = buf.length - offset;
+                }
+                final String entryName = entry.getName() + (i == 0 && isLast ? "" : ("/" + i));
+                ZipDexEntry dexEntry =
+                        new ZipDexEntry() {
+                            @Nonnull
+                            @Override
+                            public String getEntryName() {
+                                return entryName;
+                            }
 
-                  @Nonnull
-                  @Override
-                  public DexBackedDexFile getDexFile() {
-                      return dex;
-                  }
+                            // throws InvalidFile if the dex file has an invalid header.
+                            // throws UnsupportedFile if the dex file version is not supported.
+                            @Nonnull
+                            @Override
+                            public DexBackedDexFile getDexFile() {
+                                return new DexBackedDexFile(opcodes, buf, 0, true, headerOffset);
+                            }
 
-                  @Nonnull
-                  @Override
-                  public MultiDexContainer<DexBackedDexFile> getContainer() {
-                      return ZipDexContainer.this;
-                  }
+                            @Nonnull
+                            @Override
+                            public MultiDexContainer<DexBackedDexFile> getContainer() {
+                                return ZipDexContainer.this;
+                            }
 
-                  @Override
-                  public long getCrc() {
-                      return entryCrc;
-                  }
-              };
-              entries.put(entryName, dexEntry);
-              offset += dex.getFileSize();
-              if (dex.isDexContainerLastEntry()) {
-                  break;
-              }
-            };
+                            @Override
+                            public long getCrc() {
+                                return entryCrc;
+                            }
+                        };
+                entries.put(entryName, dexEntry);
+                offset += fileSize;
+                if (isLast) {
+                    return;
+                }
+            }
         }
     }
 
