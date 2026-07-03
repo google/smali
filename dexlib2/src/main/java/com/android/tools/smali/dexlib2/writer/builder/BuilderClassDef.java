@@ -80,10 +80,10 @@ public class BuilderClassDef extends BaseTypeReference implements ClassDef {
             methods = Collections.emptyList();
         }
         if (staticFields == null) {
-            staticFields = Collections.emptySortedSet();
+            staticFields = Collections.unmodifiableSortedSet(new java.util.TreeSet<>());
         }
         if (instanceFields == null) {
-            instanceFields = Collections.emptySortedSet();
+            instanceFields = Collections.unmodifiableSortedSet(new java.util.TreeSet<>());
         }
 
         this.type = type;

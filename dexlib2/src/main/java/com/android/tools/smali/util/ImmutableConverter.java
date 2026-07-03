@@ -117,7 +117,7 @@ public abstract class ImmutableConverter<ImmutableItem, Item> {
     public SortedSet<ImmutableItem> toSortedSet(@Nonnull Comparator<? super ImmutableItem> comparator,
                                                          @Nullable final Iterable<? extends Item> iterable) {
         if (iterable == null) {
-            return Collections.emptySortedSet();
+            return unmodifiableSortedSet(new java.util.TreeSet<ImmutableItem>(comparator));
         }
 
         boolean needsCopy = false;

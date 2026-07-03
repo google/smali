@@ -58,7 +58,7 @@ public class ImmutableUtils {
 
     @Nonnull public static <T> SortedSet<T> nullToEmptySortedSet(@Nullable SortedSet<T> set) {
         if (set == null) {
-            return Collections.emptySortedSet();
+            return unmodifiableSortedSet(new java.util.TreeSet<T>());
         }
         return unmodifiableSortedSet(set);
     }
