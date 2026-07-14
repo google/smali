@@ -330,18 +330,19 @@ public class OatFile extends DexBuffer implements MultiDexContainer<DexBackedDex
                 int keyEndOffset = offset;
 
                 String k = new String(buf, keyStartOffset, keyEndOffset - keyStartOffset);
-                if (k.equals(key)) {
-                    int valueStartOffset = ++offset;
-                    while (offset < endOffset && buf[offset] != '\0') {
-                        offset++;
-                    }
-                    if (offset >= endOffset) {
-                        throw new InvalidOatFileException("Oat file contains truncated key value store");
-                    }
-                    int valueEndOffset = offset;
-                    return new String(buf, valueStartOffset, valueEndOffset - valueStartOffset);
+                int valueStartOffset = ++offset;
+                while (offset < endOffset && buf[offset] != '\0') {
+                    offset++;
                 }
-                offset++;
+                if (offset >= endOffset) {
+                    throw new InvalidOatFileException("Oat file contains truncated key value store");
+                }
+
+                if (k.equals(key)) {
+                    return new String(buf, valueStartOffset, offset - valueStartOffset);
+                }
+
+                offset++; // Move past the null terminator of the value
             }
             return null;
         }
