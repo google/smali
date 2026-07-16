@@ -174,6 +174,10 @@ public class DexBackedDexFile implements DexFile {
                         "Invalid container_size %d (exceeds buffer length %d)",
                         containerSize, buf.length - offset));
             }
+        } else if (CDexBackedDexFile.isCdex(buf, offset + header_offset)) {
+            int dataStart = dexBuffer.readSmallUint(header_offset + HeaderItem.DATA_START_OFFSET);
+            int dataSize = dexBuffer.readSmallUint(header_offset + HeaderItem.DATA_SIZE_OFFSET);
+            this.containerSize = Math.min(buf.length - offset, Math.max(this.fileSize, dataStart + dataSize));
         } else {
             this.containerSize = this.fileSize;
         }
@@ -185,9 +189,15 @@ public class DexBackedDexFile implements DexFile {
              throw new DexUtil.InvalidFile(String.format("Invalid mapOffset %d", mapOffset));
         }
 
+        int baseDataOffset = getBaseDataOffset();
+        if (baseDataOffset > containerSize - 4 - mapOffset) {
+             throw new DexUtil.InvalidFile(String.format("Invalid mapOffset %d", mapOffset));
+        }
+
         // Eagerly read mapSize to validate map bounds
-        int mapSize = dexBuffer.readSmallUint(mapOffset);
-        if (mapOffset + 4 + mapSize * MapItem.ITEM_SIZE > containerSize) {
+        int mapSize = dataBuffer.readSmallUint(mapOffset);
+        int remainingSize = containerSize - baseDataOffset - mapOffset - 4;
+        if (mapSize > remainingSize / MapItem.ITEM_SIZE) {
              throw new DexUtil.InvalidFile("Map extends beyond container bounds");
         }
     }
