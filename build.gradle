@@ -30,7 +30,7 @@
 
 apply plugin: 'idea'
 
-version = '3.0.9'
+version = '3.0.10'
 
 // Note: please don't use this. This is strictly for the official releases
 // that are posted on, e.g. the bitbucket download page.
