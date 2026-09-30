@@ -70,7 +70,7 @@ idea {
         if (buildDir.exists()) {
             excludeDirs.addAll(buildDir.listFiles())
         }
-        for (sourceDir in (sourceDirs + testSourceDirs)) {
+        for (sourceDir in (sourceDirs + sourceSets.test.allSource.srcDirs)) {
             excludeDirs.remove(sourceDir);
             while ((sourceDir = sourceDir.getParentFile()) != null) {
                 excludeDirs.remove(sourceDir);
@@ -112,7 +112,7 @@ task fatJar(type: Jar, dependsOn: jar) {
 
     doLast {
         if (!System.getProperty('os.name').toLowerCase().contains('windows')) {
-            ant.symlink(link: file("${destinationDirectory.get()}/smali.jar"), resource: archivePath, overwrite: true)
+            ant.symlink(link: file("${destinationDirectory.get()}/smali.jar"), resource: archiveFile.get().asFile, overwrite: true)
         }
     }
 }
@@ -174,5 +174,6 @@ sourcesJar {
 }
 sourcesJar.dependsOn('generateGrammarSource')
 sourcesJar.dependsOn('jflex')
+compileJava.dependsOn('generateGrammarSource')
 
 tasks.getByPath(':release').dependsOn(proguard)
