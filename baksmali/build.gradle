@@ -75,7 +75,7 @@ task fatJar(type: Jar) {
 
     doLast {
         if (!System.getProperty('os.name').toLowerCase().contains('windows')) {
-            ant.symlink(link: file("${destinationDirectory.get()}/baksmali.jar"), resource: archivePath, overwrite: true)
+            ant.symlink(link: file("${destinationDirectory.get()}/baksmali.jar"), resource: archiveFile.get().asFile, overwrite: true)
         }
     }
 }
